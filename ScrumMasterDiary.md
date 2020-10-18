@@ -1,4 +1,4 @@
-18-10-2020
+**18-10-2020**
 - Main focus: get services up and running.
 - Helped the dev team on two fronts:
     - Matteo was working on defining User Stories and getting them into Taiga
