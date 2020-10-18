@@ -1,6 +1,4 @@
-DEV TEAM DIARY:
-    
-18-10-2020
+**18-10-2020**
 - Set CAS environment
 (SCRIVETE QUELLO CHE AVETE FATTO)
 - Create accounts in Mattermost, Gitlab and Taiga and foreach of them we set up the work group.
@@ -9,7 +7,7 @@ DEV TEAM DIARY:
     - set the content of the story
     - set dependencies of the story 
     - set the points of the story (UX, design, frontend, backend)
-    - set tags (on Taiga)
+    - set tags (on Taiga)s
 - Made some experience with taiga.
 - Set the Taiga environment, added the stories and customazied it setting some details like new tags or new user story status.
 - The Scrum master has select the stories to put in the first sprint and after that we discussed it together.
