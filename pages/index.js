@@ -1,65 +1,130 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import MapIcon from '@material-ui/icons/Map';
+import React, { useState } from 'react';
+import axios from 'axios';
+
+
+
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    margin: theme.spacing(1),
+  },
+  textField: {
+    margin: theme.spacing(1),
+    width: "50%",
+    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#1DA1F2"
+    },
+    "& .MuiOutlinedInput-input": {
+      color: "#1DA1F2"
+    },
+    "& .MuiInputLabel-outlined": {
+      color: "#1DA1F2"
+    },
+  },
+  submitButton: {
+    margin: theme.spacing(1),
+    width: 100,
+    color: "white",
+    backgroundColor: "#1DA1F2"
+  }
+}));
+
+
+
 
 export default function Home() {
+  const classes = useStyles();
+  const [coordinates, setCoordinates] = useState({
+    latitudeStart: 0,
+    longitudeStart: 0,
+    latitudeEnd: 0,
+    longitudeEnd: 0,
+  })
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    console.log(coordinates)
+    axios.post("/api/post/geoFilter", coordinates)
+    .then((response) => {
+      console.log(response);
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  function handleChange(evt) {
+    const value = evt.target.value;
+    setCoordinates({
+      ...coordinates,
+      [evt.target.name]: value
+    });
+  }
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>Test Next App</title>
+        <title>Twitter Tracker</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
+        <header className={styles.title}>
+          <img src="/Twitter.png" alt="twitter" className={styles.titleImg}/>
+          <h1 className={styles.titleH1}>Twitter Tracker</h1>
+        </header>   
+        <form className={styles.form} onSubmit={handleOnSubmit}>
+          <TextField 
+            id="latitudeStart"
+            className={classes.textField}
+            label="Latitude start"
+            type="number" 
+            variant="outlined"
+            name="latitudeStart"
+            onChange={handleChange}
+          />
+          <TextField 
+            id="longitudeStart"
+            className={classes.textField}
+            label="Longitude start"
+            type="number" 
+            variant="outlined"
+            name="longitudeStart"
+            onChange={handleChange}
+          />
+          <TextField 
+            id="latitudeEnd"
+            className={classes.textField}
+            label="Latitude end"
+            type="number" 
+            variant="outlined"
+            name="latitudeEnd"
+            onChange={handleChange}
+          />
+          <TextField 
+            id="longitudeEnd"
+            className={classes.textField}
+            label="Longitude end"
+            type="number" 
+            variant="outlined"
+            name="longitudeEnd"
+            onChange={handleChange}
+          />
+          <Button
+            variant="contained"
+            className={classes.submitButton}
+            color="default"
+            type="submit"
+            startIcon={<MapIcon />}
           >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+           SEND
+          </Button>
+        </form>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
     </div>
   )
 }
