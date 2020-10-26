@@ -26,6 +26,9 @@
   }
 }
 
+.introTitle{
+  margin-left: -20px;
+}
 
 .introTitle, .introLogo{
   color: #1DA1F2;
@@ -102,7 +105,8 @@
 }
 
 
-.ml1 {
-  color: #1DA1F2;
+.submit{
+  display: flex;
+  align-items: center;
 }
 
