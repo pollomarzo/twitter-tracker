@@ -1,14 +1,89 @@
+.container{
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(211, 238, 248);
+}
+
+.intro{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  animation: intro;
+  animation-duration: 5s;
+}
+
+@keyframes intro {
+  0% {
+    opacity: 100%;
+  }
+  60% {
+    opacity: 100%;
+  }
+  100%{
+    opacity: 0%;
+  }
+}
+
+.introLogo{
+  animation: animationIntroLogo;
+  animation-duration: 1s;
+}
+
+@keyframes animationIntroLogo {
+  0% {
+    height: 0px;
+  }
+  100%{
+    height: 500px;
+  }
+}
+
+.introTitle{
+  color: #1DA1F2;
+  animation: animationIntroTitle;
+  animation-duration: 4s;
+}
+
+@keyframes animationIntroTitle {
+  0% {
+    opacity: 0%;
+  }
+  100%{
+    opacity: 100%;
+  }
+}
+
+
 .main{
   height: calc(100vh - 60px);
   width: calc(100vw - 60px);
   margin: 30px;
   padding: 10px;
+  position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   border: solid 4px #1DA1F2;
   border-radius: 10px;
+  animation: main;
+  animation-duration: 9s;
+}
+
+@keyframes main {
+  0% {
+    opacity: 0%;
+  }
+  50% {
+    opacity: 0%;
+  }
+  100%{
+    opacity: 100%;
+  }
 }
 
 .title{
@@ -34,5 +109,10 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+
+.ml1 {
+  color: #1DA1F2;
 }
 

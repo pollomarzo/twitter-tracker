@@ -4,8 +4,11 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import MapIcon from '@material-ui/icons/Map';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import lottie from "lottie-web"
+import animationData from "../public/TwitterLottie.json"
+import anime from "animejs"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -56,13 +59,37 @@ export default function Home() {
     });
   }
 
-  function handleChange(evt) {
-    const value = evt.target.value;
+  function handleChange(e) {
+    const value = e.target.value;
     setCoordinates({
       ...coordinates,
-      [evt.target.name]: value
+      [e.target.name]: value
     });
   }
+
+  const container = useRef(null)
+
+  const onAnimationFinish = () => {
+    console.log('animation finished detected with isCancelled: ' + isCancelled);
+  };
+
+  useEffect(() => {
+    lottie.loadAnimation({
+      container: container.current,
+      render: "svg",
+      loop: false,
+      autoplay: true,
+      animationData,
+      onAnimationFinish: {onAnimationFinish}
+    })
+
+    setInterval(() => {
+      document.getElementById("logo").style.display = 'none';
+    }, 4800);
+
+  }, [])
+
+
 
   return (
     <div className={styles.container}>
@@ -70,10 +97,13 @@ export default function Home() {
         <title>Twitter Tracker</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <div id="logo" className={styles.intro}>
+        <div className={styles.introLogo} ref={container}/>
+        <h1 className={styles.introTitle}>TWITTER TRACKER</h1>
+      </div>
       <main className={styles.main}>
         <header className={styles.title}>
-          <img src="/Twitter.png" alt="twitter" className={styles.titleImg}/>
-          <h1 className={styles.titleH1}>Twitter Tracker</h1>
+          <h1 className={styles.titleH1}>TWITTER TRACKER</h1>
         </header>   
         <form className={styles.form} onSubmit={handleOnSubmit}>
           <TextField 
@@ -126,3 +156,5 @@ export default function Home() {
     </div>
   )
 }
+
+//<img src="/Twitter.png" alt="twitter" className={styles.titleImg}/>

@@ -10,11 +10,14 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "animejs": "^3.2.1",
     "axios": "^0.21.0",
+    "lottie-web": "^5.7.3",
     "next": "9.5.5",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-hook-form": "^6.9.6"
+    "react-hook-form": "^6.9.6",
+    "react-lottie": "^1.2.3"
   },
   "devDependencies": {
     "source-map-loader": "^1.0.0"
