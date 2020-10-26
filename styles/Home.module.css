@@ -2,7 +2,7 @@
   position: relative;
   height: 100vh;
   width: 100vw;
-  background-color: rgb(211, 238, 248);
+  background-color: rgb(229, 242, 248);
 }
 
 .intro{
@@ -12,8 +12,6 @@
   position: absolute;
   justify-content: center;
   align-items: center;
-  animation: intro;
-  animation-duration: 5s;
 }
 
 @keyframes intro {
@@ -28,35 +26,27 @@
   }
 }
 
-.introLogo{
-  animation: animationIntroLogo;
-  animation-duration: 1s;
-}
 
-@keyframes animationIntroLogo {
-  0% {
-    height: 0px;
-  }
-  100%{
-    height: 500px;
-  }
-}
-
-.introTitle{
+.introTitle, .introLogo{
   color: #1DA1F2;
-  animation: animationIntroTitle;
-  animation-duration: 4s;
+  animation: animationIntro;
+  animation-duration: 5s;
 }
 
-@keyframes animationIntroTitle {
+@keyframes animationIntro {
   0% {
     opacity: 0%;
   }
-  100%{
+  50%{
     opacity: 100%;
   }
+  80%{
+    opacity: 100%;
+  }
+  100%{
+    opacity: 0%;
+  }
 }
-
 
 .main{
   height: calc(100vh - 60px);

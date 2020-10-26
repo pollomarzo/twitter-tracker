@@ -2,21 +2,20 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/styles";
 import MapIcon from '@material-ui/icons/Map';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import lottie from "lottie-web"
 import animationData from "../public/TwitterLottie.json"
-import anime from "animejs"
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   button: {
-    margin: theme.spacing(1),
+    margin: 10,
   },
   textField: {
-    margin: theme.spacing(1),
+    margin: 10,
     width: "50%",
     "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
       borderColor: "#1DA1F2"
@@ -29,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submitButton: {
-    margin: theme.spacing(1),
+    margin: 10,
     width: 100,
     color: "white",
     backgroundColor: "#1DA1F2"
@@ -41,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Home() {
   const classes = useStyles();
+
   const [coordinates, setCoordinates] = useState({
     latitudeStart: 0,
     longitudeStart: 0,
@@ -69,10 +69,6 @@ export default function Home() {
 
   const container = useRef(null)
 
-  const onAnimationFinish = () => {
-    console.log('animation finished detected with isCancelled: ' + isCancelled);
-  };
-
   useEffect(() => {
     lottie.loadAnimation({
       container: container.current,
@@ -80,7 +76,6 @@ export default function Home() {
       loop: false,
       autoplay: true,
       animationData,
-      onAnimationFinish: {onAnimationFinish}
     })
 
     setInterval(() => {
