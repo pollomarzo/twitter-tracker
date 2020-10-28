@@ -1,20 +1,16 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import Head from "next/head";
+import styles from "../styles/Home.module.css";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/styles";
-import MapIcon from '@material-ui/icons/Map';
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import lottie from "lottie-web"
-import animationData from "../public/TwitterLottie.json"
-import Fade from '@material-ui/core/Fade';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
-
-
-
-
+import MapIcon from "@material-ui/icons/Map";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import lottie from "lottie-web";
+import animationData from "../public/TwitterLottie.json";
+import Fade from "@material-ui/core/Fade";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -25,24 +21,22 @@ const useStyles = makeStyles(() => ({
     borderRadius: 10,
     width: "50%",
     "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#1DA1F2"
+      borderColor: "#1DA1F2",
     },
     "& .MuiOutlinedInput-input": {
-      color: "#1DA1F2"
+      color: "#1DA1F2",
     },
     "& .MuiInputLabel-outlined": {
-      color: "#1DA1F2"
+      color: "#1DA1F2",
     },
   },
   submitButton: {
     margin: 10,
     width: 100,
     color: "white",
-    backgroundColor: "#1DA1F2"
-  }
+    backgroundColor: "#1DA1F2",
+  },
 }));
-
-
 
 export default function Home() {
   const classes = useStyles();
@@ -52,14 +46,12 @@ export default function Home() {
     longitudeStart: 0,
     latitudeEnd: 0,
     longitudeEnd: 0,
-  })
+  });
   const [loading, setLoading] = React.useState(false);
-  const [query, setQuery] = React.useState('idle');
+  const [query, setQuery] = React.useState("idle");
 
-  
-  const container = useRef(null)
+  const container = useRef(null);
   const timerRef = useRef();
-
 
   useEffect(() => {
     lottie.loadAnimation({
@@ -68,44 +60,46 @@ export default function Home() {
       loop: false,
       autoplay: true,
       animationData,
-    })
+    });
 
     clearTimeout(timerRef.current);
 
     setInterval(() => {
-      document.getElementById("logo").style.display = 'none';
+      document.getElementById("logo").style.display = "none";
     }, 4800);
+  }, []);
 
-  }, [])
-
-  
   function handleChange(e) {
     const value = e.target.value;
     setCoordinates({
       ...coordinates,
-      [e.target.name]: value
+      [e.target.name]: value,
     });
   }
 
   const handleClickQuery = () => {
     clearTimeout(timerRef.current);
 
-    if (query !== 'idle') {
-      setQuery('idle');
+    if (query !== "idle") {
+      setQuery("idle");
       //funzione che restituisce i risultati
       return;
     } else {
-      axios.post("/api/post/geoFilter", coordinates)
-      .then((response) => {console.log(response)})
-      .catch((error) => {console.log(error)});
+      axios
+        .post("/api/post/geoFilter", coordinates)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
 
-    setQuery('progress');
+    setQuery("progress");
     timerRef.current = window.setTimeout(() => {
-      setQuery('success');
+      setQuery("success");
     }, 5000);
   };
-
 
   return (
     <div className={styles.container}>
@@ -114,15 +108,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div id="logo" className={styles.intro}>
-        <div className={styles.introLogo} ref={container}/>
+        <div className={styles.introLogo} ref={container} />
         <h1 className={styles.introTitle}>TWITTER TRACKER</h1>
       </div>
       <main className={styles.main}>
         <header className={styles.title}>
           <h1 className={styles.titleH1}>TWITTER TRACKER</h1>
-        </header>   
+        </header>
         <div className={styles.form}>
-          <TextField 
+          <TextField
             id="latitudeStart"
             className={classes.textField}
             label="Latitude start"
@@ -131,7 +125,7 @@ export default function Home() {
             required
             onChange={handleChange}
           />
-          <TextField 
+          <TextField
             id="longitudeStart"
             className={classes.textField}
             label="Longitude start"
@@ -140,7 +134,7 @@ export default function Home() {
             required
             onChange={handleChange}
           />
-          <TextField 
+          <TextField
             id="latitudeEnd"
             className={classes.textField}
             label="Latitude end"
@@ -149,7 +143,7 @@ export default function Home() {
             required
             onChange={handleChange}
           />
-          <TextField 
+          <TextField
             id="longitudeEnd"
             className={classes.textField}
             label="Longitude end"
@@ -159,22 +153,22 @@ export default function Home() {
             onChange={handleChange}
           />
           <div className={styles.submit}>
-            <Button 
-              onClick={handleClickQuery} 
+            <Button
+              onClick={handleClickQuery}
               variant="contained"
               className={classes.submitButton}
               color="default"
             >
-              {query !== 'idle' ? 'RESET': 'START'}
+              {query !== "idle" ? "RESET" : "START"}
             </Button>
             <div>
-              {query === 'success' ? (
+              {query === "success" ? (
                 <Typography>Risultati tweet</Typography>
               ) : (
                 <Fade
-                  in={query === 'progress'}
+                  in={query === "progress"}
                   style={{
-                    transitionDelay: query === 'progress' ? '800ms' : '0ms',
+                    transitionDelay: query === "progress" ? "800ms" : "0ms",
                   }}
                   unmountOnExit
                 >
@@ -186,7 +180,7 @@ export default function Home() {
         </div>
       </main>
     </div>
-  )
+  );
 }
 
 //<img src="/Twitter.png" alt="twitter" className={styles.titleImg}/>
