@@ -10,10 +10,10 @@ const client = new Twitter({
   access_token_secret: credentials.access_token_secret, // from your User (oauth_token_secret)
 });
 
-client
-  .get("account/verify_credentials")
-  .then((results) => console.log("CREDENTIALS OK"))
-  .catch((error) => console.log(error)); //todo: handle error
+// client
+//   .get("account/verify_credentials")
+//   .then((results) => console.log("CREDENTIALS OK"))
+//   .catch((error) => console.log(error)); //todo: handle error
 
 var data = [];
 var stream = {};
