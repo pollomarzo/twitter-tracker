@@ -79,6 +79,7 @@ export default function Home() {
 
   const handleClickQuery = () => {
     clearTimeout(timerRef.current);
+    console.log(query);
 
     if (query !== "ready") {
       setQuery("ready");
@@ -109,12 +110,11 @@ export default function Home() {
         .catch((error) => {
           console.log(error);
         });
+      setQuery("searching");
+      timerRef.current = window.setTimeout(() => {
+        setQuery("success");
+      }, 5000);
     }
-
-    setQuery("searching");
-    timerRef.current = window.setTimeout(() => {
-      setQuery("success");
-    }, 5000);
   };
 
   const aStyle = { display: "none" };

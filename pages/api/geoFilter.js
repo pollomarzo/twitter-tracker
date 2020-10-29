@@ -46,6 +46,7 @@ export default function handler(req, res) {
       if (child) {
         child.kill("SIGINT");
         child.on("message", (m) => {
+          delete uuid_child_table[uuid];
           res.json(m);
           resolve();
         });
