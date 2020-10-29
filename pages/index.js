@@ -47,7 +47,8 @@ export default function Home() {
     latitudeEnd: 0,
     longitudeEnd: 0,
   });
-  const [query, setQuery] = React.useState("ready");
+  const [query, setQuery] = useState("ready");
+  const [id, setId] = useState(0);
 
   const container = useRef(null);
   const timerRef = useRef();
@@ -83,17 +84,19 @@ export default function Home() {
       setQuery("ready");
       //funzione che restituisce i risultati
       axios.delete("/api/geoFilter", {
-        data: { foo: "bar" }, 
+        data: { id: id }, 
         //headers: { "Authorization": "***" } 
-      });
+      })
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
       return;
     } else {
       axios 
         .post("/api/geoFilter", {
           coordinates: `${coordinates.longitudeStart},${coordinates.latitudeStart},${coordinates.longitudeEnd},${coordinates.latitudeEnd}`,
         })
-        .then((response) => { console.log(response) })
-        .catch((error) => { console.log(error) });
+        .then((response) => {setId(response.data)})
+        .catch((error) => {console.log(error)});
     }
 
     setQuery("searching");
@@ -116,6 +119,7 @@ export default function Home() {
         <header className={styles.title}>
           <h1 className={styles.titleH1}>TWITTER TRACKER</h1>
         </header>
+        <button onClick={() => console.log(id)}>PROVA</button>
         <div className={styles.form}>
           <TextField
             id="latitudeStart"

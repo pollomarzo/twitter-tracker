@@ -39,7 +39,9 @@ export default function handler(req, res) {
       resolve();
     } else if (req.method == "DELETE") {
       console.log(uuid_child_table);
-      var uuid = req.query.id;
+      var uuid = req.body.id;
+      console.log("body", req.body)
+      console.log(uuid)
       var child = uuid_child_table[uuid];
       if (child) {
         child.kill("SIGINT");
