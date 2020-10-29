@@ -40,13 +40,13 @@ export default function handler(req, res) {
     } else if (req.method == "DELETE") {
       console.log(uuid_child_table);
       var uuid = req.body.id;
-      console.log("body", req.body)
-      console.log(uuid)
+      console.log("body", req.body);
+      console.log(uuid);
       var child = uuid_child_table[uuid];
       if (child) {
         child.kill("SIGINT");
         child.on("message", (m) => {
-          res.send(m);
+          res.json(m);
           resolve();
         });
       } else {

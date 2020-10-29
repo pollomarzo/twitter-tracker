@@ -1,5 +1,5 @@
 const Twitter = require("twitter-lite");
-const credentials = require("./credentials.json");
+const credentials = require("./.credentials");
 
 const client = new Twitter({
   subdomain: "api", // "api" is the default (change for other subdomains)
@@ -23,7 +23,7 @@ function exportJSON(data) {
   data.forEach((value, index) => {
     json.data.push(value);
   });
-  var json = JSON.stringify(json);
+  var json = JSON.stringify(json.data);
   return json;
 }
 

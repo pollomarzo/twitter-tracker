@@ -83,20 +83,32 @@ export default function Home() {
     if (query !== "ready") {
       setQuery("ready");
       //funzione che restituisce i risultati
-      axios.delete("/api/geoFilter", {
-        data: { id: id }, 
-        //headers: { "Authorization": "***" } 
-      })
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
-      return;
+      axios
+        .delete("/api/geoFilter", {
+          data: { id: id },
+          //headers: { "Authorization": "***" }
+        })
+        .then((response) => {
+          var dataStr =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(response.data));
+          var dlAnchorElem = document.getElementById("downloadAnchorElem");
+          dlAnchorElem.setAttribute("href", dataStr);
+          dlAnchorElem.setAttribute("download", `${id}.json`);
+          dlAnchorElem.click();
+        })
+        .catch((error) => console.log("error", error));
     } else {
-      axios 
+      axios
         .post("/api/geoFilter", {
           coordinates: `${coordinates.longitudeStart},${coordinates.latitudeStart},${coordinates.longitudeEnd},${coordinates.latitudeEnd}`,
         })
-        .then((response) => {setId(response.data)})
-        .catch((error) => {console.log(error)});
+        .then((response) => {
+          setId(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
 
     setQuery("searching");
@@ -104,6 +116,8 @@ export default function Home() {
       setQuery("success");
     }, 5000);
   };
+
+  const aStyle = { display: "none" };
 
   return (
     <div className={styles.container}>
@@ -120,6 +134,7 @@ export default function Home() {
           <h1 className={styles.titleH1}>TWITTER TRACKER</h1>
         </header>
         <button onClick={() => console.log(id)}>PROVA</button>
+        <a href="" id="downloadAnchorElem" style={aStyle}></a>
         <div className={styles.form}>
           <TextField
             id="latitudeStart"
