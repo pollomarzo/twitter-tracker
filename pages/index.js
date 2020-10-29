@@ -85,7 +85,7 @@ export default function Home() {
       //funzione che restituisce i risultati
       return;
     } else {
-      axios
+      axios 
         .post("/api/geoFilter", {
           coordinates: `${coordinates.longitudeStart},${coordinates.latitudeStart},${coordinates.longitudeEnd},${coordinates.latitudeEnd}`,
         })
