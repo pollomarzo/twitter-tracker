@@ -64,14 +64,14 @@
   border: solid 4px #1DA1F2;
   border-radius: 10px;
   animation: main;
-  animation-duration: 9s;
+  animation-duration: 6s;
 }
 
 @keyframes main {
   0% {
     opacity: 0%;
   }
-  50% {
+  75% {
     opacity: 0%;
   }
   100%{

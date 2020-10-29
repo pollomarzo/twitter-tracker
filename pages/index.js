@@ -47,8 +47,7 @@ export default function Home() {
     latitudeEnd: 0,
     longitudeEnd: 0,
   });
-  const [loading, setLoading] = React.useState(false);
-  const [query, setQuery] = React.useState("idle");
+  const [query, setQuery] = React.useState("ready");
 
   const container = useRef(null);
   const timerRef = useRef();
@@ -80,9 +79,13 @@ export default function Home() {
   const handleClickQuery = () => {
     clearTimeout(timerRef.current);
 
-    if (query !== "idle") {
-      setQuery("idle");
+    if (query !== "ready") {
+      setQuery("ready");
       //funzione che restituisce i risultati
+      axios.delete("/api/geoFilter", {
+        data: { foo: "bar" }, 
+        //headers: { "Authorization": "***" } 
+      });
       return;
     } else {
       axios 
@@ -93,7 +96,7 @@ export default function Home() {
         .catch((error) => { console.log(error) });
     }
 
-    setQuery("progress");
+    setQuery("searching");
     timerRef.current = window.setTimeout(() => {
       setQuery("success");
     }, 5000);
@@ -157,16 +160,16 @@ export default function Home() {
               className={classes.submitButton}
               color="default"
             >
-              {query !== "idle" ? "RESET" : "START"}
+              {query !== "ready" ? "STOP" : "START"}
             </Button>
             <div>
               {query === "success" ? (
-                <Typography>Risultati tweet</Typography>
+                <Typography>Check the results</Typography>
               ) : (
                 <Fade
-                  in={query === "progress"}
+                  in={query === "searching"}
                   style={{
-                    transitionDelay: query === "progress" ? "800ms" : "0ms",
+                    transitionDelay: query === "searching" ? "800ms" : "0ms",
                   }}
                   unmountOnExit
                 >
