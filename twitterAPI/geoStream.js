@@ -1,5 +1,5 @@
 const Twitter = require("twitter-lite");
-const credentials = require("./.credentials");
+const credentials = require("./credentials.json");
 
 const client = new Twitter({
   subdomain: "api", // "api" is the default (change for other subdomains)

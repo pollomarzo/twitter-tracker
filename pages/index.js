@@ -89,12 +89,8 @@ export default function Home() {
         .post("/api/geoFilter", {
           coordinates: `${coordinates.longitudeStart},${coordinates.latitudeStart},${coordinates.longitudeEnd},${coordinates.latitudeEnd}`,
         })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        .then((response) => { console.log(response) })
+        .catch((error) => { console.log(error) });
     }
 
     setQuery("progress");
