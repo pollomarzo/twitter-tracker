@@ -9,7 +9,6 @@ import lottie from "lottie-web";
 import animationData from "../public/TwitterLottie.json";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { yellow } from "@material-ui/core/colors";
 
 
 const useStyles = makeStyles(() => ({
@@ -46,6 +45,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+
 export default function Home() {
   const classes = useStyles();
 
@@ -55,8 +55,12 @@ export default function Home() {
     latitudeEnd: 0,
     longitudeEnd: 0,
   });
-  const [classImg, setClassImg] = useState([styles.logoImg]);         //css of intro img
-  const [classTitle, setClassTitle] = useState([styles.logoTitle]);   //css of intro text
+  const [classIntro, setClassIntro] = useState({                      //initial class of logoDiv e mainDiv
+    div: styles.logo,
+    img: styles.logoImg,
+    title: styles.logoTitle,
+    main: styles.displayNone
+  });
   const [loading, setLoading] = useState(false);                      //to change button semantic
   const [id, setId] = useState(0);                                    //to send id of axios/post to axios/delete
   const container = useRef(null);                                     //about intro img
@@ -71,8 +75,12 @@ export default function Home() {
       animationData,
     });
     setTimeout(()=>{
-      setClassImg([styles.displayNone]);
-      setClassTitle([styles.displayNone]);
+      setClassIntro({
+        div: styles.displayNone,
+        img: styles.displayNone,
+        title: styles.displayNone,
+        main: styles.main
+      });
     }, 4500)
   }, []);
 
@@ -127,7 +135,7 @@ export default function Home() {
     }
   };
 
-  const aStyle = {  };
+  const aStyle = {display: "none"};
 
   return (
     <div className={styles.container}>
@@ -135,11 +143,11 @@ export default function Home() {
         <title>Twitter Tracker</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div id="logo" className={styles.logo}>
-        <div id="logoImg"className={classImg} ref={container} />
-        <h1 id="logoTitle" className={classTitle}>TWITTER TRACKER</h1>
+      <div id="logo" className={classIntro.div}>
+        <div id="logoImg"className={classIntro.img} ref={container} />
+        <h1 id="logoTitle" className={classIntro.title}>TWITTER TRACKER</h1>
       </div>
-      <main className={styles.main}>
+      <main className={classIntro.main}>
         <header className={styles.title}>
           <h1 className={styles.titleH1}>TWITTER TRACKER</h1>
         </header>
