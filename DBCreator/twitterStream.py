@@ -17,8 +17,10 @@ except:
 
 class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
-        print(status._json["text"])
-        db.insert(status._json)
+        if("place" in status._json.keys()):
+            if(status._json["place"]["country_code"] == "IT"):
+                print(status._json["text"])
+                db.insert(status._json)
     
     def on_error(self, status_code):
         print(status_code)
@@ -40,5 +42,5 @@ if(not api):
 MyStream = MyStreamListener()
 
 MyStream = tweepy.Stream(auth=api.auth, listener=MyStream)
-MyStream.filter(locations=[11.2342, 44.4475, 11.4402, 44.5483])
+MyStream.filter(locations=config.coordinates)
 
