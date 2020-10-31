@@ -18,9 +18,12 @@ except:
 class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         if("place" in status._json.keys()):
-            if(status._json["place"]["country_code"] == "IT"):
-                print(status._json["text"])
-                db.insert(status._json)
+            try:
+                if(status._json["place"]["country_code"] == "IT"):
+                    print(status._json["text"])
+                    db.insert(status._json)
+            except Exception as e:
+                print(e)
     
     def on_error(self, status_code):
         print(status_code)
