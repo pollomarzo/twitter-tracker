@@ -16,32 +16,14 @@
 
 .logoImg{
   height: 250px;
+  color: #1DA1F2;
 }
 
 .logoTitle{
   margin-left: -20px;
-}
-
-.logoTitle, .logoImg{
   color: #1DA1F2;
-  animation: animationIntro;
-  animation-duration: 5s;
 }
 
-@keyframes animationIntro {
-  0% {
-    opacity: 0%;
-  }
-  50%{
-    opacity: 100%;
-  }
-  80%{
-    opacity: 100%;
-  }
-  100%{
-    opacity: 0%;
-  }
-}
 
 .main{
   height: calc(100vh - 60px);
@@ -55,18 +37,8 @@
   align-items: center;
   border: solid 4px #1DA1F2;
   border-radius: 10px;
-  animation: main;
-  animation-duration: 1s;
 }
 
-@keyframes main {
-  0% {
-    opacity: 0%;
-  }
-  100%{
-    opacity: 100%;
-  }
-}
 
 .title{
   display: flex;
@@ -97,8 +69,4 @@
 .submit{
   display: flex;
   align-items: center;
-}
-
-.displayNone{
-  display: none;
 }
