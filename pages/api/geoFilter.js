@@ -1,19 +1,21 @@
-const path = require("path");
-const { v4: uuidv4 } = require("uuid");
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
-const dirPath = path.join(process.cwd(), "/twitterAPI");
+const dirPath = path.join(process.cwd(), '/twitterAPI');
 const uuid_child_table = {};
+
+// hello world
 
 export default function handler(req, res) {
   return new Promise((resolve) => {
-    if (req.method == "POST") {
-      var cp = require("child_process");
-      var child = cp.fork(dirPath + "/geoStream.js", {
-        stdio: "inherit",
+    if (req.method == 'POST') {
+      var cp = require('child_process');
+      var child = cp.fork(dirPath + '/geoStream.js', {
+        stdio: 'inherit',
       });
 
       res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
+      res.setHeader('Content-Type', 'text/html');
 
       var coordinates = req.body.coordinates;
       console.log(coordinates);
@@ -37,21 +39,21 @@ export default function handler(req, res) {
       uuid_child_table[uuid] = child;
       res.send(uuid);
       resolve();
-    } else if (req.method == "DELETE") {
+    } else if (req.method == 'DELETE') {
       console.log(uuid_child_table);
       var uuid = req.body.id;
-      console.log("body", req.body);
+      console.log('body', req.body);
       console.log(uuid);
       var child = uuid_child_table[uuid];
       if (child) {
-        child.kill("SIGINT");
-        child.on("message", (m) => {
+        child.kill('SIGINT');
+        child.on('message', (m) => {
           delete uuid_child_table[uuid];
           res.json(m);
           resolve();
         });
       } else {
-        console.log("child not found");
+        console.log('child not found');
         res.end();
         resolve();
       }
