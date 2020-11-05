@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const dirPath = path.join(process.cwd(), '/twitterAPI');
 const uuid_child_table = {};
 
-// hello world
+//hello world
 
 export default function handler(req, res) {
   return new Promise((resolve) => {
@@ -40,10 +40,10 @@ export default function handler(req, res) {
       res.send(uuid);
       resolve();
     } else if (req.method == 'DELETE') {
-      console.log(uuid_child_table);
+      //console.log(uuid_child_table);
       var uuid = req.body.id;
-      console.log('body', req.body);
-      console.log(uuid);
+      //console.log("body", req.body);
+      //console.log(uuid);
       var child = uuid_child_table[uuid];
       if (child) {
         child.kill('SIGINT');
