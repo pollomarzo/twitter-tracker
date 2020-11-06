@@ -23,7 +23,7 @@ const MainContainer = () => {
   const { textField, submitButton } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState(undefined);
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(false);
 
   // A set of coords to initialize a geolocalized stream
   const [coords, setCoordinates] = useState({
@@ -38,31 +38,34 @@ const MainContainer = () => {
 
   const openStream = () => {
     // A stream is already opened, error!
-    if (streamId !== undefined) 
-      return;
+    if (streamId !== undefined) return;
 
     let correctInput = true;
     const correctFormatRegEx = RegExp("^-?[1]?[0-8]?[0-9][.][0-9]{2}$");
     // Check if the params are correct
     Object.values(coords).forEach(
-      value => correctInput = correctInput && correctFormatRegEx.test(value)
+      (value) => (correctInput = correctInput && correctFormatRegEx.test(value))
     );
 
-    if (correctInput) { 
+    if (correctInput) {
       axios
-        .post("/api/geoFilter", { coordinates: coords })
+        .post("/api/geoFilter", {
+          coordinates: `${coords.longitudeStart},${coords.latitudeStart},${coords.longitudeEnd},${coords.latitudeEnd}`,
+        })
         .then((res) => setStreamId(res.data))
         .catch((err) => console.log(err));
-    
-    } else 
-      setError(true)
+    } else setError(true);
   };
 
   const closeStream = () => {
     // A stram wasn't opened before, error!
     if (streamId === undefined) return;
 
-    axios.delete("/api/geoFilter", { data: { id: streamId }, headers: { Authorization: "***" }})
+    axios
+      .delete("/api/geoFilter", {
+        data: { id: streamId },
+        headers: { Authorization: "***" },
+      })
       .then((_) => setStreamId(undefined))
       .catch((err) => console.warn(err));
   };
@@ -102,7 +105,6 @@ const MainContainer = () => {
             title="Error"
             msg="An acceptable input is a number in range [-180.00, 180.00] written with this formula"
           />
-
         </div>
       </div>
     </NoSsr>
