@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import { useSpring, animated } from "react-spring" 
-import { WelcomingAnimation, MainContainer } from "./components"
+import { WelcomingAnimation, MainContainer } from "../components"
 
 import styles from "../styles/Home.module.css";
 

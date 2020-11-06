@@ -3,7 +3,7 @@ import axios from "axios";
 import { CircularProgress, Fade, Button, makeStyles, NoSsr } from "@material-ui/core";
 import { AlertWindow, InputField } from './'
 
-import styles from "../../styles/Home.module.css";
+import styles from "../styles/Home.module.css";
 
 const useStyles = makeStyles(() => ({
   submitButton: {

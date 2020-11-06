@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import animationData from "../../public/TwitterLottie.json";
+import animationData from "../public/TwitterLottie.json";
 import lottie from "lottie-web";
 
-import styles from "../../styles/Home.module.css";
+import styles from "../styles/Home.module.css";
 
 
 const WelcomingAnimation = () => {
