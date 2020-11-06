@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Button,
   Dialog,
@@ -32,12 +32,12 @@ const AlertWindow = (props) => {
   const { isOpen, onConfirm, title, msg } = props;
 
   return (
-    <Dialog open={open} onClose={props.function} style={{display: isOpen || 'none'}}>
-      <DialogTitle id="alert-dialog-title" className={dialog}>
+    <Dialog open={open} style={{display: isOpen || 'none'}}>
+      <DialogTitle className={dialog}>
         {title}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
+        <DialogContentText>
           {msg}
         </DialogContentText>
       </DialogContent>

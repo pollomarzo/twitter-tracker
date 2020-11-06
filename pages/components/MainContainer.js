@@ -1,28 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { CircularProgress, Fade, Button, makeStyles, TextField, NoSsr } from "@material-ui/core";
-import { AlertWindow } from './'
+import { CircularProgress, Fade, Button, makeStyles, NoSsr } from "@material-ui/core";
+import { AlertWindow, InputField } from './'
 
 import styles from "../../styles/Home.module.css";
 
 const useStyles = makeStyles(() => ({
-  textField: {
-    margin: 10,
-    width: 300,
-    [`& fieldset`]: {
-      borderWidth: 2,
-      borderRadius: 25,
-    },
-    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#1DA1F2",
-    },
-    "& .MuiOutlinedInput-input": {
-      color: "#1DA1F2",
-    },
-    "& .MuiInputLabel-outlined": {
-      color: "#1DA1F2",
-    },
-  },
   submitButton: {
     margin: 10,
     width: 100,
@@ -32,7 +15,7 @@ const useStyles = makeStyles(() => ({
     "&:hover": {
       backgroundColor: "lightblue",
       color: "#1DA1F2",
-    },
+    }
   }
 }));
 
@@ -92,43 +75,10 @@ const MainContainer = () => {
         </header>
 
         <div className={styles.form}>
-          {/* ToDo Refractor this part */}
-          <TextField
-            id="longitudeStart"
-            className={textField}
-            label="Longitude start"
-            variant="outlined"
-            name="longitudeStart"
-            required
-            onChange={handleChange}
-          />
-          <TextField
-            id="latitudeStart"
-            className={textField}
-            label="Latitude start"
-            variant="outlined"
-            name="latitudeStart"
-            required
-            onChange={handleChange}
-          />
-          <TextField
-            id="longitudeEnd"
-            className={textField}
-            label="Longitude end"
-            variant="outlined"
-            name="longitudeEnd"
-            required
-            onChange={handleChange}
-          />
-          <TextField
-            id="latitudeEnd"
-            className={textField}
-            label="Latitude end"
-            variant="outlined"
-            name="latitudeEnd"
-            required
-            onChange={handleChange}
-          />
+          <InputField label="Longitude start" fieldName="longitudeStart" handler={handleChange} />
+          <InputField label="Latitude start" fieldName="latitudeStart" handler={handleChange} />
+          <InputField label="Longitude end" fieldName="longitudeEnd" handler={handleChange} />
+          <InputField label="Latitude end" fieldName="latitudeEnd" handler={handleChange} />
 
           <div className={styles.submit}>
             <Button
