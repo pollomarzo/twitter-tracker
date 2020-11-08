@@ -22,17 +22,31 @@ const client = new Twitter({
   access_token_secret: credentials.access_token_secret, // from your User (oauth_token_secret);
 });
 
-exports.startStream = (locations) => {
+exports.startStream = (type, parameters) => {
   const streamId = uuidv4();
-  const stream = client.stream("statuses/filter", { locations });
+  const stream = client.stream("statuses/filter", parameters);
   stream.on("start", () => {
     streams[streamId] = { stream, data: [], error: null };
     console.log("stream started");
   });
   stream.on("error", (error) => (streams[streamId].error = error)); //todo handler error
   stream.on("data", (tweet) => {
-    streams[streamId].data.push(tweet);
-    console.log(tweet.text);
+    switch (type) {
+      case "hashtag":
+        if (
+          tweet.user.location ||
+          tweet.geo ||
+          tweet.coordinates ||
+          tweet.place
+        ) {
+          streams[streamId].data.push(tweet);
+          console.log(tweet.text);
+        }
+        break;
+      default:
+        streams[streamId].data.push(tweet);
+        console.log(tweet.text);
+    }
   });
   stream.on("end", () => delete streams[streamId]);
   return streamId;
