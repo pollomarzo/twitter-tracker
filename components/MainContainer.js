@@ -1,111 +1,126 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { CircularProgress, Fade, Button, makeStyles, NoSsr } from "@material-ui/core";
-import { AlertWindow, InputField } from './'
+import dynamic from 'next/dynamic';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { makeStyles, NoSsr } from '@material-ui/core';
 
-import styles from "../styles/Home.module.css";
+import Form from './Form';
+import { startStream } from '../twitterAPI/geoStream';
+
+const Map = dynamic(() => import('./Map'), { ssr: false });
 
 const useStyles = makeStyles(() => ({
-  submitButton: {
-    margin: 10,
-    width: 100,
-    fontWeight: 800,
-    color: "white",
-    backgroundColor: "#1DA1F2",
-    "&:hover": {
-      backgroundColor: "lightblue",
-      color: "#1DA1F2",
-    }
-  }
+  container: {
+    position: 'relative',
+    height: '100vh',
+    width: '100vw',
+    backgroundColor: 'rgb(229, 242, 248)',
+  },
+  logo: {
+    height: '100vh',
+    width: '100vw',
+    display: 'flex',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoImg: {
+    height: '250px',
+    color: '#1da1f2',
+  },
+  logoTitle: {
+    marginLeft: '-20px',
+    color: '#1da1f2',
+  },
+  main: {
+    height: 'calc(100vh - 60px)',
+    width: 'calc(100vw - 60px)',
+    margin: '30px',
+    padding: '10px',
+    position: 'absolute',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: 'solid 4px #1da1f2',
+    borderRadius: '10px',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '20px',
+  },
+  titleImg: {
+    height: '60px',
+    width: '60px',
+  },
+  title: {
+    margin: '20px',
+    textAlign: 'center',
+    color: '#1da1f2',
+  },
+  content: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+  },
+  mapWrapper: {
+    flexGrow: 2,
+  },
 }));
 
 const MainContainer = () => {
-  const { textField, submitButton } = useStyles();
+  const { main, header, title, content, mapWrapper } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState(undefined);
-  const [error, setError] = useState(false);
+  const [tweets, setTweets] = useState([]);
 
-  // A set of coords to initialize a geolocalized stream
-  const [coords, setCoordinates] = useState({
-    latitudeStart: 0,
-    latitudeEnd: 0,
-    longitudeStart: 0,
-    longitudeEnd: 0,
-  });
-
-  const handleChange = (e) =>
-    setCoordinates({ ...coords, [e.target.name]: e.target.value });
-
-  const openStream = () => {
-    // A stream is already opened, error!
-    if (streamId !== undefined) return;
-
-    let correctInput = true;
-    const correctFormatRegEx = RegExp("^-?[1]?[0-8]?[0-9][.][0-9]{2}$");
-    // Check if the params are correct
-    Object.values(coords).forEach(
-      (value) => (correctInput = correctInput && correctFormatRegEx.test(value))
-    );
-
-    if (correctInput) {
-      axios
-        .post("/api/geoFilter", {
-          coordinates: `${coords.longitudeStart},${coords.latitudeStart},${coords.longitudeEnd},${coords.latitudeEnd}`,
-        })
-        .then((res) => setStreamId(res.data))
-        .catch((err) => console.log(err));
-    } else setError(true);
+  const startStream = async ({ coords }) => {
+    try {
+      const res = await axios.post('/api/geoFilter', {
+        coordinates: `${coords.longitudeStart},${coords.latitudeStart},${coords.longitudeEnd},${coords.latitudeEnd}`,
+      });
+      setStreamId(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const closeStream = () => {
-    // A stram wasn't opened before, error!
-    if (streamId === undefined) return;
-
-    axios
-      .delete("/api/geoFilter", {
+  const stopStream = async () => {
+    try {
+      const res = await axios.delete('/api/geoFilter', {
         data: { id: streamId },
-        headers: { Authorization: "***" },
-      })
-      .then((_) => setStreamId(undefined))
-      .catch((err) => console.warn(err));
+        headers: { Authorization: '***' },
+      });
+      setStreamId(null);
+      setTweets(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <NoSsr>
-      <div className={styles.main}>
-        <header className={styles.title}>
-          <h1 className={styles.titleH1}>TWITTER TRACKER</h1>
+      <div className={main}>
+        <header className={header}>
+          <h1 className={title}>TWITTER TRACKER</h1>
         </header>
-
-        <div className={styles.form}>
-          <InputField label="Longitude start" fieldName="longitudeStart" handler={handleChange} />
-          <InputField label="Latitude start" fieldName="latitudeStart" handler={handleChange} />
-          <InputField label="Longitude end" fieldName="longitudeEnd" handler={handleChange} />
-          <InputField label="Latitude end" fieldName="latitudeEnd" handler={handleChange} />
-
-          <div className={styles.submit}>
-            <Button
-              onClick={streamId ? closeStream : openStream}
-              variant="contained"
-              className={submitButton}
-              color="default"
-            >
-              {streamId ? "STOP" : "START"}
-            </Button>
-            <div>
-              <Fade in={streamId !== undefined} unmountOnExit>
-                <CircularProgress />
-              </Fade>
-            </div>
+        <div className={content}>
+          <Form onStart={startStream} onStop={stopStream} open={!!streamId} />
+          <div className={mapWrapper}>
+            <Map />
           </div>
-
-          <AlertWindow
-            isOpen={error}
-            onConfirm={setError}
-            title="Error"
-            msg="An acceptable input is a number in range [-180.00, 180.00] written with this formula"
-          />
         </div>
+        {tweets.length > 0 && (
+          <div>
+            <h1>Tweets</h1>
+            {tweets.map((tweet) => (
+              <div>
+                {tweet.text} from @{tweet.user.name}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </NoSsr>
   );

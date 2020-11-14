@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   Dialog,
@@ -6,40 +6,33 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  makeStyles
-} from "@material-ui/core";
-
+  makeStyles,
+} from '@material-ui/core';
 
 const useStyles = makeStyles({
   dialog: {
-    color: "#1DA1F2",
+    color: '#1DA1F2',
   },
   submitButton: {
     margin: 10,
     width: 100,
     fontWeight: 800,
-    color: "white",
-    backgroundColor: "#1DA1F2",
-    "&:hover": {
-      backgroundColor: "lightblue",
-      color: "#1DA1F2",
-   }
-  }
+    color: 'white',
+    backgroundColor: '#1DA1F2',
+    '&:hover': {
+      backgroundColor: 'lightblue',
+      color: '#1DA1F2',
+    },
+  },
 });
 
-const AlertWindow = (props) => {
+const AlertWindow = ({ isOpen, onConfirm, title, msg }) => {
   const { submitButton, dialog } = useStyles();
-  const { isOpen, onConfirm, title, msg } = props;
-
   return (
-    <Dialog open={open} style={{display: isOpen || 'none'}}>
-      <DialogTitle className={dialog}>
-        {title}
-      </DialogTitle>
+    <Dialog open={isOpen} style={{ display: isOpen || 'none' }}>
+      <DialogTitle className={dialog}>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          {msg}
-        </DialogContentText>
+        <DialogContentText>{msg}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
@@ -54,6 +47,5 @@ const AlertWindow = (props) => {
     </Dialog>
   );
 };
-
 
 export default AlertWindow;
