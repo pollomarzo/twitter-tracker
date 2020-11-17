@@ -1,30 +1,28 @@
-import React from "react";
-import { TextField, makeStyles } from "@material-ui/core";
+import React from 'react';
+import { TextField, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles({
   textField: {
     margin: 10,
     width: 300,
-    [`& fieldset`]: {
+    '& fieldset': {
       borderWidth: 2,
       borderRadius: 25,
     },
-    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#1DA1F2",
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#1DA1F2',
     },
-    "& .MuiOutlinedInput-input": {
-      color: "#1DA1F2",
+    '& .MuiOutlinedInput-input': {
+      color: '#1DA1F2',
     },
-    "& .MuiInputLabel-outlined": {
-      color: "#1DA1F2",
+    '& .MuiInputLabel-outlined': {
+      color: '#1DA1F2',
     },
   },
 });
 
-const InputField = (props) => {
+const InputField = ({ label, fieldName, handler }) => {
   const { textField } = useStyles();
-  const { label, fieldName, handler } = props;
-
   return (
     <TextField
       required

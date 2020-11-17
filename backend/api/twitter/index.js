@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const { nanoid } = require('nanoid');
 const Twitter = require('twitter-lite');
 const credentials = require('./.credentials');
 
@@ -12,7 +12,7 @@ function exportJSON(data) {
   var json = JSON.stringify(json.data);
   return json;
 }
-console.log('hello');
+
 const client = new Twitter({
   subdomain: 'api',
   version: '1.1',
@@ -23,11 +23,9 @@ const client = new Twitter({
 });
 
 const startStream = (type, parameters) => {
-  const streamId = uuidv4();
-  console.log(streamId);
+  const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
   streams[streamId] = { stream, data: [], error: null };
-  console.log(`startStream: ${register.magic}`);
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
     console.log(`ERROR! Twitter says: ${error.message}`);
@@ -38,13 +36,12 @@ const startStream = (type, parameters) => {
       case 'hashtag':
         if (tweet.user.location || tweet.geo || tweet.coordinates || tweet.place) {
           streams[streamId].data.push(tweet);
-          streams[streamId].socket.emit('data', tweet);
-          console.log(tweet.text);
+          console.log('SHOOTING TWEET');
+          streams[streamId].socket.emit('tweet', tweet);
         }
         break;
       default:
         streams[streamId].data.push(tweet);
-        console.log(tweet.text);
     }
   });
   return streamId;
@@ -60,12 +57,10 @@ const closeStream = (streamId) => {
 };
 
 const register = (socket, streamId) => {
-  console.log(`Register: ${register.magic}`);
   streams[streamId].socket = socket;
 };
 
 register.startStream = startStream;
 register.closeStream = closeStream;
-register.magic = Math.random();
 
 module.exports = register;

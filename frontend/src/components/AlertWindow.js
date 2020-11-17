@@ -1,13 +1,11 @@
 import React from 'react';
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  makeStyles,
-} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
 
 const useStyles = makeStyles({
   dialog: {
@@ -29,7 +27,7 @@ const useStyles = makeStyles({
 const AlertWindow = ({ isOpen, onConfirm, title, msg }) => {
   const { submitButton, dialog } = useStyles();
   return (
-    <Dialog open={isOpen} style={{ display: isOpen || 'none' }}>
+    <Dialog open={isOpen}>
       <DialogTitle className={dialog}>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{msg}</DialogContentText>
