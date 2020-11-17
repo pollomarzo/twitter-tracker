@@ -13,7 +13,6 @@ const Map = ({ tweetsList }) => {
         // Accurate coordinates (a point)
         if (tweet.coordinates && tweet.coordinates.type === 'Point')
           markerCoords = tweet.coordinates.coordinates.reverse();
-        
         // Approximated coordinates (a square/rectangle)
         else {
           // Coordinates vector is structured like this [[[BL, TL, TR, BR]]]
