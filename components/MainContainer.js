@@ -6,6 +6,8 @@ import { makeStyles, NoSsr } from '@material-ui/core';
 import Form from './Form';
 import { startStream } from '../twitterAPI/geoStream';
 
+import io from 'socket.io-client';
+
 const Map = dynamic(() => import('./Map'), { ssr: false });
 
 const useStyles = makeStyles(() => ({
@@ -81,6 +83,11 @@ const MainContainer = () => {
         coordinates: `${coords.longitudeStart},${coords.latitudeStart},${coords.longitudeEnd},${coords.latitudeEnd}`,
       });
       setStreamId(res.data);
+      const socket = io('http://localhost:3000');
+
+      socket.emit('register', res.data);
+
+      socket.on('data', (data) => console.log('data'));
     } catch (err) {
       console.error(err);
     }
