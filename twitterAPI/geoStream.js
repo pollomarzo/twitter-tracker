@@ -12,7 +12,7 @@ function exportJSON(data) {
   var json = JSON.stringify(json.data);
   return json;
 }
-
+console.log('hello');
 const client = new Twitter({
   subdomain: 'api',
   version: '1.1',
@@ -27,6 +27,7 @@ const startStream = (type, parameters) => {
   console.log(streamId);
   const stream = client.stream('statuses/filter', parameters);
   streams[streamId] = { stream, data: [], error: null };
+  console.log(`startStream: ${register.magic}`);
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
     console.log(`ERROR! Twitter says: ${error.message}`);
@@ -37,6 +38,7 @@ const startStream = (type, parameters) => {
       case 'hashtag':
         if (tweet.user.location || tweet.geo || tweet.coordinates || tweet.place) {
           streams[streamId].data.push(tweet);
+          streams[streamId].socket.emit('data', tweet);
           console.log(tweet.text);
         }
         break;
@@ -58,18 +60,12 @@ const closeStream = (streamId) => {
 };
 
 const register = (socket, streamId) => {
-  socket.on("startStream", (data) => {
-    const id = startStream(data, socket);
-    socket.emit("startStream/response", id);
-  });
-
-  socket.on("closeStream", (id) => {
-    const { data } = closeStream(id);
-    socket.emit("startStream/response", id);
-  });
+  console.log(`Register: ${register.magic}`);
+  streams[streamId].socket = socket;
 };
 
 register.startStream = startStream;
 register.closeStream = closeStream;
+register.magic = Math.random();
 
 module.exports = register;
