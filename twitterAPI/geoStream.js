@@ -22,7 +22,7 @@ const client = new Twitter({
   access_token_secret: credentials.access_token_secret, // from your User (oauth_token_secret);
 });
 
-exports.startStream = (type, parameters) => {
+const startStream = (type, parameters) => {
   const streamId = uuidv4();
   console.log(streamId);
   const stream = client.stream('statuses/filter', parameters);
@@ -48,7 +48,7 @@ exports.startStream = (type, parameters) => {
   return streamId;
 };
 
-exports.closeStream = (streamId) => {
+const closeStream = (streamId) => {
   const { stream, data, error } = streams[streamId];
   console.log('closeStream data:', data);
   stream.destroy();
@@ -56,3 +56,20 @@ exports.closeStream = (streamId) => {
   const dataJson = exportJSON(data);
   return { dataJson, error };
 };
+
+const register = (socket, streamId) => {
+  socket.on("startStream", (data) => {
+    const id = startStream(data, socket);
+    socket.emit("startStream/response", id);
+  });
+
+  socket.on("closeStream", (id) => {
+    const { data } = closeStream(id);
+    socket.emit("startStream/response", id);
+  });
+};
+
+register.startStream = startStream;
+register.closeStream = closeStream;
+
+module.exports = register;
