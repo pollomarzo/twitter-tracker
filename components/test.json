@@ -1,0 +1,272 @@
+[
+  {
+    "favorited": false,
+    "quote_count": 0,
+    "contributors": null,
+    "truncated": false,
+    "text": "Foto appena pubblicata @ Stolvizza, Friuli-Venezia Giulia, Italy https://t.co/bh3Rjqc4MG",
+    "possibly_sensitive": false,
+    "is_quote_status": false,
+    "in_reply_to_status_id": null,
+    "reply_count": 0,
+    "user": {
+      "follow_request_sent": null,
+      "profile_use_background_image": true,
+      "contributors_enabled": false,
+      "id": 165694858,
+      "default_profile": true,
+      "verified": false,
+      "profile_image_url_https": "https://pbs.twimg.com/profile_images/378800000175162090/f8a44ea1429e883e6aede49047088c87_normal.jpeg",
+      "profile_sidebar_fill_color": "DDEEF6",
+      "profile_text_color": "333333",
+      "followers_count": 57,
+      "profile_sidebar_border_color": "C0DEED",
+      "location": "Italy",
+      "default_profile_image": false,
+      "id_str": "165694858",
+      "utc_offset": null,
+      "statuses_count": 1004,
+      "description": null,
+      "friends_count": 146,
+      "profile_link_color": "1DA1F2",
+      "profile_image_url": "http://pbs.twimg.com/profile_images/378800000175162090/f8a44ea1429e883e6aede49047088c87_normal.jpeg",
+      "notifications": null,
+      "geo_enabled": true,
+      "profile_background_color": "C0DEED",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/165694858/1374536206",
+      "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+      "name": "alexia cociancich",
+      "lang": null,
+      "following": null,
+      "profile_background_tile": false,
+      "favourites_count": 433,
+      "screen_name": "snoopalexia",
+      "url": null,
+      "created_at": "Mon Jul 12 08:36:32 +0000 2010",
+      "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+      "time_zone": null,
+      "protected": false,
+      "translator_type": "null",
+      "is_translator": false,
+      "listed_count": 2
+    },
+    "filter_level": "low",
+    "geo": { "type": "Point", "coordinates": [46.3644, 13.3519] },
+    "id": 1322582414846251009,
+    "favorite_count": 0,
+    "lang": "it",
+    "entities": {
+      "user_mentions": [],
+      "symbols": [],
+      "hashtags": [],
+      "urls": [
+        {
+          "url": "https://t.co/bh3Rjqc4MG",
+          "indices": [65, 88],
+          "expanded_url": "https://www.instagram.com/p/CHA-tkxF7QN/?igshid=1mykfem4qivd5",
+          "display_url": "instagram.com/p/CHA-tkxF7QN/…"
+        }
+      ]
+    },
+    "in_reply_to_user_id_str": null,
+    "retweeted": false,
+    "coordinates": { "type": "Point", "coordinates": [13.3519, 46.3644] },
+    "timestamp_ms": "1604163194749",
+    "source": "<a href=\"http://instagram.com\" rel=\"nofollow\">Instagram</a>",
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_screen_name": null,
+    "id_str": "1322582414846251009",
+    "place": {
+      "country_code": "IT",
+      "url": "https://api.twitter.com/1.1/geo/id/0b4e0e500192f67f.json",
+      "country": "Italy",
+      "place_type": "city",
+      "bounding_box": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [13.227115, 46.298219],
+            [13.227115, 46.39705],
+            [13.48258, 46.39705],
+            [13.48258, 46.298219]
+          ]
+        ]
+      },
+      "full_name": "Resia, Friuli-Venezia Giulia",
+      "attributes": {},
+      "id": "0b4e0e500192f67f",
+      "name": "Resia"
+    },
+    "retweet_count": 0,
+    "created_at": "Sat Oct 31 16:53:14 +0000 2020",
+    "in_reply_to_user_id": null
+  },
+  {
+    "favorited": false,
+    "quote_count": 0,
+    "contributors": null,
+    "truncated": true,
+    "text": "Per quanto l'argomento possa apparire tecnico, si tratta, in realt\u00e0, della spiegazione in termini molto semplici e\u2026 https://t.co/qiJwzhRN6h",
+    "possibly_sensitive": false,
+    "is_quote_status": false,
+    "in_reply_to_status_id": null,
+    "reply_count": 0,
+    "user": {
+      "follow_request_sent": null,
+      "profile_use_background_image": false,
+      "default_profile_image": false,
+      "id": 4784481201,
+      "default_profile": false,
+      "verified": false,
+      "profile_image_url_https": "https://pbs.twimg.com/profile_images/686903724774567938/L5VzVQme_normal.png",
+      "profile_sidebar_fill_color": "000000",
+      "profile_text_color": "000000",
+      "followers_count": 532,
+      "profile_sidebar_border_color": "000000",
+      "id_str": "4784481201",
+      "profile_background_color": "000000",
+      "listed_count": 4,
+      "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+      "utc_offset": null,
+      "statuses_count": 952,
+      "description": "Associazioni Cristiane Lavoratori Italiani Sede provinciale di Bologna",
+      "friends_count": 2268,
+      "location": "Bologna, Emilia Romagna",
+      "profile_link_color": "F5ABB5",
+      "profile_image_url": "http://pbs.twimg.com/profile_images/686903724774567938/L5VzVQme_normal.png",
+      "following": null,
+      "geo_enabled": true,
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/4784481201/1558542671",
+      "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+      "name": "Acli Bologna",
+      "lang": null,
+      "profile_background_tile": false,
+      "favourites_count": 473,
+      "screen_name": "AcliBologna",
+      "notifications": null,
+      "url": "http://www.aclibo.it",
+      "created_at": "Tue Jan 12 13:30:29 +0000 2016",
+      "contributors_enabled": false,
+      "time_zone": null,
+      "protected": false,
+      "translator_type": "none",
+      "is_translator": false
+    },
+    "filter_level": "low",
+    "geo": null,
+    "id": 1324462113427959809,
+    "favorite_count": 0,
+    "lang": "it",
+    "extended_tweet": {
+      "display_text_range": [0, 280],
+      "entities": {
+        "user_mentions": [
+          {
+            "id": 488310583,
+            "indices": [248, 256],
+            "id_str": "488310583",
+            "screen_name": "CAFACLI",
+            "name": "CAF ACLI"
+          }
+        ],
+        "symbols": [],
+        "hashtags": [],
+        "urls": [
+          {
+            "url": "https://t.co/14jp3qZ9jC",
+            "indices": [257, 280],
+            "expanded_url": "https://fb.me/e/4PIKG53KM",
+            "display_url": "fb.me/e/4PIKG53KM"
+          }
+        ],
+        "media": [
+          {
+            "expanded_url": "https://twitter.com/AcliBologna/status/1324462113427959809/photo/1",
+            "display_url": "pic.twitter.com/QPQLim8XRV",
+            "url": "https://t.co/QPQLim8XRV",
+            "media_url_https": "https://pbs.twimg.com/media/EmFvRP2XEAEyNiz.jpg",
+            "id_str": "1324462107526631425",
+            "sizes": {
+              "small": { "h": 680, "resize": "fit", "w": 481 },
+              "large": { "h": 1756, "resize": "fit", "w": 1242 },
+              "medium": { "h": 1200, "resize": "fit", "w": 849 },
+              "thumb": { "h": 150, "resize": "crop", "w": 150 }
+            },
+            "indices": [281, 304],
+            "type": "photo",
+            "id": 1324462107526631425,
+            "media_url": "http://pbs.twimg.com/media/EmFvRP2XEAEyNiz.jpg"
+          }
+        ]
+      },
+      "extended_entities": {
+        "media": [
+          {
+            "expanded_url": "https://twitter.com/AcliBologna/status/1324462113427959809/photo/1",
+            "display_url": "pic.twitter.com/QPQLim8XRV",
+            "url": "https://t.co/QPQLim8XRV",
+            "media_url_https": "https://pbs.twimg.com/media/EmFvRP2XEAEyNiz.jpg",
+            "id_str": "1324462107526631425",
+            "sizes": {
+              "small": { "h": 680, "resize": "fit", "w": 481 },
+              "large": { "h": 1756, "resize": "fit", "w": 1242 },
+              "medium": { "h": 1200, "resize": "fit", "w": 849 },
+              "thumb": { "h": 150, "resize": "crop", "w": 150 }
+            },
+            "indices": [281, 304],
+            "type": "photo",
+            "id": 1324462107526631425,
+            "media_url": "http://pbs.twimg.com/media/EmFvRP2XEAEyNiz.jpg"
+          }
+        ]
+      },
+      "full_text": "Per quanto l'argomento possa apparire tecnico, si tratta, in realt\u00e0, della spiegazione in termini molto semplici e comprensibili delle possibilit\u00e0 offerte da questo benefit, che vale la pena conoscere, anche per le ricadute economiche che comporta.@CAFACLI\nhttps://t.co/14jp3qZ9jC https://t.co/QPQLim8XRV"
+    },
+    "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+    "in_reply_to_user_id_str": null,
+    "retweeted": false,
+    "coordinates": null,
+    "timestamp_ms": "1604611349814",
+    "entities": {
+      "user_mentions": [],
+      "symbols": [],
+      "hashtags": [],
+      "urls": [
+        {
+          "url": "https://t.co/qiJwzhRN6h",
+          "indices": [116, 139],
+          "expanded_url": "https://twitter.com/i/web/status/1324462113427959809",
+          "display_url": "twitter.com/i/web/status/1\u2026"
+        }
+      ]
+    },
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_screen_name": null,
+    "id_str": "1324462113427959809",
+    "display_text_range": [0, 140],
+    "place": {
+      "country_code": "IT",
+      "url": "https://api.twitter.com/1.1/geo/id/5f5fb5777dab3849.json",
+      "country": "Italia",
+      "place_type": "city",
+      "bounding_box": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [11.308073, 44.543093],
+            [11.308073, 44.606684],
+            [11.414766, 44.606684],
+            [11.414766, 44.543093]
+          ]
+        ]
+      },
+      "full_name": "Castel Maggiore, Emilia Romagna",
+      "attributes": {},
+      "id": "5f5fb5777dab3849",
+      "name": "Castel Maggiore"
+    },
+    "retweet_count": 0,
+    "created_at": "Thu Nov 05 21:22:29 +0000 2020",
+    "in_reply_to_user_id": null
+  }
+]

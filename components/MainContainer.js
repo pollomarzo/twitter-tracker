@@ -108,7 +108,7 @@ const MainContainer = () => {
         <div className={content}>
           <Form onStart={startStream} onStop={stopStream} open={!!streamId} />
           <div className={mapWrapper}>
-            <Map />
+            <Map tweetsList={tweets}/>
           </div>
         </div>
         {tweets.length > 0 && (
