@@ -1,38 +1,14 @@
-import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import axios from 'axios';
-import { makeStyles, NoSsr } from '@material-ui/core';
-
-import Form from './Form';
-import { startStream } from '../twitterAPI/geoStream';
-
+import { makeStyles } from '@material-ui/core';
 import io from 'socket.io-client';
 
-const Map = dynamic(() => import('./Map'), { ssr: false });
+import Map from './Map';
+import Form from './Form';
+
+import { BASE_URL, GEO_FILTER } from '../constants';
 
 const useStyles = makeStyles(() => ({
-  container: {
-    position: 'relative',
-    height: '100vh',
-    width: '100vw',
-    backgroundColor: 'rgb(229, 242, 248)',
-  },
-  logo: {
-    height: '100vh',
-    width: '100vw',
-    display: 'flex',
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoImg: {
-    height: '250px',
-    color: '#1da1f2',
-  },
-  logoTitle: {
-    marginLeft: '-20px',
-    color: '#1da1f2',
-  },
   main: {
     height: 'calc(100vh - 60px)',
     width: 'calc(100vw - 60px)',
@@ -51,10 +27,6 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: '20px',
-  },
-  titleImg: {
-    height: '60px',
-    width: '60px',
   },
   title: {
     margin: '20px',
@@ -79,15 +51,20 @@ const MainContainer = () => {
 
   const startStream = async ({ coords }) => {
     try {
-      const res = await axios.post('/api/geoFilter', {
+      const res = await axios.post(GEO_FILTER, {
+        type: 'hashtag',
         coordinates: `${coords.longitudeStart},${coords.latitudeStart},${coords.longitudeEnd},${coords.latitudeEnd}`,
       });
       setStreamId(res.data);
-      const socket = io('http://localhost:3000');
-
+      const socket = io(BASE_URL, {
+        transports: ['websocket'],
+        path: '/socket', // needed for cors in dev
+      });
       socket.emit('register', res.data);
-
-      socket.on('data', (data) => console.log('data'));
+      socket.on('tweet', (tweet) => {
+        console.log(tweet);
+        setTweets((tweets) => [...tweets, tweet]);
+      });
     } catch (err) {
       console.error(err);
     }
@@ -95,7 +72,7 @@ const MainContainer = () => {
 
   const stopStream = async () => {
     try {
-      const res = await axios.delete('/api/geoFilter', {
+      const res = await axios.delete(GEO_FILTER, {
         data: { id: streamId },
         headers: { Authorization: '***' },
       });
@@ -107,29 +84,27 @@ const MainContainer = () => {
   };
 
   return (
-    <NoSsr>
-      <div className={main}>
-        <header className={header}>
-          <h1 className={title}>TWITTER TRACKER</h1>
-        </header>
-        <div className={content}>
-          <Form onStart={startStream} onStop={stopStream} open={!!streamId} />
-          <div className={mapWrapper}>
-            <Map tweetsList={tweets}/>
-          </div>
+    <div className={main}>
+      <header className={header}>
+        <h1 className={title}>TWITTER TRACKER</h1>
+      </header>
+      <div className={content}>
+        <Form onStart={startStream} onStop={stopStream} open={!!streamId} />
+        <div className={mapWrapper}>
+          <Map tweetsList={tweets} />
         </div>
-        {tweets.length > 0 && (
-          <div>
-            <h1>Tweets</h1>
-            {tweets.map((tweet) => (
-              <div>
-                {tweet.text} from @{tweet.user.name}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
-    </NoSsr>
+      {tweets.length > 0 && (
+        <div>
+          <h1>Tweets</h1>
+          {tweets.map((tweet) => (
+            <div>
+              {tweet.text} from @{tweet.user.name}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

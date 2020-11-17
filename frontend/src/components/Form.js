@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { CircularProgress, Fade, Button, makeStyles } from '@material-ui/core';
-import { AlertWindow, InputField } from '.';
+
+import AlertWindow from './AlertWindow';
+import InputField from './InputField';
 
 const COORDINATE_RE = RegExp('^-?[1]?[0-8]?[0-9][.][0-9]{2}$');
 
