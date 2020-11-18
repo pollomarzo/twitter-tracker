@@ -1,8 +1,23 @@
 import React, { useMemo } from 'react';
+import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+
 import 'leaflet/dist/leaflet.css';
+import markerImg from '../assets/twitter.svg';
 
 const defaultPosition = [44.494704, 11.342005];
+
+const customMarker = new L.Icon({
+    iconUrl: markerImg,
+    iconRetinaUrl: markerImg,
+    iconAnchor: null,
+    popupAnchor: null,
+    shadowUrl: null,
+    shadowSize: null,
+    shadowAnchor: null,
+    iconSize: new L.Point(30, 30),
+    className: 'leaflet-div-icon'
+});
 
 const Map = ({ tweetsList }) => {
   const markerList = useMemo(
@@ -22,7 +37,7 @@ const Map = ({ tweetsList }) => {
         }
         // The response from Twitter are inverted against the format requested by the library
         return (
-          <Marker position={markerCoords.reverse()} key={index}>
+          <Marker position={markerCoords.reverse()} key={index} icon={customMarker}>
             <Popup>
               <b>{tweet.user.name}</b>
               <br />

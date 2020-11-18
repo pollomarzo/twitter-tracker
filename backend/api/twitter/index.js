@@ -32,7 +32,7 @@ const startStream = (type, parameters) => {
     console.log(`ERROR! Twitter says: ${util.inspect(error)}`);
     streams[streamId].error = error;
   }); //todo handler error
-  stream.on('data', (tweet) => {s
+  stream.on('data', (tweet) => {
     switch (type) {
       case 'hashtag':
         if (tweet.user.location || tweet.geo || tweet.coordinates || tweet.place) {
