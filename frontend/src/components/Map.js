@@ -11,7 +11,7 @@ const customMarker = new L.Icon({
     iconUrl: markerImg,
     iconRetinaUrl: markerImg,
     iconAnchor: null,
-    popupAnchor: null,
+    popupAnchor: [0, -15],
     shadowUrl: null,
     shadowSize: null,
     shadowAnchor: null,
