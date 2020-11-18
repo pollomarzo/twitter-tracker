@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { makeStyles } from '@material-ui/core';
+import { Grid, Typography, Paper, makeStyles } from '@material-ui/core';
 import io from 'socket.io-client';
 
 import Map from './Map';
 import Form from './Form';
+import TweetCard from './TweetCard';
 
 import { BASE_URL, GEO_FILTER } from '../constants';
+// Testing only ToDo remove
+import { fakeTweets } from '../misc/fakeTweets';
 
 const useStyles = makeStyles(() => ({
   main: {
@@ -47,13 +50,12 @@ const MainContainer = () => {
   const { main, header, title, content, mapWrapper } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState(undefined);
-  const [tweets, setTweets] = useState([]);
+  const [tweets, setTweets] = useState(fakeTweets);
 
   const startStream = async ({ coords }) => {
     try {
       const res = await axios.post(GEO_FILTER, {
-        type: 'hashtag',
-        coordinates: `${coords.longitudeStart},${coords.latitudeStart},${coords.longitudeEnd},${coords.latitudeEnd}`,
+        coordinates: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
       });
       setStreamId(res.data);
       const socket = io(BASE_URL, {
@@ -95,14 +97,12 @@ const MainContainer = () => {
         </div>
       </div>
       {tweets.length > 0 && (
-        <div>
-          <h1>Tweets</h1>
-          {tweets.map((tweet) => (
-            <div>
-              {tweet.text} from @{tweet.user.name}
-            </div>
-          ))}
-        </div>
+        <Paper>
+          <Typography variant='h4'>Tweets</Typography>
+          <Grid container spacing={3}>
+            {tweets.map((tweet, index) => <TweetCard key={index} {...tweet} />)}
+          </Grid>
+        </Paper>
       )}
     </div>
   );

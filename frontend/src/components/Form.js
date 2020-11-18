@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CircularProgress, Fade, Button, makeStyles } from '@material-ui/core';
+import { CircularProgress, Fade, Button, makeStyles, Typography } from '@material-ui/core';
 
 import AlertWindow from './AlertWindow';
 import InputField from './InputField';
@@ -33,10 +33,10 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   const { form, submitContainer, submitButton } = useStyles();
   // A set of coords to initialize a geolocalized stream
   const [coords, setCoordinates] = useState({
-    latitudeStart: 0,
-    latitudeEnd: 0,
-    longitudeStart: 0,
-    longitudeEnd: 0,
+    latitudeSW: 0,
+    longitudeSW: 0,
+    latitudeNE: 0,
+    longitudeNE: 0,
   });
   const [error, setError] = useState(false);
 
@@ -54,18 +54,16 @@ const CoordsForm = ({ onStart, onStop, open }) => {
 
   return (
     <div className={form}>
-      <InputField
-        label="Longitude start"
-        fieldName="longitudeStart"
-        handler={handleChange}
-      />
-      <InputField
-        label="Latitude start"
-        fieldName="latitudeStart"
-        handler={handleChange}
-      />
-      <InputField label="Longitude end" fieldName="longitudeEnd" handler={handleChange} />
-      <InputField label="Latitude end" fieldName="latitudeEnd" handler={handleChange} />
+      <div>
+        <Typography variant='title'>North-East Corner</Typography>
+        <InputField label="Longitude" fieldName="longitudeNE" handler={handleChange} />
+        <InputField label="Latitude" fieldName="latitudeNE" handler={handleChange} />
+      </div>
+      <div>
+        <Typography variant='title'>South-West Corner</Typography>
+        <InputField label="Longitude" fieldName="longitudeSW" handler={handleChange} />
+        <InputField label="Latitude" fieldName="latitudeSW" handler={handleChange} />
+      </div>
 
       <div className={submitContainer}>
         {open ? (

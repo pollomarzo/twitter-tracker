@@ -1,6 +1,7 @@
 const { nanoid } = require('nanoid');
 const Twitter = require('twitter-lite');
 const credentials = require('./.credentials');
+const util = require('util');
 
 let streams = {};
 
@@ -28,10 +29,10 @@ const startStream = (type, parameters) => {
   streams[streamId] = { stream, data: [], error: null };
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
-    console.log(`ERROR! Twitter says: ${error.message}`);
+    console.log(`ERROR! Twitter says: ${util.inspect(error)}`);
     streams[streamId].error = error;
   }); //todo handler error
-  stream.on('data', (tweet) => {
+  stream.on('data', (tweet) => {s
     switch (type) {
       case 'hashtag':
         if (tweet.user.location || tweet.geo || tweet.coordinates || tweet.place) {
@@ -42,6 +43,8 @@ const startStream = (type, parameters) => {
         break;
       default:
         streams[streamId].data.push(tweet);
+        console.log('SHOOTING TWEET');
+        streams[streamId].socket.emit('tweet', tweet);
     }
   });
   return streamId;
