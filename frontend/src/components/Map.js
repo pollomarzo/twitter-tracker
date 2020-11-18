@@ -8,15 +8,15 @@ import markerImg from '../assets/twitter.svg';
 const defaultPosition = [44.494704, 11.342005];
 
 const customMarker = new L.Icon({
-    iconUrl: markerImg,
-    iconRetinaUrl: markerImg,
-    iconAnchor: null,
-    popupAnchor: [0, -15],
-    shadowUrl: null,
-    shadowSize: null,
-    shadowAnchor: null,
-    iconSize: new L.Point(30, 30),
-    className: 'leaflet-div-icon'
+  iconUrl: markerImg,
+  iconRetinaUrl: markerImg,
+  iconAnchor: null,
+  popupAnchor: [0, -15],
+  shadowUrl: null,
+  shadowSize: null,
+  shadowAnchor: null,
+  iconSize: new L.Point(30, 30),
+  className: 'leaflet-div-icon',
 });
 
 const Map = ({ tweetsList }) => {

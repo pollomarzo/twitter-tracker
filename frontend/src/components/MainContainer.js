@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Grid, Typography, Paper, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import io from 'socket.io-client';
 
 import Map from './Map';
 import Form from './Form';
-import TweetCard from './TweetCard';
+import TweetList from './TweetCard';
 
 import { BASE_URL, GEO_FILTER } from '../constants';
 // Testing only ToDo remove
@@ -96,14 +96,7 @@ const MainContainer = () => {
           <Map tweetsList={tweets} />
         </div>
       </div>
-      {tweets.length > 0 && (
-        <Paper>
-          <Typography variant='h4'>Tweets</Typography>
-          <Grid container spacing={3}>
-            {tweets.map((tweet, index) => <TweetCard key={index} {...tweet} />)}
-          </Grid>
-        </Paper>
-      )}
+      {tweets.length > 0 && <TweetList list={tweets} />}
     </div>
   );
 };

@@ -1,24 +1,43 @@
 import React from 'react';
-import { Card, CardHeader, CardContent } from '@material-ui/core';
-import { Grid, Typography, Avatar } from '@material-ui/core';
+import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
 
-const TweetCard = ({ user, timestamp_ms, text }) => {
-  const userAvatar = <Avatar src={user.profile_image_url_https} />;
+const useStyles = makeStyles(() => ({
+  listStyle: {
+    position: 'absolute',
+    overflow: 'scrollbar',
+    maxHeight: '30vh',
+  },
+
+  listitem: {
+
+  }
+}));
+
+const Tweet = ({ user, timestamp_ms, text }) => {
   return (
-    <Grid item xs={3}>
-      <Card>
-        {/* toLocaleDate() doesn't seem to work, don't kno why */}
-        <CardHeader
-          title={user.name}
-          avatar={userAvatar}
-          subheader={Date(timestamp_ms).slice(0, 21)}
-        />
-        <CardContent>
-          <Typography variant="body1">{text}</Typography>
-        </CardContent>
-      </Card>
+    <ListItem alignItems="flex-start">
+      <ListItemAvatar>
+        <Avatar alt={user.name} src={user.profile_image_url_https} />
+      </ListItemAvatar>
+      <ListItemText primary={user.name} secondary={text} />
+    </ListItem>
+  );
+};
+
+const TweetList = ({ list }) => {
+  const { listStyle } = useStyles();
+
+  return (
+    <Grid item xs={3} style={{ float: 'left' }}>
+      <Typography variant='title'>Tweets List</Typography>
+      <List classes={listStyle} >
+        {list.map((tweet) => (
+          <Tweet {...tweet} />
+        ))}
+      </List>
     </Grid>
   );
 };
 
-export default TweetCard;
+export default TweetList;
