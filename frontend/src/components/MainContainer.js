@@ -53,6 +53,7 @@ const MainContainer = () => {
   const [tweets, setTweets] = useState(fakeTweets);
 
   const startStream = async ({ coords }) => {
+    setTweets([]);
     try {
       const res = await axios.post(GEO_FILTER, {
         coordinates: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
@@ -74,12 +75,11 @@ const MainContainer = () => {
 
   const stopStream = async () => {
     try {
-      const res = await axios.delete(GEO_FILTER, {
+      await axios.delete(GEO_FILTER, {
         data: { id: streamId },
         headers: { Authorization: '***' },
       });
       setStreamId(null);
-      setTweets(res.data);
     } catch (err) {
       console.error(err);
     }
