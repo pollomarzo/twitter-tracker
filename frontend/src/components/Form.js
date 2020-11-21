@@ -38,17 +38,22 @@ const CoordsForm = ({ onStart, onStop, open }) => {
     latitudeNE: 0,
     longitudeNE: 0,
   });
-  const [hashtag, setHashtag] = useState("")
-  const [user, setUser] = useState("")
+  const [params, setParams] = useState({
+    track: '', // hashtag
+    follow: '', // user
+  })
   const [error, setError] = useState(false);
 
-  const handleChange = (e) =>
+  const handleCoordChange = (e) =>
     setCoordinates({ ...coords, [e.target.name]: e.target.value });
+  const handleParamsChange = (e) =>
+    {setParams({...params, [e.target.name]: e.target.value});
+    console.log(params);}
 
   const handleSubmit = () => {
     const values = Object.values(coords);
     if (values.every((value) => value && COORDINATE_RE.test(value))) {
-      onStart({ coords });
+      onStart({ coords, params });
     } else {
       setError(true);
     }
@@ -57,22 +62,22 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   return (
     <div className={form}>
       <div className="inputForm"> 
-        <Typography variant='title'>North-East Corner</Typography>
-        <InputField label="Longitude" fieldName="longitudeNE" handler={handleChange} />
-        <InputField label="Latitude" fieldName="latitudeNE" handler={handleChange} />
+        <Typography >North-East Corner</Typography>
+        <InputField label="Longitude" fieldName="longitudeNE" handler={handleCoordChange} />
+        <InputField label="Latitude" fieldName="latitudeNE" handler={handleCoordChange} />
       </div>
       <div className="inputForm"> 
-        <Typography variant='title'>South-West Corner</Typography>
-        <InputField label="Longitude" fieldName="longitudeSW" handler={handleChange} />
-        <InputField label="Latitude" fieldName="latitudeSW" handler={handleChange} />
+        <Typography >South-West Corner</Typography>
+        <InputField label="Longitude" fieldName="longitudeSW" handler={handleCoordChange} />
+        <InputField label="Latitude" fieldName="latitudeSW" handler={handleCoordChange} />
       </div>
       <div className="inputForm"> 
-        <Typography variant='title'>Hashtag</Typography>
-        <InputField fieldName="hastag" text="#" handler={(e) => setHashtag(e.target.value)} />
+        <Typography >Hashtag</Typography>
+        <InputField fieldName="track" text="#" handler={handleParamsChange} />
       </div>
       <div className="inputForm"> 
-        <Typography variant='title'>User</Typography>
-        <InputField fieldName="user" text="@" handler={(e) => setUser(e.target.value)} />
+        <Typography >User</Typography>
+        <InputField fieldName="follow" text="@" handler={handleParamsChange}/>
       </div>
 
       <div className={submitContainer}>

@@ -22,9 +22,9 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const Tweet = ({ user, timestamp_ms, text }) => {
+const Tweet = ({ user, timestamp_ms, text, id }) => {
   return (
-    <ListItem alignItems="flex-start">
+    <ListItem key={`tcard_id${id}`} alignItems="flex-start">
       <ListItemAvatar>
         <Avatar alt={user.name} src={user.profile_image_url_https} />
       </ListItemAvatar>
@@ -44,14 +44,15 @@ const TweetList = ({ list }) => {
   };
 
   return (
-    
+
     <Grid item className={grid}>
-      <Typography variant='title'>Tweets List</Typography>
+      {/*please someone pick a half decent style for this shit */}
+      <Typography variant='inherit' style={{ display: 'inline-block'}}>Tweets List</Typography>
       <a id='exportAnchor' style={{ display: 'none' }}></a>
       <Button onClick={exportJSON}>Export tweet list</Button>
-      <List classes={listStyle} >
+      <List className={listStyle} >
         {list.map((tweet) => (
-          <Tweet {...tweet} />
+          <Tweet key={tweet.id} {...tweet} />
         ))}
       </List>
     </Grid>

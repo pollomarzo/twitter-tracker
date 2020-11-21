@@ -42,6 +42,7 @@ const startStream = (type, parameters) => {
         }
         break;
       default:
+        // consider including parameter verification here. CONSIDER!
         streams[streamId].data.push(tweet);
         console.log('SHOOTING TWEET');
         streams[streamId].socket.emit('tweet', tweet);

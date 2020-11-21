@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 
 import Map from './Map';
 import Form from './Form';
-import TweetList from './TweetCard';
+import TweetList from './TweetList';
 
 import { BASE_URL, GEO_FILTER } from '../constants';
 // Testing only ToDo remove
@@ -52,11 +52,12 @@ const MainContainer = () => {
   const [streamId, setStreamId] = useState(undefined);
   const [tweets, setTweets] = useState(fakeTweets);
 
-  const startStream = async ({ coords }) => {
+  const startStream = async ({ coords, params }) => {
     setTweets([]);
     try {
       const res = await axios.post(GEO_FILTER, {
         coordinates: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
+        //...params <-- this is what i wish we could do. but twitter API uses OR.. 
       });
       setStreamId(res.data);
       const socket = io(BASE_URL, {
@@ -66,6 +67,7 @@ const MainContainer = () => {
       socket.emit('register', res.data);
       socket.on('tweet', (tweet) => {
         console.log(tweet);
+        // consider including parameter verification here. CONSIDER!
         setTweets((tweets) => [...tweets, tweet]);
       });
     } catch (err) {
