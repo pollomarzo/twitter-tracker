@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, useRadioGroup } from '@material-ui/core';
 import io from 'socket.io-client';
 
 import Map from './Map';
@@ -13,9 +13,9 @@ import { fakeTweets } from '../misc/fakeTweets';
 
 const useStyles = makeStyles(() => ({
   main: {
-    height: 'calc(100vh - 60px)',
-    width: 'calc(100vw - 60px)',
-    margin: '30px',
+    height: 'calc(100vh - 20px)',
+    width: 'calc(100vw - 20px)',
+    margin: '10px',
     padding: '10px',
     position: 'absolute',
     display: 'flex',
@@ -96,7 +96,9 @@ const MainContainer = () => {
           <Map tweetsList={tweets} />
         </div>
       </div>
-      {tweets.length > 0 && <TweetList list={tweets} />}
+      <div className="tweetList">
+        <TweetList list={tweets} />
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, makeStyles } from '@material-ui/core';
+import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 
 const useStyles = makeStyles({
   textField: {
@@ -18,20 +18,37 @@ const useStyles = makeStyles({
     '& .MuiInputLabel-outlined': {
       color: '#1DA1F2',
     },
+    '& .MuiTypography-colorTextSecondary': {
+      color: '#1DA1F2',
+    },
   },
 });
 
-const InputField = ({ label, fieldName, handler }) => {
+const InputField = ({ label, fieldName, handler, text }) => {
   const { textField } = useStyles();
   return (
-    <TextField
-      required
+    <>
+    {text == undefined ? (
+      <TextField
       variant="outlined"
       className={textField}
       label={label}
       name={fieldName}
       onChange={handler}
     />
+    ) : (
+      <TextField
+      required
+      variant="outlined"
+      className={textField}
+      name={fieldName}
+      onChange={handler}
+      InputProps={{
+        startAdornment: <InputAdornment position="start">{text}</InputAdornment>,
+      }}
+    />
+    )}
+    </>
   );
 };
 

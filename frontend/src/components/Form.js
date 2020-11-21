@@ -38,6 +38,8 @@ const CoordsForm = ({ onStart, onStop, open }) => {
     latitudeNE: 0,
     longitudeNE: 0,
   });
+  const [hashtag, setHashtag] = useState("")
+  const [user, setUser] = useState("")
   const [error, setError] = useState(false);
 
   const handleChange = (e) =>
@@ -54,15 +56,23 @@ const CoordsForm = ({ onStart, onStop, open }) => {
 
   return (
     <div className={form}>
-      <div>
+      <div className="inputForm"> 
         <Typography variant='title'>North-East Corner</Typography>
         <InputField label="Longitude" fieldName="longitudeNE" handler={handleChange} />
         <InputField label="Latitude" fieldName="latitudeNE" handler={handleChange} />
       </div>
-      <div>
+      <div className="inputForm"> 
         <Typography variant='title'>South-West Corner</Typography>
         <InputField label="Longitude" fieldName="longitudeSW" handler={handleChange} />
         <InputField label="Latitude" fieldName="latitudeSW" handler={handleChange} />
+      </div>
+      <div className="inputForm"> 
+        <Typography variant='title'>Hashtag</Typography>
+        <InputField fieldName="hastag" text="#" handler={(e) => setHashtag(e.target.value)} />
+      </div>
+      <div className="inputForm"> 
+        <Typography variant='title'>User</Typography>
+        <InputField fieldName="user" text="@" handler={(e) => setUser(e.target.value)} />
       </div>
 
       <div className={submitContainer}>
