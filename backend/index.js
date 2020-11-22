@@ -11,7 +11,7 @@ const port = process.env.PORT || 4000;
 const api = require('./api');
 const registerNewSocket = require('./api/twitter');
 
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import io from 'socket.io-client';
 
 import Map from './Map';
-import Form from './Form';
+import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
 
 import { BASE_URL, GEO_FILTER } from '../constants';
@@ -93,7 +93,7 @@ const MainContainer = () => {
         <h1 className={title}>TWITTER TRACKER</h1>
       </header>
       <div className={content}>
-        <Form onStart={startStream} onStop={stopStream} open={!!streamId} />
+        <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
         <div className={mapWrapper}>
           <Map tweetsList={tweets} />
         </div>
