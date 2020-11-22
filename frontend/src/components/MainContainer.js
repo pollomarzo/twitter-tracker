@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { makeStyles, useRadioGroup } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import io from 'socket.io-client';
 
 import Map from './Map';
@@ -57,7 +57,7 @@ const MainContainer = () => {
     try {
       const res = await axios.post(GEO_FILTER, {
         coordinates: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
-        //...params <-- this is what i wish we could do. but twitter API uses OR.. 
+        //...params <-- this is what i wish we could do. but twitter API uses OR..
       });
       setStreamId(res.data);
       const socket = io(BASE_URL, {
@@ -68,7 +68,7 @@ const MainContainer = () => {
       socket.on('tweet', (tweet) => {
         console.log(tweet);
         // consider including parameter verification here. CONSIDER!
-        setTweets((tweets) => [...tweets, tweet]);
+        setTweets((prevTweets) => [...prevTweets, tweet]);
       });
     } catch (err) {
       console.error(err);

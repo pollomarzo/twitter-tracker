@@ -33,19 +33,17 @@ const startStream = (type, parameters) => {
     streams[streamId].error = error;
   }); //todo handler error
   stream.on('data', (tweet) => {
-    switch (type) {
-      case 'hashtag':
-        if (tweet.user.location || tweet.geo || tweet.coordinates || tweet.place) {
-          streams[streamId].data.push(tweet);
-          console.log('SHOOTING TWEET');
-          streams[streamId].socket.emit('tweet', tweet);
-        }
-        break;
-      default:
-        // consider including parameter verification here. CONSIDER!
+    if (type === 'hashtag') {
+      if (tweet.user.location || tweet.geo || tweet.coordinates || tweet.place) {
         streams[streamId].data.push(tweet);
         console.log('SHOOTING TWEET');
         streams[streamId].socket.emit('tweet', tweet);
+      }
+    } else {
+      // consider including parameter verification here. CONSIDER!
+      streams[streamId].data.push(tweet);
+      console.log('SHOOTING TWEET');
+      streams[streamId].socket.emit('tweet', tweet);
     }
   });
   return streamId;
