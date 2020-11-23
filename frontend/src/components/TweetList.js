@@ -3,11 +3,6 @@ import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-
 import { Grid, Typography, Button, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
-  listStyle: {
-    position: 'absolute',
-    overflow: 'scrollbar',
-    maxHeight: '30vh',
-  },
   grid: {
     overflow: "scroll",
     height: 150,
@@ -50,7 +45,7 @@ const TweetList = ({ list }) => {
       <Typography variant='inherit' style={{ display: 'inline-block'}}>Tweets List</Typography>
       <a id='exportAnchor' style={{ display: 'none' }}></a>
       <Button onClick={exportJSON}>Export tweet list</Button>
-      <List className={listStyle} >
+      <List>
         {list.map((tweet) => (
           <Tweet key={tweet.id} {...tweet} />
         ))}
