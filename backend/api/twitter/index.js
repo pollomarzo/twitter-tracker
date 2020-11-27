@@ -26,7 +26,6 @@ const client = new Twitter({
 function check(tweet, fields) {
   for (const [key, value] of Object.entries(fields)) {
     var nesting = key.split('.');
-    console.log(nesting);
     var tweetvalue = tweet;
     nesting.forEach(function (item, index) {
       try {
@@ -56,8 +55,8 @@ const startStream = (fields, parameters) => {
     streams[streamId].error = error;
   }); //todo handler error
   stream.on('data', (tweet) => {
-    console.log(tweet);
     if (check(tweet, fields)) {
+      console.log(tweet.text);
       streams[streamId].data.push(tweet);
       streams[streamId].socket.emit('tweet', tweet);
     }

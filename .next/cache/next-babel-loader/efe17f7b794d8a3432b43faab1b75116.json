@@ -1,1 +1,0 @@
-{"ast":null,"code":"export { default as WelcomingAnimation } from './WelcomingAnimation';\nexport { default as MainContainer } from './MainContainer';\nexport { default as AlertWindow } from './AlertWindow';","map":null,"metadata":{},"sourceType":"module"}
