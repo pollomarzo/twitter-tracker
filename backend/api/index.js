@@ -8,10 +8,9 @@ router.post('/geoFilter', (req, res) => {
     follow: req.body.follow ? req.body.follow : '',
     locations: req.body.coordinates ? req.body.coordinates : '',
   };
-  const type = req.body.type;
-  const coordinates = req.body.coordinates;
-  console.log('starting stream on ', coordinates);
-  const streamID = twitter.startStream(type, parameters);
+
+  const fields = req.body.fields ? req.body.fields : '';
+  const streamID = twitter.startStream(fields, parameters);
   res.setHeader('Content-Type', 'text/plain');
   res.status(200).send(streamID);
 });

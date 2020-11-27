@@ -23,7 +23,30 @@ const client = new Twitter({
   access_token_secret: credentials.access_token_secret, // from your User (oauth_token_secret);
 });
 
-const startStream = (type, parameters) => {
+function check(tweet, fields) {
+  for (const [key, value] of Object.entries(fields)) {
+    var nesting = key.split('.');
+    console.log(nesting);
+    var tweetvalue = tweet;
+    nesting.forEach(function (item, index) {
+      try {
+        tweetvalue = tweetvalue[item];
+      } catch (e) {
+        return false;
+      }
+    });
+    if (value.toUpperCase() === 'ANY') {
+      //any value
+      if (!tweetvalue) return false; //check if the value is defined in the tweet
+    } else {
+      //insert specifics value check here e.g if key == "place.bounding_box.coordinates" checkpointinrect(value, tweetvalue)
+      if (tweetvalue != value) return false;
+    }
+  }
+  return true;
+}
+
+const startStream = (fields, parameters) => {
   const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
   streams[streamId] = { stream, data: [], error: null };
@@ -33,16 +56,9 @@ const startStream = (type, parameters) => {
     streams[streamId].error = error;
   }); //todo handler error
   stream.on('data', (tweet) => {
-    if (type === 'hashtag') {
-      if (tweet.user.location || tweet.geo || tweet.coordinates || tweet.place) {
-        streams[streamId].data.push(tweet);
-        console.log('SHOOTING TWEET');
-        streams[streamId].socket.emit('tweet', tweet);
-      }
-    } else {
-      // consider including parameter verification here. CONSIDER!
+    console.log(tweet);
+    if (check(tweet, fields)) {
       streams[streamId].data.push(tweet);
-      console.log('SHOOTING TWEET');
       streams[streamId].socket.emit('tweet', tweet);
     }
   });
