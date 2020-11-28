@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { CircularProgress, Fade, Button, makeStyles, Typography } from '@material-ui/core';
+import {
+  CircularProgress,
+  Fade,
+  Button,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 
 import AlertWindow from './AlertWindow';
 import InputField from './InputField';
@@ -33,26 +39,28 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   const { form, submitContainer, submitButton } = useStyles();
   // A set of coords to initialize a geolocalized stream
   const [coords, setCoordinates] = useState({
-    latitudeSW: 0,
-    longitudeSW: 0,
-    latitudeNE: 0,
-    longitudeNE: 0,
+    latitudeSW: '',
+    longitudeSW: '',
+    latitudeNE: '',
+    longitudeNE: '',
   });
   const [params, setParams] = useState({
     track: '', // hashtag
     follow: '', // user
-  })
+  });
   const [error, setError] = useState(false);
 
   const handleCoordChange = (e) =>
     setCoordinates({ ...coords, [e.target.name]: e.target.value });
-  const handleParamsChange = (e) =>
-    {setParams({...params, [e.target.name]: e.target.value});
-    console.log(params);}
+  const handleParamsChange = (e) => {
+    setParams({ ...params, [e.target.name]: e.target.value });
+    console.log(params);
+  };
 
   const handleSubmit = () => {
     const values = Object.values(coords);
-    if (values.every((value) => value && COORDINATE_RE.test(value))) {
+    if (values.every((value) => value === '')) onStart({ coords: '', params });
+    else if (values.every((value) => value && COORDINATE_RE.test(value))) {
       onStart({ coords, params });
     } else {
       setError(true);
@@ -61,23 +69,31 @@ const CoordsForm = ({ onStart, onStop, open }) => {
 
   return (
     <div className={form}>
-      <div className="inputForm"> 
-        <Typography >North-East Corner</Typography>
-        <InputField label="Longitude" fieldName="longitudeNE" handler={handleCoordChange} />
+      <div className="inputForm">
+        <Typography>North-East Corner</Typography>
+        <InputField
+          label="Longitude"
+          fieldName="longitudeNE"
+          handler={handleCoordChange}
+        />
         <InputField label="Latitude" fieldName="latitudeNE" handler={handleCoordChange} />
       </div>
-      <div className="inputForm"> 
-        <Typography >South-West Corner</Typography>
-        <InputField label="Longitude" fieldName="longitudeSW" handler={handleCoordChange} />
+      <div className="inputForm">
+        <Typography>South-West Corner</Typography>
+        <InputField
+          label="Longitude"
+          fieldName="longitudeSW"
+          handler={handleCoordChange}
+        />
         <InputField label="Latitude" fieldName="latitudeSW" handler={handleCoordChange} />
       </div>
-      <div className="inputForm"> 
-        <Typography >Hashtag</Typography>
+      <div className="inputForm">
+        <Typography>Hashtag</Typography>
         <InputField fieldName="track" text="#" handler={handleParamsChange} />
       </div>
-      <div className="inputForm"> 
-        <Typography >User</Typography>
-        <InputField fieldName="follow" text="@" handler={handleParamsChange}/>
+      <div className="inputForm">
+        <Typography>User</Typography>
+        <InputField fieldName="follow" text="@" handler={handleParamsChange} />
       </div>
 
       <div className={submitContainer}>
