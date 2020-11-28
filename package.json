@@ -1,0 +1,17 @@
+{
+  "name": "root",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "http://34.65.106.228:1080/swe2020/twitter-tracker.git",
+  "author": "Twitter Tracker Developers",
+  "scripts": {
+    "start": "concurrently --kill-others \"yarn start:frontend\" \"yarn start:backend\"",
+    "start:frontend": "cd frontend && yarn start",
+    "start:backend": "cd backend && yarn start"
+  },
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "concurrently": "^5.3.0"
+  }
+}
