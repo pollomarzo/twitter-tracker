@@ -25,28 +25,31 @@ const Map = ({ tweetsList }) => {
       tweetsList.map((tweet, index) => {
         let markerCoords = undefined;
 
+        console.log(tweet);
+
         // Accurate coordinates (a point)
         if (tweet.coordinates && tweet.coordinates.type === 'Point')
           markerCoords = [...tweet.coordinates.coordinates];
         // Approximated coordinates (a square/rectangle)
-        else if (tweet.geo != null && tweet.place && tweet.place != null) {
+        else if (tweet.place) {
           // Coordinates vector is structured like this [[[BL, TL, TR, BR]]]
           const BL = tweet.place.bounding_box.coordinates[0][0];
           const TR = tweet.place.bounding_box.coordinates[0][2];
           markerCoords = [(BL[0] + TR[0]) / 2, (BL[1] + TR[1]) / 2];
         }
         // The response from Twitter are inverted against the format requested by the library
-        if(markerCoords){
-        return (
-          <Marker position={markerCoords.reverse()} key={index} icon={customMarker}>
-            <Popup>
-              <b>{tweet.user.name}</b>
-              <br />
-              <p>{tweet.text}</p>
-            </Popup>
-          </Marker>
-        );
-      }}),
+        if (markerCoords) {
+          return (
+            <Marker position={markerCoords.reverse()} key={index} icon={customMarker}>
+              <Popup>
+                <b>{tweet.user.name}</b>
+                <br />
+                <p>{tweet.text}</p>
+              </Popup>
+            </Marker>
+          );
+        }
+      }),
     [tweetsList]
   );
 
