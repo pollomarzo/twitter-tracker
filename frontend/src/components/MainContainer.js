@@ -50,7 +50,7 @@ const MainContainer = () => {
   const { main, header, title, content, mapWrapper } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState(undefined);
-  const [tweets, setTweets] = useState(fakeTweets);
+  const [tweets, setTweets] = useState([]);
 
   const startStream = async ({ coords, params }) => {
     setTweets([]);
@@ -99,7 +99,7 @@ const MainContainer = () => {
         </div>
       </div>
       <div className="tweetList">
-        <TweetList list={tweets} />
+        <TweetList list={tweets} setList={setTweets} />
       </div>
     </div>
   );
