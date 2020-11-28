@@ -10,7 +10,7 @@ import {
 import AlertWindow from './AlertWindow';
 import InputField from './InputField';
 
-const COORDINATE_RE = RegExp('^-?[1]?[0-8]?[0-9][.][0-9]{2}$');
+const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
 
 const useStyles = makeStyles(() => ({
   form: {
@@ -48,7 +48,7 @@ const CoordsForm = ({ onStart, onStop, open }) => {
     track: '', // hashtag
     follow: '', // user
   });
-  const [error, setError] = useState(false);
+  const [errors, setErrors] = useState([]);
 
   const handleCoordChange = (e) =>
     setCoordinates({ ...coords, [e.target.name]: e.target.value });
@@ -58,12 +58,22 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   };
 
   const handleSubmit = () => {
-    const values = Object.values(coords);
-    if (values.every((value) => value === '')) onStart({ coords: '', params });
-    else if (values.every((value) => value && COORDINATE_RE.test(value))) {
-      onStart({ coords, params });
+    const entries = Object.entries(coords);
+    if (entries.every(([_, value]) => value === '')) {
+      return onStart({ coords: '', params });
+    }
+
+    let errors = [];
+    entries.forEach(([coordName, value]) => {
+      if (!COORDINATE_RE.test(value)) {
+        errors.push(coordName);
+      }
+    });
+
+    if (errors.length > 0) {
+      setErrors(errors);
     } else {
-      setError(true);
+      onStart({ coords, params });
     }
   };
 
@@ -74,18 +84,34 @@ const CoordsForm = ({ onStart, onStop, open }) => {
         <InputField
           label="Longitude"
           fieldName="longitudeNE"
+          helperText="Invalid coordinate."
+          hasError={errors.includes('longitudeNE')}
           handler={handleCoordChange}
         />
-        <InputField label="Latitude" fieldName="latitudeNE" handler={handleCoordChange} />
+        <InputField
+          label="Latitude"
+          fieldName="latitudeNE"
+          helperText="Invalid coordinate."
+          hasError={errors.includes('latitudeNE')}
+          handler={handleCoordChange}
+        />
       </div>
       <div className="inputForm">
         <Typography>South-West Corner</Typography>
         <InputField
           label="Longitude"
           fieldName="longitudeSW"
+          helperText="Invalid coordinate."
+          hasError={errors.includes('longitudeSW')}
           handler={handleCoordChange}
         />
-        <InputField label="Latitude" fieldName="latitudeSW" handler={handleCoordChange} />
+        <InputField
+          label="Latitude"
+          fieldName="latitudeSW"
+          helperText="Invalid coordinate."
+          hasError={errors.includes('latitudeSW')}
+          handler={handleCoordChange}
+        />
       </div>
       <div className="inputForm">
         <Typography>Hashtag</Typography>
@@ -123,12 +149,6 @@ const CoordsForm = ({ onStart, onStop, open }) => {
           </Fade>
         </div>
       </div>
-      <AlertWindow
-        isOpen={error}
-        onConfirm={setError}
-        title="Error"
-        msg="An acceptable input is a number in range [-180.00, 180.00] written with this formula"
-      />
     </div>
   );
 };

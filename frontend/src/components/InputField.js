@@ -21,34 +21,27 @@ const useStyles = makeStyles({
     '& .MuiTypography-colorTextSecondary': {
       color: '#1DA1F2',
     },
+    '& .Mui-error': {
+      color: '#1DA1F2',
+    },
   },
 });
 
-const InputField = ({ label, fieldName, handler, text }) => {
+const InputField = ({ label, fieldName, handler, text, helperText, hasError }) => {
   const { textField } = useStyles();
   return (
-    <>
-      {text ? (
-        <TextField
-          required
-          variant="outlined"
-          className={textField}
-          name={fieldName}
-          onChange={handler}
-          InputProps={{
-            startAdornment: <InputAdornment position="start">{text}</InputAdornment>,
-          }}
-        />
-      ) : (
-        <TextField
-          variant="outlined"
-          className={textField}
-          label={label}
-          name={fieldName}
-          onChange={handler}
-        />
-      )}
-    </>
+    <TextField
+      variant="outlined"
+      className={textField}
+      label={label}
+      name={fieldName}
+      onChange={handler}
+      helperText={hasError && helperText}
+      error={hasError}
+      InputProps={{
+        startAdornment: text && <InputAdornment position="start">{text}</InputAdornment>,
+      }}
+    />
   );
 };
 

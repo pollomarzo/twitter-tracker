@@ -37,7 +37,7 @@ const AlertWindow = ({ isOpen, onConfirm, title, msg }) => {
           color="default"
           variant="contained"
           className={submitButton}
-          onClick={() => onConfirm(false)}
+          onClick={onConfirm}
         >
           OK
         </Button>
