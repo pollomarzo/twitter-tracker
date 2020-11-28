@@ -72,12 +72,12 @@ const Map = ({ tweetsList }) => {
       Object.entries(normalizeList(tweetsList)).map(([coords, tweets], index) => (
         <Marker position={coords.split(',').reverse()} key={index} icon={customMarker}>
           <Popup>
-            {tweets.map((tweet) => (
-              <>
+            {tweets.map((tweet, index) => (
+              <React.Fragment key={index}>
                 <b>{tweet.username}</b>
                 <br />
                 <p>{tweet.text}</p>
-              </>
+              </React.Fragment>
             ))}
           </Popup>
         </Marker>
