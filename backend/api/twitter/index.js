@@ -1,7 +1,6 @@
 const { nanoid } = require('nanoid');
 const Twitter = require('twitter-lite');
 const credentials = require('./.credentials');
-const util = require('util');
 
 let streams = {};
 
@@ -26,11 +25,10 @@ const client = new Twitter({
 const startStream = (type, parameters) => {
   const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
-  streams[streamId] = { stream, data: [], error: null };
+  streams[streamId] = { stream, data: [] };
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
-    console.log(`ERROR! Twitter says: ${util.inspect(error)}`);
-    streams[streamId].error = error;
+    streams[streamId].socket.emit('error', error);
   }); //todo handler error
   stream.on('data', (tweet) => {
     if (type === 'hashtag') {
@@ -50,12 +48,12 @@ const startStream = (type, parameters) => {
 };
 
 const closeStream = (streamId) => {
-  const { stream, data, error } = streams[streamId];
+  const { stream, data } = streams[streamId];
   console.log('closeStream data:', data);
   stream.destroy();
   delete streams[streamId];
   const dataJson = exportJSON(data);
-  return { dataJson, error };
+  return { dataJson };
 };
 
 const register = (socket, streamId) => {
