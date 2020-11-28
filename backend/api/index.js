@@ -2,15 +2,21 @@ const express = require('express');
 const router = express.Router();
 const twitter = require('./twitter');
 
-router.post('/geoFilter', (req, res) => {
-  const parameters = {
-    track: req.body.track ? req.body.track : '',
-    follow: req.body.follow ? req.body.follow : '',
-    locations: req.body.coordinates ? req.body.coordinates : '',
-  };
+const converter = (oldParams) => ({
+  'user.id_str': oldParams.follow || 'ANY',
+  'entities.hashtags': oldParams.track || 'ANY'
+});
 
-  const fields = req.body.fields ? req.body.fields : '';
-  const streamID = twitter.startStream(fields, parameters);
+// twitter API expects
+//   - username: follow
+//   - hashtags: track
+//   - coordinates: locations
+// in request, I expect streamParameters and constraints. 
+// *The first in OR, the second in AND, in succession*
+router.post('/geoFilter', (req, res) => {
+  const { streamParameters, constraints } = req.body;
+  console.log(`RECEIVED REQ with constraints and params`, constraints, streamParameters);
+  const streamID = twitter.startStream(converter(constraints), streamParameters);
   res.setHeader('Content-Type', 'text/plain');
   res.status(200).send(streamID);
 });

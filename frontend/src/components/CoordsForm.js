@@ -33,10 +33,10 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   const { form, submitContainer, submitButton } = useStyles();
   // A set of coords to initialize a geolocalized stream
   const [coords, setCoordinates] = useState({
-    latitudeSW: 0,
-    longitudeSW: 0,
-    latitudeNE: 0,
-    longitudeNE: 0,
+    latitudeSW: '',
+    longitudeSW: '',
+    latitudeNE: '',
+    longitudeNE: '',
   });
   const [params, setParams] = useState({
     track: '', // hashtag
@@ -52,9 +52,11 @@ const CoordsForm = ({ onStart, onStop, open }) => {
 
   const handleSubmit = () => {
     const values = Object.values(coords);
-    if (values.every((value) => value && COORDINATE_RE.test(value))) {
+    if (values.every((value) => value === '' )) onStart({coords: '', params});
+    else if (values.every((value) => value && COORDINATE_RE.test(value)) ) {
       onStart({ coords, params });
-    } else {
+    } 
+    else {
       setError(true);
     }
   };

@@ -46,6 +46,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+
 const MainContainer = () => {
   const { main, header, title, content, mapWrapper } = useStyles();
   // To set the id of the current stream
@@ -54,10 +55,33 @@ const MainContainer = () => {
 
   const startStream = async ({ coords, params }) => {
     setTweets([]);
+    let streamParameters;
+    let constraints;
+    // if coordinates were given, they have the priority, and after we'll check everything else
+    if (coords){
+      streamParameters = {
+        locations: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
+      };
+      constraints = params;
+    }
+    // if a username is given, we want to know everything he's tweeted, and then select on hashtag
+    else if (params.follow){
+      streamParameters = {
+        follow: params.follow,
+      };
+      constraints = {'track': params.track};
+    }
+    // otherwise, we only select based on hashtag
+    else if (params.track){
+      streamParameters = {
+        track: params.track,
+      };
+      constraints = {};
+    }
+
     try {
       const res = await axios.post(GEO_FILTER, {
-        coordinates: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
-        //...params <-- this is what i wish we could do. but twitter API uses OR..
+        streamParameters, constraints
       });
       setStreamId(res.data);
       const socket = io(BASE_URL, {
@@ -67,7 +91,6 @@ const MainContainer = () => {
       socket.emit('register', res.data);
       socket.on('tweet', (tweet) => {
         console.log(tweet);
-        // consider including parameter verification here. CONSIDER!
         setTweets((prevTweets) => [...prevTweets, tweet]);
       });
     } catch (err) {

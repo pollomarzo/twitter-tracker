@@ -23,8 +23,8 @@ const client = new Twitter({
   access_token_secret: credentials.access_token_secret, // from your User (oauth_token_secret);
 });
 
-function check(tweet, fields) {
-  for (const [key, value] of Object.entries(fields)) {
+function check(tweet, constraints) {
+  for (const [key, value] of Object.entries(constraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
     nesting.forEach(function (item, index) {
@@ -39,13 +39,21 @@ function check(tweet, fields) {
       if (!tweetvalue) return false; //check if the value is defined in the tweet
     } else {
       //insert specifics value check here e.g if key == "place.bounding_box.coordinates" checkpointinrect(value, tweetvalue)
-      if (tweetvalue != value) return false;
+      if (key === 'entities.hashtags'){
+        // if there is no value return false
+        if (!tweetvalue) return false;
+        // if it's only one item convert to array
+        else if(!Array.isArray(tweetvalue)) tweetvalue = [tweetvalue];
+        // check if any of the expected hashtags are included
+        return tweetvalue.some((hashtag) => value.includes(hashtag));
+      }
+      return tweetvalue === value;
     }
   }
   return true;
 }
 
-const startStream = (fields, parameters) => {
+const startStream = (constraints, parameters) => {
   const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
   streams[streamId] = { stream, data: [], error: null };
@@ -55,7 +63,7 @@ const startStream = (fields, parameters) => {
     streams[streamId].error = error;
   }); //todo handler error
   stream.on('data', (tweet) => {
-    if (check(tweet, fields)) {
+    if (check(tweet, constraints)) {
       console.log(tweet.text);
       streams[streamId].data.push(tweet);
       streams[streamId].socket.emit('tweet', tweet);
