@@ -1,21 +1,16 @@
 import React, { useMemo } from 'react';
 import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
-import { Grid, Typography, Button, makeStyles } from '@material-ui/core';
+import { Typography, Button, makeStyles } from '@material-ui/core';
 import JSZip from 'jszip';
 
 const useStyles = makeStyles(() => ({
   grid: {
-    height: 150,
     width: 540,
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderColor: '#1DA1F2',
-    scrollbarWidth: 'none',
     marginTop: 5,
     marginBottom: 5,
-    borderRadius: 20,
   },
   tweetList: {
+    height: 150,
     overflow: 'auto',
   },
 }));
@@ -89,13 +84,15 @@ const TweetList = ({ list }) => {
   return (
     <div className={grid}>
       {/*please someone pick a half decent style for this shit */}
-      <Typography variant="inherit" style={{ display: 'inline-block' }}>
-        Tweets List
-      </Typography>
-      <Button onClick={exportJSON}>Export tweet list</Button>
-      <Button onClick={downloadImages} disabled={images.length === 0}>
-        Download Images
-      </Button>
+      <div>
+        <Typography variant="inherit" style={{ display: 'inline-block' }}>
+          Tweets List
+        </Typography>
+        <Button onClick={exportJSON}>Export tweet list</Button>
+        <Button onClick={downloadImages} disabled={images.length === 0}>
+          Download Images
+        </Button>
+      </div>
       <div className={tweetList}>
         <List>
           {list.map((tweet) => (
