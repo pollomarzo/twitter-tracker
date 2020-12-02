@@ -148,7 +148,7 @@ const MainContainer = () => {
           <Map tweetsList={tweets} />
         </div>
       </div>
-      <div className="tweetList">
+      <div className="tweetListContainer">
         <TweetList list={tweets} />
       </div>
     </div>

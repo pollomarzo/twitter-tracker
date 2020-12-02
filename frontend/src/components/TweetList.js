@@ -5,14 +5,16 @@ import JSZip from 'jszip';
 
 const useStyles = makeStyles(() => ({
   grid: {
-    width: 540,
+    width: "38%",
+    height: "90%",
     marginTop: 5,
     marginBottom: 5,
-  },
-  tweetList: {
-    height: 150,
-    overflow: 'auto',
-  },
+    borderWidth: "2px",
+    borderStyle: "solid",
+    borderColor: "#1da1f2",
+    overflowX: "hidden",
+    borderRadius: 20,
+  }
 }));
 
 const Tweet = ({ user, timestamp_ms, text, id }) => {
@@ -36,7 +38,7 @@ const triggerDownload = ({ name, url }) => {
 };
 
 const TweetList = ({ list }) => {
-  const { grid, tweetList } = useStyles();
+  const { grid } = useStyles();
   const images = useMemo(
     () =>
       list.reduce((images, tweet) => {
@@ -83,8 +85,7 @@ const TweetList = ({ list }) => {
 
   return (
     <div className={grid}>
-      {/*please someone pick a half decent style for this shit */}
-      <div>
+      <div className="buttonTweetList">
         <Typography variant="inherit" style={{ display: 'inline-block' }}>
           Tweets List
         </Typography>
@@ -93,7 +94,7 @@ const TweetList = ({ list }) => {
           Download Images
         </Button>
       </div>
-      <div className={tweetList}>
+      <div className="tweetList">
         <List>
           {list.map((tweet) => (
             <Tweet key={tweet.id} {...tweet} />

@@ -32,12 +32,27 @@ a {
   color: #0f5c8b;
 }
 
-.tweetList{
+.tweetListContainer{
   width: 100%;
+  height: 150px;
   display: flex;
   justify-content: right;
+  align-items: center;
 }
 
+.buttonTweetList{
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tweetList{
+  height: 80%;
+  width: 100%;
+  overflow: scroll;
+}
 
 
 
