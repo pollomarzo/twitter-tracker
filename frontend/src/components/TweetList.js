@@ -1,6 +1,9 @@
 import React from 'react';
+import { useErrorHandler } from 'react-error-boundary';
 import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import { Grid, Typography, Button, makeStyles } from '@material-ui/core';
+
+import { generateError } from './AlertWindow';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -17,7 +20,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Tweet = ({ user, timestamp_ms, text, id }) => {
+const Tweet = ({ user, text, id }) => {
   return (
     <ListItem key={`tcard_id${id}`} alignItems="flex-start">
       <ListItemAvatar>
@@ -30,8 +33,9 @@ const Tweet = ({ user, timestamp_ms, text, id }) => {
 
 const TweetList = ({ list, setList }) => {
   const { grid } = useStyles();
-
+  const propagateError = useErrorHandler();
   const openDialog = () => document.getElementById('importInput').click();
+
   const exportJSON = () => {
     const dump =
       'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(list));
@@ -40,14 +44,30 @@ const TweetList = ({ list, setList }) => {
     exportAnchor.setAttribute('download', 'TweetsDump.json');
     exportAnchor.click();
   };
+
   const importJSON = (event) => {
     const uploadedFile = event.target.files[0];
     if (uploadedFile && uploadedFile.type === 'application/json') {
       const reader = new FileReader();
       // Callback on successfull read
-      reader.onload = (event) => setList(JSON.parse(event.target.result));
+      reader.onload = (event) => {
+        const dump = JSON.parse(event.target.result);
+        if (validateJSON(dump)) {
+         setList(dump);
+        } else {
+          const importError = generateError("The given file doesn't match the format requested");
+          propagateError(importError);
+        }
+      };
       reader.readAsText(uploadedFile, 'utf-8');
     }
+  };
+
+  const validateJSON = (toValidate) => {
+    if (Array.isArray(toValidate))
+      return toValidate.every(
+        (item) => item.id && item.user && item.text && (item.coordinates || item.place)
+      );
   };
 
   return (
@@ -55,7 +75,9 @@ const TweetList = ({ list, setList }) => {
       <Typography variant="inherit" style={{ display: 'inline-block' }}>
         Tweets List
       </Typography>
-      <a id="exportAnchor" href="." style={{ display: 'none' }}>This is hidden</a>
+      <a id="exportAnchor" href="." style={{ display: 'none' }}>
+        This is hidden
+      </a>
       <input
         id="importInput"
         type="file"

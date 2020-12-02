@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { CircularProgress, Fade, Button, makeStyles, Typography } from '@material-ui/core';
+import { useErrorHandler } from 'react-error-boundary';
+import { Fade, Button, Typography } from '@material-ui/core';
+import { CircularProgress, makeStyles } from '@material-ui/core';
 
-import AlertWindow from './AlertWindow';
+import { generateError } from './AlertWindow';
 import InputField from './InputField';
 
 const COORDINATE_RE = RegExp('^-?[1]?[0-8]?[0-9][.][0-9]{2}$');
@@ -31,6 +33,7 @@ const useStyles = makeStyles(() => ({
 
 const CoordsForm = ({ onStart, onStop, open }) => {
   const { form, submitContainer, submitButton } = useStyles();
+  const propagateError = useErrorHandler();
   // A set of coords to initialize a geolocalized stream
   const [coords, setCoordinates] = useState({
     latitudeSW: 0,
@@ -41,43 +44,59 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   const [params, setParams] = useState({
     track: '', // hashtag
     follow: '', // user
-  })
-  const [error, setError] = useState(false);
+  });
 
   const handleCoordChange = (e) =>
     setCoordinates({ ...coords, [e.target.name]: e.target.value });
-  const handleParamsChange = (e) =>
-    {setParams({...params, [e.target.name]: e.target.value});
-    console.log(params);}
+  const handleParamsChange = (e) => {
+    setParams({ ...params, [e.target.name]: e.target.value });
+    console.log(params);
+  };
 
   const handleSubmit = () => {
     const values = Object.values(coords);
-    if (values.every((value) => value && COORDINATE_RE.test(value))) {
+    if (values.every((value) => value && COORDINATE_RE.test(value)))
       onStart({ coords, params });
-    } else {
-      setError(true);
+    else {
+      const onReset = () =>
+        setCoordinates((coords) =>
+          Object.keys(coords).forEach((key) => (coords[key] = 0))
+        );
+      const coordsError = generateError(
+        'An acceptable input is a number in range [-180.00, 180.00]',
+        onReset
+      );
+      propagateError(coordsError);
     }
   };
 
   return (
     <div className={form}>
-      <div className="inputForm"> 
-        <Typography >North-East Corner</Typography>
-        <InputField label="Longitude" fieldName="longitudeNE" handler={handleCoordChange} />
+      <div className="inputForm">
+        <Typography>North-East Corner</Typography>
+        <InputField
+          label="Longitude"
+          fieldName="longitudeNE"
+          handler={handleCoordChange}
+        />
         <InputField label="Latitude" fieldName="latitudeNE" handler={handleCoordChange} />
       </div>
-      <div className="inputForm"> 
-        <Typography >South-West Corner</Typography>
-        <InputField label="Longitude" fieldName="longitudeSW" handler={handleCoordChange} />
+      <div className="inputForm">
+        <Typography>South-West Corner</Typography>
+        <InputField
+          label="Longitude"
+          fieldName="longitudeSW"
+          handler={handleCoordChange}
+        />
         <InputField label="Latitude" fieldName="latitudeSW" handler={handleCoordChange} />
       </div>
-      <div className="inputForm"> 
-        <Typography >Hashtag</Typography>
+      <div className="inputForm">
+        <Typography>Hashtag</Typography>
         <InputField fieldName="track" text="#" handler={handleParamsChange} />
       </div>
-      <div className="inputForm"> 
-        <Typography >User</Typography>
-        <InputField fieldName="follow" text="@" handler={handleParamsChange}/>
+      <div className="inputForm">
+        <Typography>User</Typography>
+        <InputField fieldName="follow" text="@" handler={handleParamsChange} />
       </div>
 
       <div className={submitContainer}>
@@ -107,12 +126,6 @@ const CoordsForm = ({ onStart, onStop, open }) => {
           </Fade>
         </div>
       </div>
-      <AlertWindow
-        isOpen={error}
-        onConfirm={setError}
-        title="Error"
-        msg="An acceptable input is a number in range [-180.00, 180.00] written with this formula"
-      />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import io from 'socket.io-client';
 import Map from './Map';
 import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
+import ErrorCatcher from './AlertWindow';
 
 import { BASE_URL, GEO_FILTER } from '../constants';
 // Testing only ToDo remove
@@ -88,20 +89,22 @@ const MainContainer = () => {
   };
 
   return (
-    <div className={main}>
-      <header className={header}>
-        <h1 className={title}>TWITTER TRACKER</h1>
-      </header>
-      <div className={content}>
-        <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
-        <div className={mapWrapper}>
-          <Map tweetsList={tweets} />
+    <ErrorCatcher>
+      <div className={main}>
+        <header className={header}>
+          <h1 className={title}>TWITTER TRACKER</h1>
+        </header>
+        <div className={content}>
+          <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
+          <div className={mapWrapper}>
+            <Map tweetsList={tweets} />
+          </div>
+        </div>
+        <div className="tweetList">
+          <TweetList list={tweets} setList={setTweets} />
         </div>
       </div>
-      <div className="tweetList">
-        <TweetList list={tweets} setList={setTweets} />
-      </div>
-    </div>
+    </ErrorCatcher>
   );
 };
 
