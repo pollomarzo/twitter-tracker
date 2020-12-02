@@ -7,6 +7,7 @@ import io from 'socket.io-client';
 import Map from './Map';
 import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
+import WordCloud from './WordCloud';
 
 import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
 // Testing only ToDo remove
@@ -148,7 +149,8 @@ const MainContainer = () => {
           <Map tweetsList={tweets} />
         </div>
       </div>
-      <div className="tweetListContainer">
+      <div className="container">
+        <WordCloud list={tweets} />
         <TweetList list={tweets} />
       </div>
     </div>

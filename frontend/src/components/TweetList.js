@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 
 const useStyles = makeStyles(() => ({
   grid: {
-    width: "38%",
+    width: "40%",
     height: "90%",
     marginTop: 5,
     marginBottom: 5,
