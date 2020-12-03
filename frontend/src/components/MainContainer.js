@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { makeStyles } from '@material-ui/core';
 import io from 'socket.io-client';
+import { useErrorHandler } from 'react-error-boundary';
+import { makeStyles } from '@material-ui/core';
+import axios from 'axios';
 
 import Map from './Map';
 import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
+import { generateError } from './AlertWindow';
 
 import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
-// Testing only ToDo remove
-import { fakeTweets } from '../misc/fakeTweets';
 
 const useStyles = makeStyles(() => ({
   main: {
@@ -52,6 +52,7 @@ const useStyles = makeStyles(() => ({
 
 const MainContainer = () => {
   const { main, header, title, content, leftContent, mapWrapper } = useStyles();
+  const propagateError = useErrorHandler();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
@@ -62,7 +63,7 @@ const MainContainer = () => {
       const res = await axios.get(`${GET_IDS}?names=${names}`);
       return res.data;
     } catch (err) {
-      console.error(err);
+      propagateError(generateError("One of the users you asked for doesn't exist!"))
     }
   };
 
@@ -111,7 +112,7 @@ const MainContainer = () => {
       });
       socket.on('error', (error) => console.log(error));
     } catch (err) {
-      console.error(err);
+      propagateError(generateError("Couldn't start stream on server, please retry!"));
     }
   };
 
@@ -123,7 +124,7 @@ const MainContainer = () => {
       });
       setStreamId(null);
     } catch (err) {
-      console.error(err);
+      propagateError(generateError("Couldn't stop stream on the server, please retry!"));
     }
   };
 
@@ -133,7 +134,9 @@ const MainContainer = () => {
         <h1 className={title}>TWITTER TRACKER</h1>
       </header>
       <div className={content}>
+      <div className={leftContent}>
         <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
+        </div>
         <div className={mapWrapper}>
           <Map tweetsList={tweets} />
         </div>
