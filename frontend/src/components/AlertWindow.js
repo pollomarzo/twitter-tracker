@@ -1,11 +1,7 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
+import React, { useState } from 'react';
+import { makeStyles, Button, Dialog, DialogTitle } from '@material-ui/core';
+import { DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const useStyles = makeStyles({
   dialog: {
@@ -24,20 +20,21 @@ const useStyles = makeStyles({
   },
 });
 
-const AlertWindow = ({ isOpen, onConfirm, title, msg }) => {
+const AlertWindow = ({error, resetErrorBoundary}) => {
   const { submitButton, dialog } = useStyles();
+  const { title, message } = error;
   return (
-    <Dialog open={isOpen}>
-      <DialogTitle className={dialog}>{title}</DialogTitle>
+    <Dialog open={true}>
+      <DialogTitle className={dialog}>{title || 'Error'}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{msg}</DialogContentText>
+        <DialogContentText>{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           color="default"
           variant="contained"
           className={submitButton}
-          onClick={onConfirm}
+          onClick={resetErrorBoundary}
         >
           OK
         </Button>
@@ -46,4 +43,36 @@ const AlertWindow = ({ isOpen, onConfirm, title, msg }) => {
   );
 };
 
-export default AlertWindow;
+
+const generateError = (message, reset, title) => {
+  const error = Error(message);
+  const defaultCB = () => {};
+
+  error.title = title || 'Error';
+  error.message = message || 'Generic error message';
+  error.reset = reset || defaultCB;
+  return (error);
+};
+
+
+const ErrorCatcher = ({ children }) => {
+  const [error, setError] = useState(undefined);
+  const handleReset = () => {
+    error.reset();
+    setError(undefined);
+  }
+
+  return (
+    <ErrorBoundary
+      FallbackComponent={AlertWindow}
+      onError={err => setError(err)}
+      onReset={handleReset}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+};
+
+
+export { generateError, AlertWindow };
+export default ErrorCatcher;

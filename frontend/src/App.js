@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import { useSpring, animated } from 'react-spring';
 import WelcomingAnimation from './components/WelcomingAnimation';
 import MainContainer from './components/MainContainer';
+import ErrorCatcher from './components/AlertWindow';
 
 const ANIMATED = process.env.NODE_ENV === 'production';
 
@@ -33,6 +34,7 @@ const App = () => {
   });
 
   return (
+    <ErrorCatcher>
     <div className={container}>
       {ANIMATED ? (
         <>
@@ -47,6 +49,7 @@ const App = () => {
         <MainContainer />
       )}
     </div>
+    </ErrorCatcher>
   );
 };
 

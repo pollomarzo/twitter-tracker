@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
 import io from 'socket.io-client';
 
 import Map from './Map';
@@ -55,8 +54,7 @@ const MainContainer = () => {
   const { main, header, title, content, leftContent, mapWrapper } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
-  const [tweets, setTweets] = useState(fakeTweets);
-  const [streamError, setStreamError] = useState();
+  const [tweets, setTweets] = useState([]);
 
   const getIDs = async (names) => {
     try {
@@ -111,7 +109,7 @@ const MainContainer = () => {
         console.log(tweet);
         setTweets((prevTweets) => [...prevTweets, tweet]);
       });
-      socket.on('error', (error) => setStreamError(error));
+      socket.on('error', (error) => console.log(error));
     } catch (err) {
       console.error(err);
     }
@@ -135,21 +133,13 @@ const MainContainer = () => {
         <h1 className={title}>TWITTER TRACKER</h1>
       </header>
       <div className={content}>
-        <div className={leftContent}>
-          <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
-          {streamError && (
-            <Alert severity="error" variant="filled">
-              <AlertTitle>Error</AlertTitle>
-              {streamError.source}
-            </Alert>
-          )}
-        </div>
+        <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
         <div className={mapWrapper}>
           <Map tweetsList={tweets} />
         </div>
       </div>
       <div className="tweetList">
-        <TweetList list={tweets} />
+        <TweetList list={tweets} setList={setTweets} />
       </div>
     </div>
   );

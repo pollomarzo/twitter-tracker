@@ -1,7 +1,10 @@
 import React, { useMemo } from 'react';
+import { useErrorHandler } from 'react-error-boundary';
 import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import { Typography, Button, makeStyles } from '@material-ui/core';
 import JSZip from 'jszip';
+
+import { generateError } from './AlertWindow';
 
 const useStyles = makeStyles(() => ({
   grid: {
@@ -15,7 +18,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Tweet = ({ user, timestamp_ms, text, id }) => {
+const Tweet = ({ user, text, id }) => {
   return (
     <ListItem key={`tcard_id${id}`} alignItems="flex-start">
       <ListItemAvatar>
@@ -35,8 +38,19 @@ const triggerDownload = ({ name, url }) => {
   document.body.removeChild(link);
 };
 
-const TweetList = ({ list }) => {
+const triggerUpload = (onChangeHandler) => {
+  const link = document.createElement('input');
+  document.body.appendChild(link);
+  link.type = 'file';
+  link.accept = 'application/json';
+  link.onchange = onChangeHandler;
+  link.click();
+  document.body.removeChild(link);
+};
+
+const TweetList = ({ list, setList }) => {
   const { grid, tweetList } = useStyles();
+  const propagateError = useErrorHandler();
   const images = useMemo(
     () =>
       list.reduce((images, tweet) => {
@@ -64,6 +78,32 @@ const TweetList = ({ list }) => {
     triggerDownload({ name: 'TweetsDump.json', url });
   };
 
+  const validateJSON = (toValidate) => {
+    if (Array.isArray(toValidate))
+      return toValidate.every(
+        (item) => item.id && item.user && item.text && (item.coordinates || item.place)
+      );
+  };
+
+  const importJSON = (event) => {
+    const uploadedFile = event.target.files[0];
+    if (uploadedFile && uploadedFile.type === 'application/json') {
+      const reader = new FileReader();
+      // Callback on successfull read
+      reader.onload = (event) => {
+        const dump = JSON.parse(event.target.result);
+        if (validateJSON(dump)) {
+          setList(dump);
+        } else {
+          propagateError(
+            generateError("The given file doesn't match the format requested")
+          );
+        }
+      };
+      reader.readAsText(uploadedFile, 'utf-8');
+    }
+  };
+
   const downloadImages = async () => {
     const zip = new JSZip();
     for (const { file, url } of images) {
@@ -77,7 +117,8 @@ const TweetList = ({ list }) => {
       const url = URL.createObjectURL(result);
       triggerDownload({ name: 'Photos.zip', url });
     } catch (err) {
-      console.error(err);
+      const downloadError = generateError("Couldn't start image download");
+      propagateError(downloadError);
     }
   };
 
@@ -88,7 +129,11 @@ const TweetList = ({ list }) => {
         <Typography variant="inherit" style={{ display: 'inline-block' }}>
           Tweets List
         </Typography>
-        <Button onClick={exportJSON}>Export tweet list</Button>
+        <Button
+          onClick={list.length === 0 ? () => triggerUpload(importJSON) : exportJSON}
+        >
+          {list.length === 0 ? 'Import tweet list' : 'Export tweet list'}
+        </Button>
         <Button onClick={downloadImages} disabled={images.length === 0}>
           Download Images
         </Button>

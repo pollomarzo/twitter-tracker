@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import {
-  CircularProgress,
-  Fade,
-  Button,
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import { useErrorHandler } from 'react-error-boundary';
+import { Fade, Button, Typography } from '@material-ui/core';
+import { CircularProgress, makeStyles } from '@material-ui/core';
 
-import AlertWindow from './AlertWindow';
+import { generateError } from './AlertWindow';
 import InputField from './InputField';
 
 const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
@@ -37,6 +33,7 @@ const useStyles = makeStyles(() => ({
 
 const CoordsForm = ({ onStart, onStop, open }) => {
   const { form, submitContainer, submitButton } = useStyles();
+  const propagateError = useErrorHandler();
   // A set of coords to initialize a geolocalized stream
   const [coords, setCoordinates] = useState({
     latitudeSW: '',
@@ -48,32 +45,33 @@ const CoordsForm = ({ onStart, onStop, open }) => {
     track: '', // hashtag
     follow: '', // user
   });
-  const [errors, setErrors] = useState([]);
 
   const handleCoordChange = (e) =>
     setCoordinates({ ...coords, [e.target.name]: e.target.value });
-  const handleParamsChange = (e) => {
+
+  const handleParamsChange = (e) =>
     setParams({ ...params, [e.target.name]: e.target.value });
-    console.log(params);
-  };
 
   const handleSubmit = () => {
-    const entries = Object.entries(coords);
-    if (entries.every(([_, value]) => value === '')) {
-      return onStart({ coords: '', params });
+    const values = Object.values(coords);
+    // Start a not geolocalized
+    if (values.every(value => value === '')) {
+      onStart({ coords: '', params });
     }
-
-    let errors = [];
-    entries.forEach(([coordName, value]) => {
-      if (!COORDINATE_RE.test(value)) {
-        errors.push(coordName);
-      }
-    });
-
-    if (errors.length > 0) {
-      setErrors(errors);
-    } else {
+    // Start a geolocalized
+    else if (values.every(value => value && COORDINATE_RE.test(value)))
       onStart({ coords, params });
+    else {
+      const onReset = () =>
+        setCoordinates((coords) =>
+          Object.keys(coords).forEach((key) => (coords[key] = 0))
+        );
+      propagateError(
+        generateError(
+          'An acceptable input is a number in range [-180.00, 180.00]',
+          onReset
+        )
+      );
     }
   };
 
@@ -84,34 +82,18 @@ const CoordsForm = ({ onStart, onStop, open }) => {
         <InputField
           label="Longitude"
           fieldName="longitudeNE"
-          helperText="Invalid coordinate."
-          hasError={errors.includes('longitudeNE')}
           handler={handleCoordChange}
         />
-        <InputField
-          label="Latitude"
-          fieldName="latitudeNE"
-          helperText="Invalid coordinate."
-          hasError={errors.includes('latitudeNE')}
-          handler={handleCoordChange}
-        />
+        <InputField label="Latitude" fieldName="latitudeNE" handler={handleCoordChange} />
       </div>
       <div className="inputForm">
         <Typography>South-West Corner</Typography>
         <InputField
           label="Longitude"
           fieldName="longitudeSW"
-          helperText="Invalid coordinate."
-          hasError={errors.includes('longitudeSW')}
           handler={handleCoordChange}
         />
-        <InputField
-          label="Latitude"
-          fieldName="latitudeSW"
-          helperText="Invalid coordinate."
-          hasError={errors.includes('latitudeSW')}
-          handler={handleCoordChange}
-        />
+        <InputField label="Latitude" fieldName="latitudeSW" handler={handleCoordChange} />
       </div>
       <div className="inputForm">
         <Typography>Hashtag</Typography>
