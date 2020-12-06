@@ -8,6 +8,7 @@ import Map from './Map';
 import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
 import { generateError } from './AlertWindow';
+import WordCloud from './WordCloud';
 
 import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
 
@@ -141,7 +142,8 @@ const MainContainer = () => {
           <Map tweetsList={tweets} />
         </div>
       </div>
-      <div className="tweetList">
+      <div className="container">
+        <WordCloud list={tweets} />
         <TweetList list={tweets} setList={setTweets} />
       </div>
     </div>
