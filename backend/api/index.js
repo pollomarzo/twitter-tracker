@@ -1,6 +1,15 @@
 const express = require('express');
-const router = express.Router();
 const twitter = require('./twitter');
+const nodemailer = require('nodemailer')
+const router = express.Router();
+
+const mailTransport = nodemailer.createTransport({
+  service: 'SendGrid',
+  auth: {
+    //user: credentials.sendgrid.user,
+    //pass: credentials.sendgrid.password,
+  }
+})
 
 const converter = (oldParams) => ({
   'user.id_str': oldParams.follow || 'ANY',
@@ -25,6 +34,12 @@ router.post('/geoFilter', (req, res) => {
   res.status(200).send(streamID);
 });
 
+router.delete('/geoFilter', (req, res) => {
+  const streamID = req.body.id; // should be body
+  twitter.closeStream(streamID);
+  res.status(200).end();
+});
+
 router.get('/getUserIDs', async (req, res) => {
   const { names } = req.query;
   try {
@@ -35,10 +50,9 @@ router.get('/getUserIDs', async (req, res) => {
   }
 });
 
-router.delete('/geoFilter', (req, res) => {
-  const streamID = req.body.id; // should be body
-  twitter.closeStream(streamID);
-  res.status(200).end();
+router.put('/notification', (req, res) => {
+  
 });
+
 
 module.exports = router;

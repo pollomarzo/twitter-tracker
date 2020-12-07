@@ -4,7 +4,7 @@ const credentials = require('./.credentials');
 
 let streams = {};
 
-function exportJSON(data) {
+const exportJSON = data => {
   json = { data: [] };
   data.forEach((value) => {
     json.data.push(value);
@@ -22,11 +22,11 @@ const client = new Twitter({
   access_token_secret: credentials.access_token_secret, // from your User (oauth_token_secret);
 });
 
-function check(tweet, constraints) {
+const check = (tweet, constraints) => {
   for (const [key, value] of Object.entries(constraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
-    nesting.forEach(function (item) {
+    nesting.forEach(item => {
       try {
         tweetvalue = tweetvalue[item];
       } catch (e) {

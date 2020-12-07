@@ -7,6 +7,7 @@ import axios from 'axios';
 import Map from './Map';
 import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
+import NotifySettings from './NotifySettings';
 import { generateError } from './AlertWindow';
 
 import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
@@ -135,6 +136,7 @@ const MainContainer = () => {
       </header>
       <div className={content}>
       <div className={leftContent}>
+        <NotifySettings count={tweets.length} />
         <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
         </div>
         <div className={mapWrapper}>
