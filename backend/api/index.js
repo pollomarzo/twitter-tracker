@@ -1,16 +1,17 @@
 const express = require('express');
 const twitter = require('./twitter');
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 const router = express.Router();
 
 const SMTP = nodemailer.createTransport({
-  service: 'SendGrid',
   auth: {
     user: 'twittertracker',
     pass: 'password',
-  }
-})
-SMTP.sendMail({}, (err, info) => console.log(err))
+  },
+});
+
+SMTP.sendMail({}, (err, info) => console.log(err));
+
 const converter = (oldParams) => ({
   'user.id_str': oldParams.follow || 'ANY',
   'entities.hashtags': oldParams.track || 'ANY',
@@ -56,11 +57,11 @@ router.put('/notification', (req, res) => {
     from: 'twittertracker@noreply.com',
     to: address,
     subject: '[Notification] Your selected treshold has been surpassed',
-    text: `Currently we got ${count} tweets that fullfill your paramaters`
-  }
+    text: `Currently we got ${count} tweets that fullfill your paramaters`,
+  };
   SMTP.sendMail(toSend, (err, info) => {
     if (err) {
-      console.log(err)
+      console.log(err);
       res.statusCode = 400;
       res.send(err);
     } else {
@@ -69,6 +70,5 @@ router.put('/notification', (req, res) => {
     }
   });
 });
-
 
 module.exports = router;
