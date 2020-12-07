@@ -10,10 +10,9 @@ const NotifySettings = ({ count }) => {
   const [treshold, setTreshold] = useState(100);
 
   useEffect(() => {
-    if (count >= treshold) {
+    if (email && treshold && count >= treshold) {
       axios
         .put(NOTIFICATION, { address: email, count: count })
-        .then((res) => console.log(res))
         .catch((err) => console.log(err));
     }
   }, [email, treshold, count]);
