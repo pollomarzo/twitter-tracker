@@ -81,10 +81,12 @@ const TweetList = ({ list, setList }) => {
   };
 
   const validateJSON = (toValidate) => {
-    if (Array.isArray(toValidate))
-      return toValidate.every(
-        (item) => item.id && item.user && item.text && (item.coordinates || item.place)
-      );
+    const isCompliant = toValidate.every(
+      (item) => item.id && item.user && item.text && (item.coordinates || item.place)
+    );
+    if (!isCompliant) {
+      throw(new Error());
+    }
   };
 
   const importJSON = (event) => {
@@ -93,10 +95,11 @@ const TweetList = ({ list, setList }) => {
       const reader = new FileReader();
       // Callback on successfull read
       reader.onload = (event) => {
-        const dump = JSON.parse(event.target.result);
-        if (validateJSON(dump)) {
+        try {
+          const dump = JSON.parse(event.target.result);
+          validateJSON(dump);
           setList(dump);
-        } else {
+        } catch (err) {
           propagateError(
             generateError("The given file doesn't match the format requested")
           );

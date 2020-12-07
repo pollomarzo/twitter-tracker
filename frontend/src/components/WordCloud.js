@@ -1,50 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import ReactWordcloud from 'react-wordcloud';
 
 
 const WordCloud = ({ list }) => {
-  const [arrayOfWords, setArrayOfWords] = useState([]);
-
-
-  function httpCase(str) {
-    var listOfWord = ""
-    var tmp = ""
-    var i
-    for( i = 0; i < list.length; i++){
-      tmp = tmp + list[i].text + " "
-    }
-    var splitStr = tmp.split(" ");
-    for (i = 0; i < splitStr.length; i++) {
-      if(!(splitStr[i].startsWith("http"))){
-        listOfWord = listOfWord + splitStr[i].toLowerCase() + " "
-      }
-    }
-    return listOfWord
-  }
-
-  function tweetsToText(str) {
-    var arrayOfObject = []
-    var index 
-    var splitStr = str.split(" ");
-    splitStr.forEach((element) => {
-      index = arrayOfObject.findIndex( s => s.text === element)
-      if (index !== -1){
-          arrayOfObject[index] = ({text: element, value: arrayOfObject[index].value+1})
-      }
-      else  arrayOfObject.push({text: element, value: 1})   
-    })
-    return arrayOfObject;
-  }
-
-
-
-  useEffect(()=>{
-    var tmp = httpCase(list)
-    console.log(tmp)
-    var tmp2 = tweetsToText(tmp)
-    setArrayOfWords(tmp2)
-    console.log(arrayOfWords)  
-  }, [list])
+  const wordsList = useMemo(() => {
+    const uniqueWord = [];
+    list.forEach(tweet => {
+      tweet.text.toLowerCase().split(" ").forEach(word => {
+        const collision = uniqueWord.find(item => item.word === word);
+        if (collision)
+          collision.occurrencies++;
+        else 
+          uniqueWord.push({ word, occurrencies: 1})
+      })});
+    return uniqueWord;
+  }, [list]);
 
   const options = {
     colors: ["blue", "#2F4F4F", "#011f4b", "#03396c", "#008080", "#05E9FF", '#525C65'],
@@ -62,7 +32,7 @@ const WordCloud = ({ list }) => {
   };
 
   const callbacks = {
-    getWordTooltip: word => `${word.text} (${word.value})`,
+    getWordTooltip: word => `${word.text} (${word.occurrencies})`,
   };
 
 
@@ -72,7 +42,7 @@ const WordCloud = ({ list }) => {
         id="wordCloud"
         callbacks={callbacks}
         options={options}
-        words={arrayOfWords}
+        words={wordsList}
       />
     </div>
   )
@@ -81,4 +51,3 @@ const WordCloud = ({ list }) => {
 
 
 export default WordCloud;
-
