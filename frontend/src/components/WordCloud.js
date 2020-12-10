@@ -1,53 +1,63 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactWordcloud from 'react-wordcloud';
 
-
 const WordCloud = ({ list }) => {
-  const wordsList = useMemo(() => {
-    const uniqueWord = [];
-    list.forEach(tweet => {
-      tweet.text.toLowerCase().split(" ").forEach(word => {
-        const collision = uniqueWord.find(item => item.word === word);
-        if (collision)
-          collision.occurrencies++;
-        else 
-          uniqueWord.push({ word, occurrencies: 1})
-      })});
-    return uniqueWord;
+  const [arrayOfWords, setArrayOfWords] = useState([]);
+
+  const collapse = (toCollapse) => {
+    const collapsed = [];
+    toCollapse.split(' ').forEach((item) => {
+      const index = collapsed.findIndex((element) => element.text === item);
+      if (index !== -1) collapsed[index].value += 1;
+      else collapsed.push({ text: item, value: 1 });
+    });
+    return collapsed;
+  };
+
+  useEffect(() => {
+    const getWordList = () => {
+      let listOfWord = '';
+      let accumulator = '';
+      // Create an agglomerate with all the text from the list
+      list.forEach((item) => (accumulator += `${item.text} `));
+      accumulator = accumulator.split(' ');
+      // Separate every word in the conglomerate and purges links
+      accumulator.forEach((word) => {
+        if (!word.startsWith('http')) listOfWord += `${word.toLowerCase()} `;
+      });
+      return listOfWord;
+    };
+    const wordData = getWordList(list);
+    const compressedData = collapse(wordData);
+    setArrayOfWords(compressedData);
   }, [list]);
 
   const options = {
-    colors: ["blue", "#2F4F4F", "#011f4b", "#03396c", "#008080", "#05E9FF", '#525C65'],
+    colors: ['blue', '#2F4F4F', '#011f4b', '#03396c', '#008080', '#05E9FF', '#525C65'],
     enableTooltip: true,
     deterministic: false,
-    fontFamily: "impact",
+    fontFamily: 'impact',
     fontSizes: [15, 40],
-    fontStyle: "normal",
-    fontWeight: "normal",
+    fontStyle: 'normal',
+    fontWeight: 'normal',
     padding: 1,
     rotations: 3,
     rotationAngles: [0, 90],
-    spiral: "archimedean",
-    transitionDuration: 1500
+    spiral: 'archimedean',
+    transitionDuration: 1500,
   };
 
-  const callbacks = {
-    getWordTooltip: word => `${word.text} (${word.occurrencies})`,
-  };
-
+  const getWordTooltip = (word) => `${word.text} (${word.value})`;
 
   return (
     <div className="wordCloud">
       <ReactWordcloud
-        id="wordCloud"
-        callbacks={callbacks}
+        callbacks={{ getWordTooltip }}
         options={options}
-        words={wordsList}
+        words={arrayOfWords}
       />
     </div>
-  )
+  );
 };
-
-
 
 export default WordCloud;
