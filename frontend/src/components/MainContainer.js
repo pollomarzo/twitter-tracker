@@ -9,22 +9,15 @@ import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
 import { generateError } from './AlertWindow';
 import WordCloud from './WordCloud';
+import { fakeTweets } from '../misc/fakeTweets';
 
 import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
 
 const useStyles = makeStyles(() => ({
-  main: {
-    height: 'calc(100vh - 20px)',
-    width: 'calc(100vw - 20px)',
-    margin: '10px',
-    padding: '10px',
-    position: 'absolute',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    border: 'solid 4px #1da1f2',
-    borderRadius: '10px',
+  container: {
+    height: '100vh',
+    width: '100vw',
+    padding: '1vh',
   },
   header: {
     display: 'flex',
@@ -38,25 +31,37 @@ const useStyles = makeStyles(() => ({
     color: '#1da1f2',
   },
   content: {
-    width: '100%',
-    height: '100%',
     display: 'flex',
+    flexFlow: 'row nowrap',
   },
   leftContent: {
-    paddingLeft: 16,
-    paddingRight: 16,
+    display: 'flex',
+    flexFlow: 'column nowrap',
+  },
+  formCloud: {
+    display: 'flex',
+    flexFlow: 'column nowrap',
+  },
+  rightContent: {
+    display: 'flex',
+    flexFlow: 'column nowrap',
+    flex: '1 1 auto',
   },
   mapWrapper: {
     flexGrow: 2,
   },
+  listWrapper: {
+    overflow: 'scroll',
+    maxHeight: '40vh',
+  },
 }));
 
 const MainContainer = () => {
-  const { main, header, title, content, leftContent, mapWrapper } = useStyles();
+  const classes = useStyles();
   const propagateError = useErrorHandler();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
-  const [tweets, setTweets] = useState([]);
+  const [tweets, setTweets] = useState(fakeTweets);
 
   const getIDs = async (names) => {
     try {
@@ -130,21 +135,23 @@ const MainContainer = () => {
   };
 
   return (
-    <div className={main}>
-      <header className={header}>
-        <h1 className={title}>TWITTER TRACKER</h1>
+    <div className={classes.container}>
+      <header className={classes.header}>
+        <h1 className={classes.title}>TWITTER TRACKER</h1>
       </header>
-      <div className={content}>
-        <div className={leftContent}>
+      <div className={classes.content}>
+        <div className={classes.leftContent}>
           <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
+          <WordCloud list={tweets} />
         </div>
-        <div className={mapWrapper}>
-          <Map tweetsList={tweets} />
+        <div className={classes.rightContent}>
+          <div className={classes.mapWrapper}>
+            <Map tweetsList={tweets} />
+          </div>
+          <div className={classes.listWrapper}>
+            <TweetList list={tweets} setList={setTweets} />
+          </div>
         </div>
-      </div>
-      <div className="container">
-        <WordCloud list={tweets} />
-        <TweetList list={tweets} setList={setTweets} />
       </div>
     </div>
   );

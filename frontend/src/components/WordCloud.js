@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import ReactWordcloud from 'react-wordcloud';
 import 'tippy.js/themes/light.css';
+import { Slider, Grid, Typography, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles(() => ({
+  container: {
+    display: 'flex',
+    flexFlow: 'column nowrap',
+  },
+  wordCloud: {
+    width: '100%',
+  }
+}))
 
 const WordCloud = ({ list }) => {
+  const classes = useStyles();
   const [arrayOfWords, setArrayOfWords] = useState([]);
+  const [numWords, setNumWords] = useState(7);
+  const handleSlider = (event, newValue) => setNumWords(newValue);
 
   const collapse = (toCollapse) => {
     const collapsed = [];
@@ -54,13 +68,16 @@ const WordCloud = ({ list }) => {
   const getWordTooltip = (word) => `${word.text} (${word.value})`;
 
   return (
-    <div className="wordCloud">
-      <ReactWordcloud
-        callbacks={{ getWordTooltip }}
-        options={options}
-        maxWords={5}
-        words={arrayOfWords}
-      />
+    <div className={classes.container}>
+      <Slider value={numWords} onChange={setNumWords} />
+      <div className={classes.wordCloud}>
+        <ReactWordcloud
+          callbacks={{ getWordTooltip }}
+          options={options}
+          maxWords={5}
+          words={arrayOfWords}
+        />
+      </div>
     </div >
   );
 };

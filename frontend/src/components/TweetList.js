@@ -8,15 +8,19 @@ import { generateError } from './AlertWindow';
 
 const useStyles = makeStyles(() => ({
   grid: {
-    width: "40%",
-    height: "90%",
     marginTop: 5,
     marginBottom: 5,
     borderWidth: "2px",
-    borderStyle: "solid",
-    borderColor: "#1da1f2",
     overflowX: "hidden",
-    borderRadius: 20,
+    overflow: 'scroll',
+    display: 'flex',
+    flexFlow: 'column nowrap',
+    flex: '1 1 auto',
+    height: '100%',
+    overflow: 'scroll',
+  },
+  listStyle: {
+    overflow: 'scroll',
   }
 }));
 
@@ -51,7 +55,7 @@ const triggerUpload = (onChangeHandler) => {
 };
 
 const TweetList = ({ list, setList }) => {
-  const { grid } = useStyles();
+  const { grid, listStyle } = useStyles();
   const propagateError = useErrorHandler();
   const images = useMemo(
     () =>
@@ -85,7 +89,7 @@ const TweetList = ({ list, setList }) => {
       (item) => item.id && item.user && item.text && (item.coordinates || item.place)
     );
     if (!isCompliant) {
-      throw(new Error());
+      throw (new Error());
     }
   };
 
@@ -142,7 +146,7 @@ const TweetList = ({ list, setList }) => {
           Download Images
         </Button>
       </div>
-      <div className="tweetList">
+      <div className={listStyle}>
         <List>
           {list.map((tweet) => (
             <Tweet key={tweet.id} {...tweet} />
