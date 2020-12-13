@@ -59,6 +59,7 @@ const startStream = (constraints, parameters) => {
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
     streams[streamId].socket.emit('error', error);
+    console.log(error);
   }); //todo handler error
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {
