@@ -49,7 +49,7 @@ const useStyles = makeStyles(() => ({
     flexGrow: 2,
   },
   listWrapper: {
-    overflow: 'scroll',
+    overflow: 'hidden',
     maxHeight: '40vh',
   },
 }));

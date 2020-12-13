@@ -11,16 +11,14 @@ const useStyles = makeStyles(() => ({
     marginTop: 5,
     marginBottom: 5,
     borderWidth: "2px",
-    overflowX: "hidden",
-    overflow: 'scroll',
     display: 'flex',
     flexFlow: 'column nowrap',
     flex: '1 1 auto',
     height: '100%',
-    overflow: 'scroll',
+    overflow: 'hidden',
   },
   listStyle: {
-    overflow: 'scroll',
+    overflowY: 'scroll',
   }
 }));
 
