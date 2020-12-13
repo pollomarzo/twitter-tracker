@@ -10,13 +10,11 @@ const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
 
 const useStyles = makeStyles(() => ({
   form: {
-    height: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
   submitContainer: {
     display: 'flex',
-    alignItems: 'center',
   },
   submitButton: {
     margin: 10,

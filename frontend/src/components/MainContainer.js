@@ -37,10 +37,8 @@ const useStyles = makeStyles(() => ({
   leftContent: {
     display: 'flex',
     flexFlow: 'column nowrap',
-  },
-  formCloud: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
+    justifyContent: 'space-between',
+    flex: '0 0 auto',
   },
   rightContent: {
     display: 'flex',

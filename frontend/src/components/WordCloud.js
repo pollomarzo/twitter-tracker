@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import ReactWordcloud from 'react-wordcloud';
-import 'tippy.js/themes/light.css';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/material.css';
 import { Slider, Grid, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   container: {
+    flexGrow: 0,
     display: 'flex',
     flexFlow: 'column nowrap',
   },
   wordCloud: {
     width: '100%',
+  },
+  sliderStyle: {
+    width: '40vh',
   }
 }))
 
@@ -17,7 +22,9 @@ const WordCloud = ({ list }) => {
   const classes = useStyles();
   const [arrayOfWords, setArrayOfWords] = useState([]);
   const [numWords, setNumWords] = useState(7);
-  const handleSlider = (event, newValue) => setNumWords(newValue);
+  const handleSlider = (event, newValue) => {
+    setNumWords(newValue);
+  }
 
   const collapse = (toCollapse) => {
     const collapsed = [];
@@ -50,18 +57,15 @@ const WordCloud = ({ list }) => {
   const options = {
     colors: ['blue', '#2F4F4F', '#011f4b', '#03396c', '#008080', '#05E9FF', '#525C65'],
     enableTooltip: true,
-    deterministic: false,
+    deterministic: true,
     fontFamily: 'impact',
     fontSizes: [15, 60],
     fontStyle: 'normal',
     fontWeight: 'normal',
-    padding: 5,
-    rotations: 3,
-    rotationAngles: [0, 90],
-    spiral: 'archimedean',
+    rotations: 0,
     transitionDuration: 1000,
     tooltipOptions: {
-      theme: 'light'
+      theme: 'material'
     }
   };
 
@@ -69,12 +73,19 @@ const WordCloud = ({ list }) => {
 
   return (
     <div className={classes.container}>
-      <Slider value={numWords} onChange={setNumWords} />
+      <Typography>
+        How many words would you like to show?
+      </Typography>
+      <Slider
+        className={classes.sliderStyle}
+        value={numWords}
+        onChange={handleSlider}
+        max={Math.min(100, arrayOfWords.length)} min={1} />
       <div className={classes.wordCloud}>
         <ReactWordcloud
           callbacks={{ getWordTooltip }}
           options={options}
-          maxWords={5}
+          maxWords={numWords}
           words={arrayOfWords}
         />
       </div>
