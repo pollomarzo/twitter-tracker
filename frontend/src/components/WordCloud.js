@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactWordcloud from 'react-wordcloud';
+import 'tippy.js/themes/light.css';
 
 const WordCloud = ({ list }) => {
   const [arrayOfWords, setArrayOfWords] = useState([]);
@@ -37,14 +38,17 @@ const WordCloud = ({ list }) => {
     enableTooltip: true,
     deterministic: false,
     fontFamily: 'impact',
-    fontSizes: [15, 40],
+    fontSizes: [15, 60],
     fontStyle: 'normal',
     fontWeight: 'normal',
-    padding: 1,
+    padding: 5,
     rotations: 3,
     rotationAngles: [0, 90],
     spiral: 'archimedean',
-    transitionDuration: 1500,
+    transitionDuration: 1000,
+    tooltipOptions: {
+      theme: 'light'
+    }
   };
 
   const getWordTooltip = (word) => `${word.text} (${word.value})`;
@@ -54,9 +58,10 @@ const WordCloud = ({ list }) => {
       <ReactWordcloud
         callbacks={{ getWordTooltip }}
         options={options}
+        maxWords={5}
         words={arrayOfWords}
       />
-    </div>
+    </div >
   );
 };
 
