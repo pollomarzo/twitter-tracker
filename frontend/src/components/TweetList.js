@@ -8,14 +8,18 @@ import { generateError } from './AlertWindow';
 
 const useStyles = makeStyles(() => ({
   grid: {
-    width: 540,
     marginTop: 5,
     marginBottom: 5,
+    borderWidth: "2px",
+    display: 'flex',
+    flexFlow: 'column nowrap',
+    flex: '1 1 auto',
+    height: '100%',
+    overflow: 'hidden',
   },
-  tweetList: {
-    height: 150,
-    overflow: 'auto',
-  },
+  listStyle: {
+    overflowY: 'scroll',
+  }
 }));
 
 const Tweet = ({ user, text, id }) => {
@@ -49,7 +53,7 @@ const triggerUpload = (onChangeHandler) => {
 };
 
 const TweetList = ({ list, setList }) => {
-  const { grid, tweetList } = useStyles();
+  const { grid, listStyle } = useStyles();
   const propagateError = useErrorHandler();
   const images = useMemo(
     () =>
@@ -79,10 +83,12 @@ const TweetList = ({ list, setList }) => {
   };
 
   const validateJSON = (toValidate) => {
-    if (Array.isArray(toValidate))
-      return toValidate.every(
-        (item) => item.id && item.user && item.text && (item.coordinates || item.place)
-      );
+    const isCompliant = toValidate.every(
+      (item) => item.id && item.user && item.text && (item.coordinates || item.place)
+    );
+    if (!isCompliant) {
+      throw (new Error());
+    }
   };
 
   const importJSON = (event) => {
@@ -91,10 +97,11 @@ const TweetList = ({ list, setList }) => {
       const reader = new FileReader();
       // Callback on successfull read
       reader.onload = (event) => {
-        const dump = JSON.parse(event.target.result);
-        if (validateJSON(dump)) {
+        try {
+          const dump = JSON.parse(event.target.result);
+          validateJSON(dump);
           setList(dump);
-        } else {
+        } catch (err) {
           propagateError(
             generateError("The given file doesn't match the format requested")
           );
@@ -124,8 +131,7 @@ const TweetList = ({ list, setList }) => {
 
   return (
     <div className={grid}>
-      {/*please someone pick a half decent style for this shit */}
-      <div>
+      <div className="buttonTweetList">
         <Typography variant="inherit" style={{ display: 'inline-block' }}>
           Tweets List
         </Typography>
@@ -138,7 +144,7 @@ const TweetList = ({ list, setList }) => {
           Download Images
         </Button>
       </div>
-      <div className={tweetList}>
+      <div className={listStyle}>
         <List>
           {list.map((tweet) => (
             <Tweet key={tweet.id} {...tweet} />

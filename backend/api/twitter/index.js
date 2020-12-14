@@ -22,7 +22,12 @@ const client = new Twitter({
   access_token_secret: credentials.access_token_secret, // from your User (oauth_token_secret);
 });
 
-const check = (tweet, constraints) => {
+// use this whenever possible for higher rates
+const appClient = new Twitter({
+  bearer_token: credentials.bearer_token,
+});
+
+function check(tweet, constraints) {
   for (const [key, value] of Object.entries(constraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
@@ -88,7 +93,7 @@ const register = (socket, streamId) => {
 const getIDs = async (usernames) => {
   //we assume usernames is a CSV
   console.log('asking twitter for', usernames);
-  const users = await client.get('users/lookup', {
+  const users = await appClient.get('users/lookup', {
     screen_name: usernames.replace(' ', ''),
   });
   return users.map((user) => user.id_str);

@@ -3,6 +3,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
+  scrollbar-width: none;  /* Firefox */
 }
 
 html,
@@ -31,12 +32,39 @@ a {
   color: #0f5c8b;
 }
 
-.tweetList{
+.container{
   width: 100%;
+  height: 150px;
   display: flex;
-  justify-content: right;
+  align-items: center;
+  justify-content: space-around;
 }
 
+.buttonTweetList{
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tweetList{
+  height: 80%;
+  width: 100%;
+  overflow: scroll;
+}
+
+.wordCloud{
+  height: 90%;
+  width: 40%;
+  border: solid 2px #1da1f2;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  overflow: scroll;
+}
 
 
 

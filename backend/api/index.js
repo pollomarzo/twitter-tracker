@@ -38,7 +38,7 @@ router.get('/getUserIDs', async (req, res) => {
     const ids = await twitter.getIDs(names);
     res.status(200).json(ids);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err });
   }
 });
 
