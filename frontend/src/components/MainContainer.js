@@ -16,14 +16,13 @@ import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
 
 const useStyles = makeStyles(() => ({
   container: {
-    height: '100vh',
-    width: '100vw',
+    display: 'flex',
+    flexFlow: 'column nowrap',
     padding: '1vh',
+    height: '100vh',
+    overflow: 'scroll',
   },
   header: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     fontSize: '20px',
   },
   title: {
@@ -45,9 +44,10 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexFlow: 'column nowrap',
     flex: '1 1 auto',
+    overflow: 'hidden',
   },
   mapWrapper: {
-    flexGrow: 2,
+    flexGrow: 1,
   },
   listWrapper: {
     overflow: 'hidden',
