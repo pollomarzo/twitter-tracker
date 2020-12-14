@@ -64,7 +64,7 @@ const MainContainer = () => {
       const res = await axios.get(`${GET_IDS}?names=${names}`);
       return res.data;
     } catch (err) {
-      propagateError(generateError("One of the users you asked for doesn't exist!"))
+      propagateError(generateError("One of the users you asked for doesn't exist!"));
     }
   };
 
@@ -135,9 +135,9 @@ const MainContainer = () => {
         <h1 className={title}>TWITTER TRACKER</h1>
       </header>
       <div className={content}>
-      <div className={leftContent}>
-        <NotifySettings count={tweets.length} />
-        <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
+        <div className={leftContent}>
+          <NotifySettings count={tweets.length} />
+          <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
         </div>
         <div className={mapWrapper}>
           <Map tweetsList={tweets} />
