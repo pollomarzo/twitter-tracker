@@ -12,17 +12,21 @@ const NotifySettings = ({ count }) => {
 
   useEffect(() => {
     if (!mailSent && email && treshold && count >= treshold) {
+      setSent(true);
       axios
         .put(NOTIFICATION, { address: email, count: count })
-        .then(_ => setSent(true))
-        .catch((err) => console.log(err));
+        .catch((_) => setSent(false));
     }
   }, [mailSent, email, treshold, count]);
 
   return (
     <>
       <div className="inputForm">
-        <InputField label="e-mail" handler={(event) => setEmail(event.target.value)} disabled={mailSent} />
+        <InputField
+          label="e-mail"
+          handler={(event) => setEmail(event.target.value)}
+          disabled={mailSent}
+        />
         <Typography>{`Already got ${count} tweets`}</Typography>
       </div>
       <div className="inputForm">
@@ -33,8 +37,6 @@ const NotifySettings = ({ count }) => {
           valueLabelDisplay="auto"
           min={0}
           max={1000}
-          step={50}
-          marks
           disabled={mailSent}
         />
       </div>
