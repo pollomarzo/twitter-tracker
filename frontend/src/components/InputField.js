@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-const InputField = ({ label, fieldName, handler, text, helperText, hasError }) => {
+const InputField = ({ label, fieldName, handler, text, helperText, hasError, ...others}) => {
   const { textField } = useStyles();
   return (
     <TextField
@@ -41,6 +41,7 @@ const InputField = ({ label, fieldName, handler, text, helperText, hasError }) =
       InputProps={{
         startAdornment: text && <InputAdornment position="start">{text}</InputAdornment>,
       }}
+      {...others}
     />
   );
 };

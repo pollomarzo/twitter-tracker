@@ -4,7 +4,7 @@ const credentials = require('./.credentials');
 
 let streams = {};
 
-function exportJSON(data) {
+const exportJSON = data => {
   json = { data: [] };
   data.forEach((value) => {
     json.data.push(value);
@@ -31,7 +31,7 @@ function check(tweet, constraints) {
   for (const [key, value] of Object.entries(constraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
-    nesting.forEach(function (item) {
+    nesting.forEach(item => {
       try {
         tweetvalue = tweetvalue[item];
       } catch (e) {
@@ -64,6 +64,7 @@ const startStream = (constraints, parameters) => {
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
     streams[streamId].socket.emit('error', error);
+    console.log(error);
   }); //todo handler error
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {

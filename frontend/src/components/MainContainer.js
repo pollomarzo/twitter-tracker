@@ -7,6 +7,7 @@ import axios from 'axios';
 import Map from './Map';
 import CoordsForm from './CoordsForm';
 import TweetList from './TweetList';
+import NotifySettings from './NotifySettings';
 import { generateError } from './AlertWindow';
 import WordCloud from './WordCloud';
 import { fakeTweets } from '../misc/fakeTweets';
@@ -139,6 +140,7 @@ const MainContainer = () => {
       </header>
       <div className={classes.content}>
         <div className={classes.leftContent}>
+          <NotifySettings count={tweets.length} />
           <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
           <WordCloud list={tweets} />
         </div>

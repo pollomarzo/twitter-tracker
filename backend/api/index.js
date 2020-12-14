@@ -1,6 +1,7 @@
 const express = require('express');
-const router = express.Router();
 const twitter = require('./twitter');
+const SMTP = require('./email');
+const router = express.Router();
 
 const converter = (oldParams) => ({
   'user.id_str': oldParams.follow || 'ANY',
@@ -25,6 +26,12 @@ router.post('/geoFilter', (req, res) => {
   res.status(200).send(streamID);
 });
 
+router.delete('/geoFilter', (req, res) => {
+  const streamID = req.body.id; // should be body
+  twitter.closeStream(streamID);
+  res.status(200).end();
+});
+
 router.get('/getUserIDs', async (req, res) => {
   const { names } = req.query;
   try {
@@ -35,10 +42,24 @@ router.get('/getUserIDs', async (req, res) => {
   }
 });
 
-router.delete('/geoFilter', (req, res) => {
-  const streamID = req.body.id; // should be body
-  twitter.closeStream(streamID);
-  res.status(200).end();
+router.put('/notification', (req, res) => {
+  const { address, count } = req.body;
+  const toSend = {
+    from: '***REMOVED***',
+    to: address,
+    subject: '[Notification] Your selected treshold has been surpassed',
+    text: `Currently we got ${count} tweets that fullfill your paramaters`,
+  };
+  
+  SMTP.send(toSend)
+    .then((info) => {
+      res.statusCode = 200;
+      res.send(info);
+    })
+    .catch((err) => {
+      res.statusCode = 400;
+      res.send(err);
+    });
 });
 
 module.exports = router;

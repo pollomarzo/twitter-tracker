@@ -92,8 +92,8 @@ const Map = ({ tweetsList }) => {
                     {tweet.images.map((image) => (
                       <img
                         src={image.media_url}
-                        alt="Image"
-                        width="80%"
+                        alt="User's shared content"
+                        width="80"
                         style={{ display: 'block' }}
                       />
                     ))}
