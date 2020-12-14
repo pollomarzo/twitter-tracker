@@ -18,9 +18,10 @@ const normalizeList = (tweets) =>
     .map((tweet) => {
       const media = (tweet.extended_entities && tweet.extended_entities.media) || [];
       const normalized = {
+        id: tweet.id_str,
         text: tweet.text,
         user: tweet.user,
-        images: media.filter((media) => media.type === 'photo'),
+        images: media.filter((item) => item.type === 'photo'),
       };
 
       // Accurate coordinates (a point)
@@ -81,8 +82,8 @@ const Map = ({ tweetsList }) => {
         >
           <Popup>
             <List>
-              {tweets.map((tweet, index) => (
-                <ListItem key={index} alignItems="flex-start">
+              {tweets.map((tweet) => (
+                <ListItem key={tweet.id} alignItems="flex-start">
                   {/*TODO: LESS PADDINGGG*/}
                   <ListItemAvatar>
                     <Avatar alt={tweet.user.name} src={tweet.user.profile_image_url} />

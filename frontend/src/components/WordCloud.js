@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactWordcloud from 'react-wordcloud';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/material.css';
-import { Slider, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Slider, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -15,8 +15,8 @@ const useStyles = makeStyles(() => ({
   },
   sliderStyle: {
     width: '40vh',
-  }
-}))
+  },
+}));
 
 const WordCloud = ({ list }) => {
   const classes = useStyles();
@@ -24,7 +24,7 @@ const WordCloud = ({ list }) => {
   const [numWords, setNumWords] = useState(7);
   const handleSlider = (event, newValue) => {
     setNumWords(newValue);
-  }
+  };
 
   const collapse = (toCollapse) => {
     const collapsed = [];
@@ -49,7 +49,7 @@ const WordCloud = ({ list }) => {
       });
       return listOfWord;
     };
-    const wordData = getWordList(list);
+    const wordData = getWordList();
     const compressedData = collapse(wordData);
     setArrayOfWords(compressedData);
   }, [list]);
@@ -65,22 +65,22 @@ const WordCloud = ({ list }) => {
     rotations: 0,
     transitionDuration: 1000,
     tooltipOptions: {
-      theme: 'material'
-    }
+      theme: 'material',
+    },
   };
 
   const getWordTooltip = (word) => `${word.text} (${word.value})`;
 
   return (
     <div className={classes.container}>
-      <Typography>
-        How many words would you like to show?
-      </Typography>
+      <Typography>How many words would you like to show?</Typography>
       <Slider
         className={classes.sliderStyle}
         value={numWords}
         onChange={handleSlider}
-        max={Math.min(100, arrayOfWords.length)} min={1} />
+        max={Math.min(100, arrayOfWords.length)}
+        min={1}
+      />
       <div className={classes.wordCloud}>
         <ReactWordcloud
           callbacks={{ getWordTooltip }}
@@ -89,7 +89,7 @@ const WordCloud = ({ list }) => {
           words={arrayOfWords}
         />
       </div>
-    </div >
+    </div>
   );
 };
 

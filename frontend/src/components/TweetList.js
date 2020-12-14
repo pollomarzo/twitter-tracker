@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
   grid: {
     marginTop: 5,
     marginBottom: 5,
-    borderWidth: "2px",
+    borderWidth: '2px',
     display: 'flex',
     flexFlow: 'column nowrap',
     flex: '1 1 auto',
@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
   },
   listStyle: {
     overflowY: 'scroll',
-  }
+  },
 }));
 
 const Tweet = ({ user, text, id }) => {
@@ -55,7 +55,7 @@ const triggerUpload = (onChangeHandler) => {
 const TweetList = ({ list, setList }) => {
   const { grid, listStyle } = useStyles();
   const propagateError = useErrorHandler();
-  const images = useMemo(
+  const imgFiles = useMemo(
     () =>
       list.reduce((images, tweet) => {
         if (tweet.extended_entities && tweet.extended_entities.media) {
@@ -87,12 +87,12 @@ const TweetList = ({ list, setList }) => {
       (item) => item.id && item.user && item.text && (item.coordinates || item.place)
     );
     if (!isCompliant) {
-      throw (new Error());
+      throw new Error();
     }
   };
 
-  const importJSON = (event) => {
-    const uploadedFile = event.target.files[0];
+  const importJSON = (fileEvt) => {
+    const uploadedFile = fileEvt.target.files[0];
     if (uploadedFile && uploadedFile.type === 'application/json') {
       const reader = new FileReader();
       // Callback on successfull read
@@ -113,7 +113,7 @@ const TweetList = ({ list, setList }) => {
 
   const downloadImages = async () => {
     const zip = new JSZip();
-    for (const { file, url } of images) {
+    for (const { file, url } of imgFiles) {
       const response = await fetch(url);
       const blob = await response.blob();
       zip.file(file, blob);
@@ -140,7 +140,7 @@ const TweetList = ({ list, setList }) => {
         >
           {list.length === 0 ? 'Import tweet list' : 'Export tweet list'}
         </Button>
-        <Button onClick={downloadImages} disabled={images.length === 0}>
+        <Button onClick={downloadImages} disabled={imgFiles.length === 0}>
           Download Images
         </Button>
       </div>

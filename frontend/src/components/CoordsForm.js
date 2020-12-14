@@ -53,16 +53,16 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   const handleSubmit = () => {
     const values = Object.values(coords);
     // Start a not geolocalized
-    if (values.every(value => value === '')) {
+    if (values.every((value) => value === '')) {
       onStart({ coords: '', params });
     }
     // Start a geolocalized
-    else if (values.every(value => value && COORDINATE_RE.test(value)))
+    else if (values.every((value) => value && COORDINATE_RE.test(value)))
       onStart({ coords, params });
     else {
       const onReset = () =>
-        setCoordinates((coords) =>
-          Object.keys(coords).forEach((key) => (coords[key] = 0))
+        setCoordinates((prevCoords) =>
+          Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
         );
       propagateError(
         generateError(
