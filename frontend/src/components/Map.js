@@ -4,10 +4,9 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { List, ListItem, ListItemAvatar, Avatar, ListItemText } from '@material-ui/core';
 
 import 'leaflet/dist/leaflet.css';
-import markerImg from '../assets/twitter.svg';
+import markerImg from '../assets/twitter-marker.png';
 
 const defaultPosition = [44.494704, 11.342005];
-
 const THRESHOLD = 0.000001;
 
 const getPic = (tweet) =>
@@ -75,8 +74,10 @@ const Map = ({ tweetsList }) => {
             new leaflet.Icon({
               iconUrl: tweets.length > 1 ? markerImg : getPic(tweets[0]),
               popupAnchor: [0, -15],
-              iconSize: new leaflet.Point(30, 30),
-              className: 'leaflet-div-icon',
+              iconSize:
+                tweets.length > 1
+                  ? new leaflet.Point(22.8, 35.8)
+                  : new leaflet.Point(30, 30),
             })
           }
         >

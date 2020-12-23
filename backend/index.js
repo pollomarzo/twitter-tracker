@@ -11,10 +11,14 @@ const port = process.env.PORT || 4000;
 const api = require('./api');
 const registerNewSocket = require('./api/twitter');
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: '*' }));
+/** needs to accept:
+ * localhost:3000
+ * frontend MEDIATED by ngrok (right now http://de98d2531c38.eu.ngrok.io)
+ */
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(express.static(__dirname + '/public')); // static middleware
 
