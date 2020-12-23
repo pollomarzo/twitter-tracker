@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ReactWordcloud from 'react-wordcloud';
+import { Slider, Typography, makeStyles } from '@material-ui/core';
+import { WORDCLOUD_ID } from '../constants';
+
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/material.css';
-import { Slider, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -81,7 +83,7 @@ const WordCloud = ({ list }) => {
         max={Math.min(100, arrayOfWords.length)}
         min={1}
       />
-      <div className={classes.wordCloud}>
+      <div id={WORDCLOUD_ID} className={classes.wordCloud}>
         <ReactWordcloud
           callbacks={{ getWordTooltip }}
           options={options}

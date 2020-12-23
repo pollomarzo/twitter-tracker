@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { makeStyles, Button } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import io from 'socket.io-client';
 import { useErrorHandler } from 'react-error-boundary';
-import { makeStyles } from '@material-ui/core';
-import axios from 'axios';
 
 import Map from './Map';
 import CoordsForm from './CoordsForm';
@@ -11,8 +12,13 @@ import NotifySettings from './NotifySettings';
 import { generateError } from './AlertWindow';
 import WordCloud from './WordCloud';
 import { fakeTweets } from '../misc/fakeTweets';
+import { MAP_ID } from '../constants';
 
-import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
+import { useUser } from '../context/UserContext';
+
+import { BASE_URL, GEO_FILTER, GET_IDS, REQUEST_TOKEN, SEND_TWEET } from '../constants';
+// TODO: For testing purposes only, needs to be removed for production
+import ScheduleTweet from './ScheduleTweet';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -61,6 +67,8 @@ const MainContainer = () => {
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState(fakeTweets);
+  const [streamError, setStreamError] = useState();
+  const { authProps } = useUser();
 
   const getIDs = async (names) => {
     try {
@@ -133,6 +141,18 @@ const MainContainer = () => {
     }
   };
 
+  const handleAuthentication = async () => {
+    try {
+      const res = await axios.get(REQUEST_TOKEN);
+      console.log(res);
+      window.location.replace(
+        `https://api.twitter.com/oauth/authenticate?oauth_token=${res.data.token}`
+      );
+    } catch (err) {
+      console.error(err.response);
+    }
+  };
+
   return (
     <div className={classes.container}>
       <header className={classes.header}>
@@ -142,10 +162,17 @@ const MainContainer = () => {
         <div className={classes.leftContent}>
           <NotifySettings count={tweets.length} />
           <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
+          <ScheduleTweet handleAuth={handleAuthentication} />
+          {streamError && (
+            <Alert severity="error" variant="filled">
+              <AlertTitle>Error</AlertTitle>
+              {streamError.source}
+            </Alert>
+          )}
           <WordCloud list={tweets} />
         </div>
         <div className={classes.rightContent}>
-          <div className={classes.mapWrapper}>
+          <div id={MAP_ID} className={classes.mapWrapper}>
             <Map tweetsList={tweets} />
           </div>
           <div className={classes.listWrapper}>

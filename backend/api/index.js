@@ -50,7 +50,7 @@ router.put('/notification', (req, res) => {
     subject: '[Notification] Your selected treshold has been surpassed',
     text: `Currently we got ${count} tweets that fullfill your paramaters`,
   };
-  
+
   SMTP.send(toSend)
     .then((info) => {
       res.statusCode = 200;
@@ -60,6 +60,37 @@ router.put('/notification', (req, res) => {
       res.statusCode = 400;
       res.send(err);
     });
+});
+
+router.post('/sendTweet', async (req, res) => {
+  const { msg, authProps } = req.body;
+  // console.log('inside sendTweet', req.body);
+  try {
+    const response = await twitter.sendTweet(msg, authProps);
+    res.status(200).send(response);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err });
+  }
+});
+
+router.get('/requestToken', async (req, res) => {
+  try {
+    const response = await twitter.requestToken();
+    res.status(200).send(response);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get('/auth', async (req, res) => {
+  const { oauthToken, oauthVerifier } = req.query;
+  try {
+    const response = await twitter.requestAccess(oauthToken, oauthVerifier);
+    res.status(200).send(response);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
 });
 
 module.exports = router;
