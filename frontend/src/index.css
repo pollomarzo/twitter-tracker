@@ -73,6 +73,8 @@ a {
   display: flex;
   flex-direction: column;
   overflow: scroll;
+  border: solid 1px #1da0f296;
+  border-radius: 20px;
 }
 
 .infoArea, .graphArea, .graphRadar, .graphPie, .graphTable{
