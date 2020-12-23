@@ -75,7 +75,7 @@ a {
   overflow: scroll;
 }
 
-.infoArea, .graphArea, .graphRadar{
+.infoArea, .graphArea, .graphRadar, .graphPie, .graphTable{
   margin: 20px;
   background-color: #ffffff;
   border: solid 1px #1da0f296;
@@ -98,4 +98,10 @@ a {
 .infoNumber{
   font-size: 60px;
   color: #1da1f2;
+}
+
+.graphTable{
+  min-height: 300px;
+  min-width: 700px;
+  padding: 10px;
 }
