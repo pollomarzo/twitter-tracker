@@ -10,6 +10,7 @@ import TweetList from './TweetList';
 import NotifySettings from './NotifySettings';
 import { generateError } from './AlertWindow';
 import WordCloud from './WordCloud';
+import Graphs from './Graphs';
 import { fakeTweets } from '../misc/fakeTweets';
 
 import { BASE_URL, GEO_FILTER, GET_IDS } from '../constants';
@@ -60,7 +61,7 @@ const MainContainer = () => {
   const propagateError = useErrorHandler();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
-  const [tweets, setTweets] = useState(fakeTweets);
+  const [tweets, setTweets] = useState([]);
 
   const getIDs = async (names) => {
     try {
@@ -140,9 +141,10 @@ const MainContainer = () => {
       </header>
       <div className={classes.content}>
         <div className={classes.leftContent}>
-          <NotifySettings count={tweets.length} />
-          <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
-          <WordCloud list={tweets} />
+          <NotifySettings key="notifySettingsKey" count={tweets.length} />
+          <CoordsForm key="coordsFormKey" onStart={startStream} onStop={stopStream} open={!!streamId} />
+          {/*<WordCloud key="wordCloudKey" list={tweets} />*/}
+          <Graphs key="graphsKey" list={tweets} />
         </div>
         <div className={classes.rightContent}>
           <div className={classes.mapWrapper}>

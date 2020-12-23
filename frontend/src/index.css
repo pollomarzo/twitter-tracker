@@ -66,5 +66,36 @@ a {
   overflow: scroll;
 }
 
+.graphsContainer{
+  height: 350px;
+  width: 750px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}
 
+.infoArea, .graphArea, .graphRadar{
+  margin: 20px;
+  background-color: #ffffff;
+  border: solid 1px #1da0f296;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
+.infoArea{
+  padding: 10px;
+}
+
+.infoTitle{
+  font-size: 30px;
+  color: #1da1f2;
+}
+
+.infoNumber{
+  font-size: 60px;
+  color: #1da1f2;
+}
