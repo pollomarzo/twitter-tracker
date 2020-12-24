@@ -102,6 +102,16 @@ a {
   color: #1da1f2;
 }
 
+.cityAndRegion{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cityAndRegion *{
+  margin: 2px;
+}
+
 .graphTable{
   min-height: 300px;
   min-width: 700px;
