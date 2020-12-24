@@ -161,7 +161,19 @@ const Graphs = ({ list }) => {
         <PieChart width={700} height={300}>
           <Pie dataKey="count" isAnimationActive={false} data={geo} outerRadius={80} label >
             {
-              geo.map((entry, index) => <Cell name={entry.name} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
+              geo.map((entry, index) => <Cell name={entry.name + ": " + (geo[index].count / list.length)*100 + "%"} key={`cell-${index}`} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
+            }
+          </Pie>
+          <Tooltip />
+          <Legend verticalAlign="top" height={36} iconSize={30} iconType="circle" />
+        </PieChart>
+      </div>
+      <div className="graphPie" >
+        <h1 className="infoTitle">TWEETS RE-TWEETED</h1>
+        <PieChart width={700} height={300}>
+          <Pie dataKey="count" isAnimationActive={false} data={retweet} outerRadius={80} label >
+            {
+              retweet.map((entry, index) => <Cell name={entry.name + ": " + (retweet[index].count / list.length)*100 + "%"} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
             }
           </Pie>
           <Tooltip />
@@ -197,18 +209,6 @@ const Graphs = ({ list }) => {
             </AgGridReact>
           </div>
         </div>
-      <div className="graphPie" >
-        <h1 className="infoTitle">TWEETS RE-TWEETED</h1>
-        <PieChart width={700} height={300}>
-          <Pie dataKey="count" isAnimationActive={false} data={retweet} outerRadius={80} label >
-            {
-              retweet.map((entry, index) => <Cell name={entry.name} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
-            }
-          </Pie>
-          <Tooltip />
-          <Legend verticalAlign="top" height={36} iconSize={30} iconType="circle" />
-        </PieChart>
-      </div>
     </div>
     
   );
