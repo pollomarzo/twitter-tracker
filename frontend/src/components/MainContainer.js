@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { makeStyles, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import io from 'socket.io-client';
 import { useErrorHandler } from 'react-error-boundary';
@@ -11,6 +11,7 @@ import TweetList from './TweetList';
 import NotifySettings from './NotifySettings';
 import { generateError } from './AlertWindow';
 import WordCloud from './WordCloud';
+import StartStopStream from './StartStopStream';
 import { fakeTweets } from '../misc/fakeTweets';
 import { MAP_ID } from '../constants';
 
@@ -66,7 +67,7 @@ const MainContainer = () => {
   const propagateError = useErrorHandler();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
-  const [tweets, setTweets] = useState(fakeTweets);
+  const [tweets, setTweets] = useState([]);
   const [streamError, setStreamError] = useState();
   const { authProps } = useUser();
 
@@ -161,6 +162,7 @@ const MainContainer = () => {
       <div className={classes.content}>
         <div className={classes.leftContent}>
           <NotifySettings count={tweets.length} />
+          <StartStopStream stopStream={()=>setStreamId(null)} streamId={streamId}/>
           <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
           <ScheduleTweet handleAuth={handleAuthentication} />
           {streamError && (
