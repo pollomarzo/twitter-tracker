@@ -20,15 +20,23 @@ import { MAP_ID, WORDCLOUD_ID } from '../constants';
 
 import html2canvas from 'html2canvas';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   status: { float: 'right', fontWeight: 'normal' },
   statusText: {},
-  stopped: { backgroundColor: '#cccccc', borderRadius: '2px' },
-  running: { backgroundColor: '#86e038', borderRadius: '5px' },
+  stopped: {
+    backgroundColor: '#cccccc',
+    borderRadius: '5px',
+    padding: `${theme.spacing(0.5)}px ${theme.spacing(1)}px`,
+  },
+  running: {
+    backgroundColor: '#86e038',
+    borderRadius: '5px',
+    padding: `${theme.spacing(0.5)}px ${theme.spacing(1)}px`,
+  },
   leftButton: {
     flexGrow: '1 0 0',
   },
-});
+}));
 const NUMBER_RE = /^[0-9|\.]+$/;
 const CONFIRM_RE = /^[0-9]+(\.[0-9]+)?$/;
 const H_TO_MS = (hours) => Math.floor(hours * 60 * 60 * 1000);
