@@ -3,6 +3,7 @@ import { useErrorHandler } from 'react-error-boundary';
 import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import { Typography, Button, makeStyles } from '@material-ui/core';
 import JSZip from 'jszip';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import { generateError } from './AlertWindow';
 
@@ -142,6 +143,9 @@ const TweetList = ({ list, setList }) => {
         </Button>
         <Button onClick={downloadImages} disabled={imgFiles.length === 0}>
           Download Images
+        </Button>
+        <Button onClick={() => setList([])} disabled={list.length === 0}>
+          <DeleteIcon />
         </Button>
       </div>
       <div className={listStyle}>
