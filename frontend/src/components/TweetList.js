@@ -3,7 +3,11 @@ import { useErrorHandler } from 'react-error-boundary';
 import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import { Typography, Button, makeStyles } from '@material-ui/core';
 import JSZip from 'jszip';
+import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import PublishIcon from '@material-ui/icons/Publish';
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 
 import { generateError } from './AlertWindow';
 
@@ -20,6 +24,12 @@ const useStyles = makeStyles(() => ({
   },
   listStyle: {
     overflowY: 'scroll',
+  },
+  listHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
 }));
 
@@ -54,7 +64,7 @@ const triggerUpload = (onChangeHandler) => {
 };
 
 const TweetList = ({ list, setList }) => {
-  const { grid, listStyle } = useStyles();
+  const classes = useStyles();
   const propagateError = useErrorHandler();
   const imgFiles = useMemo(
     () =>
@@ -101,7 +111,7 @@ const TweetList = ({ list, setList }) => {
         try {
           const dump = JSON.parse(event.target.result);
           validateJSON(dump);
-          setList(dump);
+          setList((old) => [...old, ...dump]);
         } catch (err) {
           propagateError(
             generateError("The given file doesn't match the format requested")
@@ -131,24 +141,35 @@ const TweetList = ({ list, setList }) => {
   };
 
   return (
-    <div className={grid}>
-      <div className="buttonTweetList">
-        <Typography variant="inherit" style={{ display: 'inline-block' }}>
+    <div className={classes.grid}>
+      <div className={classes.listHeader}>
+        <Typography variant="h6" style={{ display: 'inline-block' }}>
           Tweets List
         </Typography>
-        <Button
-          onClick={list.length === 0 ? () => triggerUpload(importJSON) : exportJSON}
-        >
-          {list.length === 0 ? 'Import tweet list' : 'Export tweet list'}
-        </Button>
-        <Button onClick={downloadImages} disabled={imgFiles.length === 0}>
-          Download Images
-        </Button>
-        <Button onClick={() => setList([])} disabled={list.length === 0}>
-          <DeleteIcon />
-        </Button>
+        <span className={classes.buttons}>
+          <Tooltip title="Import tweet list">
+            <Button onClick={() => triggerUpload(importJSON)}>
+              <PublishIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Export tweets">
+            <Button onClick={exportJSON} disabled={list.length === 0}>
+              <GetAppIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Download Images">
+            <Button onClick={downloadImages} disabled={imgFiles.length === 0}>
+              <PhotoLibraryIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Clear list">
+            <Button onClick={() => setList([])} disabled={list.length === 0}>
+              <DeleteIcon />
+            </Button>
+          </Tooltip>
+        </span>
       </div>
-      <div className={listStyle}>
+      <div className={classes.listStyle}>
         <List>
           {list.map((tweet) => (
             <Tweet key={tweet.id} {...tweet} />
