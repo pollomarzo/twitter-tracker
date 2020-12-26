@@ -88,7 +88,7 @@ const Graphs = ({ list }) => {
       }
     }
     return Object.keys(result).map(function (p) {
-      if (p == 'Not geolocated') return { name: p, count: result[p] };
+      if (p == 'Not geolocated') return { name: p, country: 'Not geolocated',  count: result[p] };
       else if (p.length == 2) return { name: getName(p), count: result[p] };
       else {
         var tmp = p.split('-')[0] == 'undefined' ? 'Unknown' : p.split('-')[0];
@@ -176,7 +176,7 @@ const Graphs = ({ list }) => {
         <PieChart width={700} height={300}>
           <Pie dataKey="count" isAnimationActive={false} data={geo} outerRadius={80} label >
             {
-              geo.map((entry, index) => <Cell name={entry.name + ": " + (geo[index].count / list.length)*100 + "%"} key={`cell-${index}`} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
+              geo.map((entry, index) => <Cell name={entry.name + ": " + ((geo[index].count / list.length)*100).toFixed(0)  + "%"} key={`cell-${index}`} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
             }
           </Pie>
           <Tooltip />
@@ -188,7 +188,7 @@ const Graphs = ({ list }) => {
         <PieChart width={700} height={300}>
           <Pie dataKey="count" isAnimationActive={false} data={retweet} outerRadius={80} label >
             {
-              retweet.map((entry, index) => <Cell name={entry.name + ": " + (retweet[index].count / list.length)*100 + "%"} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
+              retweet.map((entry, index) => <Cell name={entry.name + ": " + ((retweet[index].count / list.length)*100).toFixed(0) + "%"} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
             }
           </Pie>
           <Tooltip />
