@@ -65,14 +65,14 @@ const startStream = (constraints, parameters) => {
   streams[streamId] = { stream, data: [] };
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
-    streams[streamId].socket.emit('error', error);
+    // streams[streamId].socket.emit('error', error);
     console.log(error);
   }); //todo handler error
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {
-      console.log(tweet.text);
+      // console.log(tweet.text);
       streams[streamId].data.push(tweet);
-      streams[streamId].socket.emit('tweet', tweet);
+      // streams[streamId].socket.emit('tweet', tweet);
     }
   });
   return streamId;
@@ -80,14 +80,14 @@ const startStream = (constraints, parameters) => {
 
 const closeStream = (streamId) => {
   const { stream, data } = streams[streamId];
-  console.log('closeStream data:', data);
+  // console.log('closeStream data:', data);
   stream.destroy();
   delete streams[streamId];
   const dataJson = exportJSON(data);
   return { dataJson };
 };
 
-const register = (socket, streamId) => {
+const registerNewSocket = (socket, streamId) => {
   streams[streamId].socket = socket;
 };
 
@@ -193,11 +193,18 @@ const sendTweet = async (msg, authProps) => {
   return tweet;
 };
 
-register.requestToken = requestToken;
-register.requestAccess = requestAccess;
-register.startStream = startStream;
-register.closeStream = closeStream;
-register.getIDs = getIDs;
-register.sendTweet = sendTweet;
+const attachSocket = (socket, streamId) => {};
 
-module.exports = register;
+const detachSocket = (socket) => {};
+
+module.exports = {
+  registerNewSocket,
+  requestToken,
+  requestAccess,
+  startStream,
+  closeStream,
+  getIDs,
+  sendTweet,
+  attachSocket,
+  detachSocket,
+};

@@ -62,6 +62,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const socket = io(BASE_URL, {
+  transports: ['websocket'],
+  path: '/socket', // needed for cors in dev
+});
+
 const MainContainer = () => {
   const classes = useStyles();
   const propagateError = useErrorHandler();
@@ -110,21 +115,25 @@ const MainContainer = () => {
     }
 
     try {
-      const res = await axios.post(GEO_FILTER, {
-        streamParameters,
-        constraints,
-      });
+      const res = await axios.post(
+        GEO_FILTER,
+        {
+          streamParameters,
+          constraints,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(('axios', res));
       setStreamId(res.data);
-      const socket = io(BASE_URL, {
-        transports: ['websocket'],
-        path: '/socket', // needed for cors in dev
-      });
-      socket.emit('register', res.data);
-      socket.on('tweet', (tweet) => {
-        console.log(tweet);
-        setTweets((prevTweets) => [...prevTweets, tweet]);
-      });
-      socket.on('error', (error) => console.log(error));
+
+      // socket.emit('register', res.data);
+      // socket.on('tweet', (tweet) => {
+      //   console.log(tweet);
+      //   setTweets((prevTweets) => [...prevTweets, tweet]);
+      // });
+      // socket.on('error', (error) => console.log(error));
     } catch (err) {
       propagateError(generateError("Couldn't start stream on server, please retry!"));
     }
@@ -135,6 +144,7 @@ const MainContainer = () => {
       await axios.delete(GEO_FILTER, {
         data: { id: streamId },
         headers: { Authorization: '***' },
+        withCredentials: true,
       });
       setStreamId(null);
     } catch (err) {
@@ -162,7 +172,7 @@ const MainContainer = () => {
       <div className={classes.content}>
         <div className={classes.leftContent}>
           <NotifySettings count={tweets.length} />
-          <StartStopStream stopStream={()=>setStreamId(null)} streamId={streamId}/>
+          <StartStopStream stopStream={() => setStreamId(null)} streamId={streamId} />
           <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
           <ScheduleTweet handleAuth={handleAuthentication} />
           {streamError && (

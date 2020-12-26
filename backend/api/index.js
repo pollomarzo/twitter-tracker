@@ -23,6 +23,7 @@ router.post('/geoFilter', (req, res) => {
   // alternatively, leave it as is and leave everyone baffled. TODO!
   const streamID = twitter.startStream(converter(constraints), streamParameters);
   res.setHeader('Content-Type', 'text/plain');
+  res.cookie('streamId', streamID, { maxAge: 259200000 });
   res.status(200).send(streamID);
 });
 
