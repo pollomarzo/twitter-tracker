@@ -13,6 +13,8 @@ import { generateError } from './AlertWindow';
 import WordCloud from './WordCloud';
 import { fakeTweets } from '../misc/fakeTweets';
 import { MAP_ID } from '../constants';
+import Filters from './Filters';
+
 
 import { useUser } from '../context/UserContext';
 
@@ -66,7 +68,7 @@ const MainContainer = () => {
   const propagateError = useErrorHandler();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
-  const [tweets, setTweets] = useState(fakeTweets);
+  const [tweets, setTweets] = useState([]);
   const [streamError, setStreamError] = useState();
   const { authProps } = useUser();
 
@@ -177,6 +179,9 @@ const MainContainer = () => {
           </div>
           <div className={classes.listWrapper}>
             <TweetList list={tweets} setList={setTweets} />
+          </div>
+          <div className={classes.listWrapper}>
+            <Filters list={tweets} setList={setTweets} />
           </div>
         </div>
       </div>
