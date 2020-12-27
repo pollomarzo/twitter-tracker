@@ -1,14 +1,41 @@
 import React, { useMemo } from 'react';
 import leaflet from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { List, ListItem, ListItemAvatar, Avatar, ListItemText } from '@material-ui/core';
+import {
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  makeStyles,
+} from '@material-ui/core';
 
 import 'leaflet/dist/leaflet.css';
-import markerImg from '../assets/twitter.svg';
+import markerImg from '../assets/twitter-marker.png';
 
 const defaultPosition = [44.494704, 11.342005];
-
 const THRESHOLD = 0.000001;
+
+const useStyles = makeStyles(() => ({
+  list: {
+    maxHeight: '300px',
+    overflow: 'auto',
+    '& .MuiListItem-gutters': {
+      padding: '0 10px',
+    },
+  },
+  popup: {
+    '& .leaflet-popup-content': {
+      margin: '0',
+      padding: '0',
+    },
+  },
+  listSecondary: {
+    '& p': {
+      margin: '0',
+    },
+  },
+}));
 
 const getPic = (tweet) =>
   tweet.images.length === 0 ? tweet.user.profile_image_url : tweet.images[0].media_url;
@@ -65,6 +92,7 @@ const normalizeList = (tweets) =>
     }, {});
 
 const Map = ({ tweetsList }) => {
+  const classes = useStyles();
   const markers = useMemo(
     () =>
       Object.entries(normalizeList(tweetsList)).map(([coords, tweets], index) => (
@@ -75,20 +103,26 @@ const Map = ({ tweetsList }) => {
             new leaflet.Icon({
               iconUrl: tweets.length > 1 ? markerImg : getPic(tweets[0]),
               popupAnchor: [0, -15],
-              iconSize: new leaflet.Point(30, 30),
-              className: 'leaflet-div-icon',
+              iconSize:
+                tweets.length > 1
+                  ? new leaflet.Point(22.8, 35.8)
+                  : new leaflet.Point(30, 30),
             })
           }
         >
-          <Popup>
-            <List>
+          <Popup className={classes.popup}>
+            <List className={classes.list}>
               {tweets.map((tweet) => (
                 <ListItem key={tweet.id} alignItems="flex-start">
                   {/*TODO: LESS PADDINGGG*/}
                   <ListItemAvatar>
                     <Avatar alt={tweet.user.name} src={tweet.user.profile_image_url} />
                   </ListItemAvatar>
-                  <ListItemText primary={tweet.user.name} secondary={tweet.text} />
+                  <ListItemText
+                    className={classes.listSecondary}
+                    primary={tweet.user.name}
+                    secondary={tweet.text}
+                  />
                   <div>
                     {tweet.images.map((image) => (
                       <img
@@ -105,7 +139,7 @@ const Map = ({ tweetsList }) => {
           </Popup>
         </Marker>
       )),
-    [tweetsList]
+    [tweetsList, classes]
   );
 
   return (

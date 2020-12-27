@@ -1,17 +1,19 @@
 const { nanoid } = require('nanoid');
 const Twitter = require('twitter-lite');
-const credentials = require('./.credentials');
+const credentials = require('./.credentials.json');
+const fs = require('fs');
+const path = require('path');
 
 let streams = {};
 
-const exportJSON = data => {
+const exportJSON = (data) => {
   json = { data: [] };
   data.forEach((value) => {
     json.data.push(value);
   });
   var json = JSON.stringify(json.data);
   return json;
-}
+};
 
 const client = new Twitter({
   subdomain: 'api',
@@ -31,7 +33,7 @@ function check(tweet, constraints) {
   for (const [key, value] of Object.entries(constraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
-    nesting.forEach(item => {
+    nesting.forEach((item) => {
       try {
         tweetvalue = tweetvalue[item];
       } catch (e) {
@@ -99,8 +101,103 @@ const getIDs = async (usernames) => {
   return users.map((user) => user.id_str);
 };
 
+// FIRST ONE: aks for token
+const requestToken = async () => {
+  const client = new Twitter({
+    consumer_key: credentials.consumer_key, // from Twitter.
+    consumer_secret: credentials.consumer_secret, // from Twitter.
+  });
+
+  const res = await client.getRequestToken('http://12975e6bcaa8.eu.ngrok.io/auth');
+  return { token: res.oauth_token, secret: res.oauth_token_secret };
+};
+
+const requestAccess = async (oauthToken, oauthVerifier) => {
+  const client = new Twitter({
+    consumer_key: credentials.consumer_key,
+    consumer_secret: credentials.consumer_secret,
+  });
+
+  const res = await client.getAccessToken({
+    oauth_verifier: oauthVerifier,
+    oauth_token: oauthToken,
+  });
+
+  return {
+    accessToken: res.oauth_token,
+    accessTokenSecret: res.oauth_token_secret,
+    userId: res.user_id,
+    screenName: res.screen_name,
+  };
+};
+
+/**
+ * authProps = {
+    accessToken: res.oauth_token,
+    accessTokenSecret: res.oauth_token_secret,
+    userId: res.user_id,
+    screenName: res.screen_name,
+  }
+
+  msg = {
+    text : String
+    media = [String]
+    data:[<mediatype>][;base64],<data>
+  }
+ */
+const sendTweet = async (msg, authProps) => {
+  const client = new Twitter({
+    consumer_key: credentials.consumer_key,
+    consumer_secret: credentials.consumer_secret,
+    access_token_key: authProps.accessToken,
+    access_token_secret: authProps.accessTokenSecret,
+  });
+
+  const uploadClient = new Twitter({
+    subdomain: 'upload',
+    consumer_key: credentials.consumer_key,
+    consumer_secret: credentials.consumer_secret,
+    access_token_key: authProps.accessToken,
+    access_token_secret: authProps.accessTokenSecret,
+  });
+
+  // var media_ids_list = []
+  // msg.forEach(el => {
+  //   const TEST_IMAGE = fs.readFileSync(path.join(__dirname, 'test.jpg'));
+  //   const base64Image = new Buffer.from(TEST_IMAGE).toString('base64');
+
+  //   const mediaUploadResponse = await uploadClient.post('media/upload', {
+  //     media_data: base64Image,
+  //   });
+
+  //   media_ids_list.push(mediaUploadResponse.media_id_string)
+  // })
+
+  // const TEST_IMAGE = fs.readFileSync(path.join(__dirname, 'test.jpg'));
+  // const base64Image = new Buffer.from(TEST_IMAGE).toString('base64');
+
+  const mediaUploadResponses = await Promise.all(
+    msg.media.map((media) =>
+      uploadClient.post('media/upload', {
+        media_data: media,
+      })
+    )
+  );
+
+  const tweet = await client.post('statuses/update', {
+    status: msg.text,
+    auto_populate_reply_metadata: true,
+    media_ids: mediaUploadResponses.map((res) => res.media_id_string).join(','),
+  });
+
+  return tweet;
+};
+
+register.requestToken = requestToken;
+register.requestAccess = requestAccess;
 register.startStream = startStream;
 register.closeStream = closeStream;
 register.getIDs = getIDs;
+register.sendTweet = sendTweet;
 
 module.exports = register;

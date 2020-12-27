@@ -68,7 +68,7 @@ a {
 
 .graphsContainer{
   height: 350px;
-  width: 750px;
+  width: 100%;
   margin: 10px;
   display: flex;
   flex-direction: column;
