@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { makeStyles, Button } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -69,8 +69,13 @@ const MainContainer = () => {
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
+  const [tweetsFiltered, setTweetsFiltered] = useState(tweets);
   const [streamError, setStreamError] = useState();
   const { authProps } = useUser();
+
+  useEffect(() => {
+    setTweetsFiltered(tweets)
+  }, [tweets])
 
   const getIDs = async (names) => {
     try {
@@ -171,17 +176,17 @@ const MainContainer = () => {
               {streamError.source}
             </Alert>
           )}
-          <WordCloud list={tweets} />
+          <WordCloud list={tweetsFiltered} />
         </div>
         <div className={classes.rightContent}>
           <div id={MAP_ID} className={classes.mapWrapper}>
-            <Map tweetsList={tweets} />
+            <Map tweetsList={tweetsFiltered} />
           </div>
           <div className={classes.listWrapper}>
-            <TweetList list={tweets} setList={setTweets} />
+            <TweetList list={tweetsFiltered} setList={setTweets} />
           </div>
           <div className={classes.listWrapper}>
-            <Filters list={tweets} setList={setTweets} />
+            <Filters list={tweets} setList={setTweetsFiltered} />
           </div>
         </div>
       </div>
