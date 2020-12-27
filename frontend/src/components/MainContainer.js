@@ -46,12 +46,12 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexFlow: 'column nowrap',
     justifyContent: 'space-between',
-    flex: '0 0 auto',
+    maxWidth: '50vw',
   },
   rightContent: {
     display: 'flex',
     flexFlow: 'column nowrap',
-    flex: '1 1 auto',
+    flex: '1 0 auto',
     overflow: 'hidden',
   },
   mapWrapper: {
