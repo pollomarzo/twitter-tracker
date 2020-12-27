@@ -1,38 +1,61 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import { makeStyles, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, Input, MenuItem, FormControl, Select} from '@material-ui/core';
+import { getName } from 'country-list';
+
 
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
+    justifyContent: "center",
+    alignItems: "center"
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
+    marginBottom: theme.spacing(3),
+    marginTop: theme.spacing(3),
+    height: 50,
+    width: 120,
+    multilineColor:{
+      color:'white',
+    },
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "white"
+    },
   },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
+  submitButton: {
+    margin: 10,
+    width: 100,
+    fontWeight: 800,
+    color: 'white',
+    backgroundColor: '#1DA1F2',
+    '&:hover': {
+      backgroundColor: 'lightblue',
+      color: '#1DA1F2',
+    },
   },
+  title: {
+    alignSelf: "center",
+    color: 'white',
+  },
+  button: {
+    color: 'white',
+  },
+  multilineColor:{
+    color:'white'
+  }
 }));
 
 const Filters = ({list, setList}) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState("");
+  const [minDate, setMinDate] = useState("");
+  const [maxDate, setMaxDate] = useState("");
+  const [minTime, setMinTime] = useState("");
+  const [maxTime, setMaxTime] = useState("");
   const [geolocation, setGeolocaton] = useState('');
+  const [country, setCountry] = useState('');
+  const [countryList, setCountryList] = useState([]);
   const [city, setCity] = useState('');
   const [citiesList, setCitiesList] = useState([]);
 
@@ -44,74 +67,215 @@ const Filters = ({list, setList}) => {
     setOpen(false);
   };
 
-  const monthConvert = (numb) => {
-    const text = ["empty", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    if (numb.startsWith("0")) numb = numb.split("0")[1]
-    return text[parseInt(numb)]
+  const monthConvert = (month) => {
+    const text = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    var numb = (text.indexOf(month) + 1).toString()
+    if (numb.length === 1) numb = "0" + numb
+    return numb
   }
 
   const handleFilter = () => {
     var tmp = list
-    //list.forEach(element => console.log(element.created_at.substring(8, 10), element.created_at.substring(4, 7), element.created_at.substring(26, 30) ))
-    if (date !== "") tmp = list.filter(element => (element.created_at.substring(8, 10) === date.split("-")[2] && element.created_at.substring(4, 7) === monthConvert(date.split("-")[1]) && element.created_at.substring(26, 30) === date.split("-")[0]))
-    if (geolocation === "Yes") tmp = list.filter(element => (element.coordinates && element.coordinates.type === 'Point') ||(element.place && element.place.bounding_box))
-    else if (geolocation === "No") {
-      var noGeolocation = list.filter(element => (element.coordinates && element.coordinates.type === 'Point') ||(element.place && element.place.bounding_box))
-      tmp = list.filter(element => !noGeolocation.includes(element))
+    var tmpList = []
+    if (minDate !== "") {
+      tmpList = []
+      tmp.forEach(element => {
+        var year = element.created_at.substring(26, 30)
+        var month = monthConvert(element.created_at.substring(4, 7))
+        var day = element.created_at.substring(8, 10)
+        if (year > minDate.split("-")[0]) tmpList.push(element)
+        else if (year === minDate.split("-")[0]) {
+          if (month > minDate.split("-")[1]) tmpList.push(element)
+          else if (month === minDate.split("-")[1]) {
+            if (day >= minDate.split("-")[2]) tmpList.push(element)
+          }
+        }
+      })
+      tmp = tmpList
     }
-    if (city !== "") tmp = tmp.filter(element => (element.place.full_name).split(",")[0] === city)
+    if (maxDate !== "") {
+      tmpList = []
+      tmp.forEach(element => {
+        var year = element.created_at.substring(26, 30)
+        var month = monthConvert(element.created_at.substring(4, 7))
+        var day = element.created_at.substring(8, 10)
+        if (year < maxDate.split("-")[0]) tmpList.push(element)
+        else if (year === maxDate.split("-")[0]) {
+          if (month < maxDate.split("-")[1]) tmpList.push(element)
+          else if (month === maxDate.split("-")[1]) {
+            if (day <= maxDate.split("-")[2]) tmpList.push(element)
+          }
+        }
+      })
+      tmp = tmpList
+    }
+    if (minTime !== "") {
+      tmpList = []
+      tmp.forEach(element => {
+        var hourTweet = element.created_at.substring(11, 13)
+        var minuteTweet = element.created_at.substring(14, 16)
+        if (hourTweet > minTime.split(":")[0]) tmpList.push(element)
+        else if (hourTweet === minTime.split(":")[0]) {
+          if (minuteTweet >= minTime.split(":")[1]) tmpList.push(element)
+        }
+      })
+      tmp = tmpList
+    }
+    if (maxTime !== "") {
+      tmpList = []
+      tmp.forEach(element => {
+        var hourTweet = element.created_at.substring(11, 13)
+        var minuteTweet = element.created_at.substring(14, 16)
+        if (hourTweet < maxTime.split(":")[0]) tmpList.push(element)
+        else if (hourTweet === maxTime.split(":")[0]) {
+          if (minuteTweet <= maxTime.split(":")[1]) tmpList.push(element)
+        }
+      })
+      tmp = tmpList
+    }
+    if (geolocation === "Yes") tmp = tmp.filter(element => (element.coordinates && element.coordinates.type === 'Point') ||(element.place && element.place.bounding_box))
+    else if (geolocation === "No") {
+      var noGeolocation = tmp.filter(element => (element.coordinates && element.coordinates.type === 'Point') ||(element.place && element.place.bounding_box))
+      tmp = tmp.filter(element => !noGeolocation.includes(element))
+    }
+    if (city !== "") {
+      tmp = tmp.filter(element => (element.coordinates && element.coordinates.type === 'Point') ||(element.place && element.place.bounding_box))
+      if (city === "Unknown") tmp = tmp.filter(element => element.place.name === "")
+      else tmp = tmp.filter(element => element.place.name === city)
+    }
+    if (country !== "") {
+      tmp = tmp.filter(element => (element.coordinates && element.coordinates.type === 'Point') ||(element.place && element.place.bounding_box))
+      if (country === "Unknown") tmp = tmp.filter(element => element.place.country_code === "")
+      else tmp = tmp.filter(element => getName(element.place.country_code) === country)
+    }
     setList(tmp)
     setOpen(false);
   }
 
   useEffect(() => {
+    var tmp = []
     var citiesListArray = []
-    list.forEach(element => { citiesListArray.push((element.place.full_name).split(",")[0]) });
-    setCitiesList(citiesListArray.filter(function(item, pos) {return citiesListArray.indexOf(item) === pos;}))
-  }, [list])
+    list.forEach(element => { 
+      if (element.place !== null) {
+        if (element.place.name === "" ) citiesListArray.push("Unknown")
+        else citiesListArray.push((element.place.name))
+      }
+    });
+    tmp = (citiesListArray.filter(function(item, pos) {return citiesListArray.indexOf(item) === pos}))
+    setCitiesList(tmp.sort())
+    var countriesListArray = []
+    list.forEach(element => {
+      if (element.place !== null) {
+        if (element.place.country_code === "" ) countriesListArray.push("Unknown")
+        else countriesListArray.push(getName(element.place.country_code))
+      }
+    });
+    tmp = (countriesListArray.filter(function(item, pos) {return countriesListArray.indexOf(item) === pos}))
+    setCountryList(tmp.sort())
+  }, [list])  
 
   return (
     <div>
-      <Button onClick={handleClickOpen}>Open select dialog</Button>
-      <Dialog disableBackdropClick disableEscapeKeyDown open={open} onClose={handleClose}>
-        <DialogTitle>Fill the form</DialogTitle>
+      <Button className={classes.submitButton} onClick={handleClickOpen}>FILTERS</Button>
+      <Dialog disableBackdropClick disableEscapeKeyDown open={open} onClose={handleClose}  PaperProps={{style: {backgroundColor: '#1DA1F2'}}} maxWidth="xl">
+        <DialogTitle className={classes.title}>FILTERS</DialogTitle>
         <DialogContent>
           <form className={classes.container}>
-            <FormControl key={"dataKey"} className={classes.formControl}>
-              <TextField
-                  id="date"
-                  label="Date"
-                  type="date"
-                  className={classes.textField}
-                  value={date}
-                  onChange={event => setDate(event.target.value)}
+            <div className="timeFilter">
+              <FormControl key={"minDataKey"} className={classes.formControl}>
+                <TextField
+                    id="date"
+                    type="date"
+                    label="Min date"
+                    value={minDate}
+                    className={classes.button}
+                    onChange={event => setMinDate(event.target.value)}
+                    InputProps={{className: classes.multilineColor}}
+                    InputLabelProps={{
+                      shrink: true,
+                      style: { color: 'white'},
+                    }}
+                  />
+              </FormControl>
+              <FormControl key={"maxDataKey"} className={classes.formControl}>
+                <TextField
+                    id="date"
+                    type="date"
+                    label="Max date"
+                    value={maxDate}
+                    className={classes.button}
+                    onChange={event => setMaxDate(event.target.value)}
+                    InputProps={{className: classes.multilineColor}}
+                    InputLabelProps={{
+                      shrink: true,
+                      style: { color: 'white'},
+                    }}
+                  />
+              </FormControl>
+            </div>
+            <div className="timeFilter">
+              <FormControl key={"minTimeKey"} className={classes.formControl}>
+                <TextField
+                  id="minTime"
+                  label="Min time"
+                  type="time"
+                  value={minTime}
+                  className={classes.button}
+                  onChange={event => setMinTime(event.target.value)}
+                  InputProps={{className: classes.multilineColor}}
                   InputLabelProps={{
                     shrink: true,
+                    style: { color: 'white'},
                   }}
                 />
-            </FormControl>
+              </FormControl>
+              <FormControl key={"maxTimeKey"} className={classes.formControl}>
+                <TextField
+                    id="maxTime"
+                    label="Max time"
+                    type="time"
+                    value={maxTime}
+                    className={classes.button}
+                    onChange={event => setMaxTime(event.target.value)}
+                    InputProps={{className: classes.multilineColor}}
+                    InputLabelProps={{
+                      shrink: true,
+                      style: { color: 'white'},
+                    }}
+                  />
+              </FormControl>
+            </div>
             <FormControl key={"geoKey"} className={classes.formControl}>
-              <InputLabel id="geolocationLabel">Geolocation</InputLabel>
-              <Select labelId="geolocationLabel" value={geolocation} onChange={(event) => setGeolocaton(event.target.value)} input={<Input />} >
-                <MenuItem value=""> <em>None</em> </MenuItem>
+              <InputLabel id="geolocationLabel" className={classes.button} >Geolocation</InputLabel>
+              <Select labelId="geolocationLabel" value={geolocation} onChange={(event) => setGeolocaton(event.target.value)} inputProps={{className: classes.multilineColor}}  input={<Input />} >
+                <MenuItem value="">-----</MenuItem>
                 <MenuItem value="Yes">Yes</MenuItem>
                 <MenuItem value="No">No</MenuItem>
               </Select>
             </FormControl>
+
+            <FormControl key={"countryKey"} className={classes.formControl}>
+              <InputLabel id="countryLabel" className={classes.button}>Country</InputLabel>
+              <Select labelId="countryLabel" value={country} onChange={(event) => setCountry(event.target.value)} inputProps={{className: classes.multilineColor}} input={<Input />}>
+                <MenuItem value="">-----</MenuItem>
+                {countryList.map(element => { return <MenuItem value={element}>{element}</MenuItem>})}
+              </Select>
+            </FormControl>
+
             <FormControl key={"cityKey"} className={classes.formControl}>
-              <InputLabel id="cityLabel">City</InputLabel>
-              <Select labelId="cityLabel" value={city} onChange={(event) => setCity(event.target.value)} input={<Input />}>
-                <MenuItem value=""> <em>None</em> </MenuItem>
+              <InputLabel id="cityLabel" className={classes.button}>City</InputLabel>
+              <Select labelId="cityLabel" value={city} onChange={(event) => setCity(event.target.value)} inputProps={{className: classes.multilineColor}} input={<Input />}>
+                <MenuItem value="">-----</MenuItem>
                 {citiesList.map(element => { return <MenuItem value={element}>{element}</MenuItem>})}
               </Select>
             </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} className={classes.button}>
             Cancel
           </Button>
-          <Button onClick={handleFilter} color="primary">
+          <Button onClick={handleFilter} className={classes.button}>
             Ok
           </Button>
         </DialogActions>

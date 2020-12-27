@@ -176,6 +176,7 @@ const MainContainer = () => {
               {streamError.source}
             </Alert>
           )}
+          <Filters list={tweets} setList={setTweetsFiltered} />
           <WordCloud list={tweetsFiltered} />
         </div>
         <div className={classes.rightContent}>
@@ -184,9 +185,6 @@ const MainContainer = () => {
           </div>
           <div className={classes.listWrapper}>
             <TweetList list={tweetsFiltered} setList={setTweets} />
-          </div>
-          <div className={classes.listWrapper}>
-            <Filters list={tweets} setList={setTweetsFiltered} />
           </div>
         </div>
       </div>
