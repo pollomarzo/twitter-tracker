@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -17,9 +17,23 @@ import { MAP_ID } from '../constants';
 
 import { useUser } from '../context/UserContext';
 
-import { BASE_URL, GEO_FILTER, GET_IDS, REQUEST_TOKEN, SEND_TWEET } from '../constants';
+import {
+  BASE_URL,
+  GEO_FILTER,
+  GET_IDS,
+  REQUEST_TOKEN,
+  SEND_TWEET,
+  SETTINGS,
+} from '../constants';
 // TODO: For testing purposes only, needs to be removed for production
 import ScheduleTweet from './ScheduleTweet';
+
+function getCookieValue(a) {
+  const b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
+  return b ? b.pop() : null;
+}
+
+const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -74,7 +88,60 @@ const MainContainer = () => {
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
   const [streamError, setStreamError] = useState();
-  const { authProps } = useUser();
+  const [coords, setCoordinates] = useState({
+    latitudeSW: '',
+    longitudeSW: '',
+    latitudeNE: '',
+    longitudeNE: '',
+  });
+  const [params, setParams] = useState({
+    track: '', // hashtag
+    follow: '', // user
+  });
+
+  //cookie
+  useEffect(() => {
+    const fetchSettings = async (streamId) => {
+      try {
+        const res = await axios.get(`${SETTINGS}?streamId=${streamId}`);
+        const settings = res.data;
+        console.log(settings);
+
+        if (settings.locations) {
+          const coords = settings.locations.split(',');
+          setCoordinates({
+            latitudeSW: coords[1],
+            longitudeSW: coords[0],
+            latitudeNE: coords[3],
+            longitudeNE: coords[2],
+          });
+        }
+
+        if (settings.track) {
+          setParams({ track: settings.track });
+        }
+
+        if (settings.follow) {
+          console.log(settings.follow);
+          setParams({ follow: settings.follow });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const oldStreamId = getCookieValue('streamId');
+
+    if (oldStreamId) {
+      setStreamId(oldStreamId);
+      fetchSettings(oldStreamId);
+      socket.emit('attach', { streamId: oldStreamId });
+      socket.on('tweet', (tweet) => {
+        console.log(tweet.text);
+        setTweets((prevTweets) => [...prevTweets, tweet]);
+      });
+    }
+  }, []);
 
   const getIDs = async (names) => {
     try {
@@ -89,21 +156,18 @@ const MainContainer = () => {
   const startStream = async ({ coords, params }) => {
     let streamParameters; // in OR
     let constraints; // in AND, AFTER collection
-    if (params.follow) {
-      params.follow = await getIDs(params.follow);
-    }
+    const follow = params.follow && (await getIDs(params.follow));
+
     // if coordinates were given, they have the priority, and after we'll check everything else
     if (coords) {
       streamParameters = {
         locations: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
       };
-      constraints = params;
+      constraints = { ...params, follow };
     }
     // if a username is given, we want to know everything he's tweeted, and then select on hashtag
     else if (params.follow) {
-      streamParameters = {
-        follow: params.follow,
-      };
+      streamParameters = { follow };
       constraints = { track: params.track };
     }
     // otherwise, we only select based on hashtag
@@ -125,15 +189,16 @@ const MainContainer = () => {
           withCredentials: true,
         }
       );
-      console.log(('axios', res));
-      setStreamId(res.data);
 
-      // socket.emit('register', res.data);
-      // socket.on('tweet', (tweet) => {
-      //   console.log(tweet);
-      //   setTweets((prevTweets) => [...prevTweets, tweet]);
-      // });
-      // socket.on('error', (error) => console.log(error));
+      setStreamId(res.data);
+      console.log('stream id axios', res.data);
+
+      socket.emit('attach', { streamId: res.data });
+      socket.on('tweet', (tweet) => {
+        console.log(tweet);
+        setTweets((prevTweets) => [...prevTweets, tweet]);
+      });
+      socket.on('error', console.log);
     } catch (err) {
       propagateError(generateError("Couldn't start stream on server, please retry!"));
     }
@@ -147,6 +212,9 @@ const MainContainer = () => {
         withCredentials: true,
       });
       setStreamId(null);
+      socket.off('tweet');
+      socket.off('error');
+      document.cookie = 'streamId=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     } catch (err) {
       propagateError(generateError("Couldn't stop stream on the server, please retry!"));
     }
@@ -164,6 +232,35 @@ const MainContainer = () => {
     }
   };
 
+  const handleCoordChange = (e) =>
+    setCoordinates({ ...coords, [e.target.name]: e.target.value });
+
+  const handleParamsChange = (e) =>
+    setParams({ ...params, [e.target.name]: e.target.value });
+
+  const handleStart = () => {
+    const values = Object.values(coords);
+    // Start a not geolocalized
+    if (values.every((value) => value === '')) {
+      startStream({ coords: '', params });
+    }
+    // Start a geolocalized
+    else if (values.every((value) => value && COORDINATE_RE.test(value)))
+      startStream({ coords, params });
+    else {
+      const onReset = () =>
+        setCoordinates((prevCoords) =>
+          Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
+        );
+      propagateError(
+        generateError(
+          'An acceptable input is a number in range [-180.00, 180.00]',
+          onReset
+        )
+      );
+    }
+  };
+
   return (
     <div className={classes.container}>
       <header className={classes.header}>
@@ -173,7 +270,15 @@ const MainContainer = () => {
         <div className={classes.leftContent}>
           <NotifySettings count={tweets.length} />
           <StartStopStream stopStream={() => setStreamId(null)} streamId={streamId} />
-          <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
+          <CoordsForm
+            open={!!streamId}
+            coords={coords}
+            params={params}
+            onStart={handleStart}
+            onStop={stopStream}
+            onCoordChange={handleCoordChange}
+            onParamChange={handleParamsChange}
+          />
           <ScheduleTweet handleAuth={handleAuthentication} />
           {streamError && (
             <Alert severity="error" variant="filled">
@@ -197,3 +302,4 @@ const MainContainer = () => {
 };
 
 export default MainContainer;
+//liso cacca

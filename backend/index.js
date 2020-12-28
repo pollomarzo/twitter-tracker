@@ -29,17 +29,14 @@ app.use('/api', api);
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  socket.on('register', (id) => {
-    console.log('register', id);
-    twitter.registerNewSocket(socket, id);
-  });
 
-  socket.on('attach', (streamId) => {
+  socket.on('attach', ({ streamId }) => {
     console.log(`Socket ${socket.id} will be attached to stream ${streamId}`);
     twitter.attachSocket(socket, streamId);
   });
 
   socket.on('disconnect', () => {
+    console.log(`Socket ${socket.id} disconnected`);
     twitter.detachSocket(socket);
   });
 });

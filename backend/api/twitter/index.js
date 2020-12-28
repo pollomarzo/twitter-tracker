@@ -30,7 +30,14 @@ const appClient = new Twitter({
 });
 
 function check(tweet, constraints) {
-  for (const [key, value] of Object.entries(constraints)) {
+  const twConstraints = {
+    'user.id_str': constraints.follow || 'ANY',
+    'entities.hashtags': constraints.track || 'ANY',
+  };
+
+  console.log(twConstraints);
+
+  for (const [key, value] of Object.entries(twConstraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
     nesting.forEach((item) => {
@@ -40,20 +47,22 @@ function check(tweet, constraints) {
         return false;
       }
     });
-    if (value.toUpperCase() === 'ANY') {
+    if (value === 'ANY') {
       //any value
       if (!tweetvalue) return false; //check if the value is defined in the tweet
     } else {
       //insert specifics value check here e.g if key == "place.bounding_box.coordinates" checkpointinrect(value, tweetvalue)
       if (key === 'entities.hashtags') {
+        console.log(tweetvalue);
         // if there is no value return false
         if (!tweetvalue) return false;
         // if it's only one item convert to array
         else if (!Array.isArray(tweetvalue)) tweetvalue = [tweetvalue];
         // check if any of the expected hashtags are included
-        return tweetvalue.some((hashtag) => value.includes(hashtag));
+        return tweetvalue.some((hashtag) => value.includes(hashtag.text));
+      } else {
+        return value.includes(tweetvalue);
       }
-      return tweetvalue === value;
     }
   }
   return true;
@@ -62,17 +71,24 @@ function check(tweet, constraints) {
 const startStream = (constraints, parameters) => {
   const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
-  streams[streamId] = { stream, data: [] };
+  streams[streamId] = { stream, settings: { ...constraints, ...parameters }, data: [] };
+  console.log(streams[streamId].settings);
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
-    // streams[streamId].socket.emit('error', error);
+    if (streams[streamId].socket) {
+      streams[streamId].socket.emit('error', error);
+    }
+
     console.log(error);
-  }); //todo handler error
+  });
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {
-      // console.log(tweet.text);
+      console.log(`Inside stream:data: ${tweet.text}`);
       streams[streamId].data.push(tweet);
-      // streams[streamId].socket.emit('tweet', tweet);
+
+      if (streams[streamId].socket) {
+        streams[streamId].socket.emit('tweet', tweet);
+      }
     }
   });
   return streamId;
@@ -85,10 +101,6 @@ const closeStream = (streamId) => {
   delete streams[streamId];
   const dataJson = exportJSON(data);
   return { dataJson };
-};
-
-const registerNewSocket = (socket, streamId) => {
-  streams[streamId].socket = socket;
 };
 
 //returns an Array of IDs
@@ -161,21 +173,6 @@ const sendTweet = async (msg, authProps) => {
     access_token_secret: authProps.accessTokenSecret,
   });
 
-  // var media_ids_list = []
-  // msg.forEach(el => {
-  //   const TEST_IMAGE = fs.readFileSync(path.join(__dirname, 'test.jpg'));
-  //   const base64Image = new Buffer.from(TEST_IMAGE).toString('base64');
-
-  //   const mediaUploadResponse = await uploadClient.post('media/upload', {
-  //     media_data: base64Image,
-  //   });
-
-  //   media_ids_list.push(mediaUploadResponse.media_id_string)
-  // })
-
-  // const TEST_IMAGE = fs.readFileSync(path.join(__dirname, 'test.jpg'));
-  // const base64Image = new Buffer.from(TEST_IMAGE).toString('base64');
-
   const mediaUploadResponses = await Promise.all(
     msg.media.map((media) =>
       uploadClient.post('media/upload', {
@@ -193,12 +190,36 @@ const sendTweet = async (msg, authProps) => {
   return tweet;
 };
 
-const attachSocket = (socket, streamId) => {};
+const attachSocket = (socket, streamId) => {
+  streams[streamId].socket = socket;
+  const oldData = [...streams[streamId].data];
+  oldData.forEach((tweet) => {
+    console.log(`In attachSocket: ${tweet.text}`);
+    socket.emit('tweet', tweet);
+  });
+};
 
-const detachSocket = (socket) => {};
+const detachSocket = (socket) => {
+  const targetStream = Object.entries(streams).find(
+    ([_, stream]) => stream.socket.id === socket.id
+  );
+
+  if (targetStream) {
+    targetStream.socket = null;
+  }
+};
+
+const getSettings = async (streamId) => {
+  const ids = streams[streamId].settings.follow.join();
+  const users = await appClient.get('users/lookup', {
+    user_id: ids,
+  });
+  const usernames = users.map((user) => user.screen_name);
+  streams[streamId].settings.follow = usernames.join();
+  return streams[streamId].settings;
+};
 
 module.exports = {
-  registerNewSocket,
   requestToken,
   requestAccess,
   startStream,
@@ -207,4 +228,5 @@ module.exports = {
   sendTweet,
   attachSocket,
   detachSocket,
+  getSettings,
 };
