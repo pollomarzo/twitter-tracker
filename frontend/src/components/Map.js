@@ -1,6 +1,13 @@
 import React, { useMemo } from 'react';
 import leaflet from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  FeatureGroup,
+  Circle,
+} from 'react-leaflet';
 import {
   List,
   ListItem,
@@ -9,9 +16,11 @@ import {
   ListItemText,
   makeStyles,
 } from '@material-ui/core';
-
+import { useLeafletContext } from '@react-leaflet/core';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
 import markerImg from '../assets/twitter-marker.png';
+import EditControl from './EditControl';
 
 const defaultPosition = [44.494704, 11.342005];
 const THRESHOLD = 0.000001;
@@ -149,6 +158,12 @@ const Map = ({ tweetsList }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {markers}
+      <EditControl
+        position="topleft"
+        draw={{
+          rectangle: false,
+        }}
+      />
     </MapContainer>
   );
 };
