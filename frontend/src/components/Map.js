@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import leaflet from 'leaflet';
 import {
   MapContainer,
@@ -16,11 +16,11 @@ import {
   ListItemText,
   makeStyles,
 } from '@material-ui/core';
-import { useLeafletContext } from '@react-leaflet/core';
+
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import markerImg from '../assets/twitter-marker.png';
-import EditControl from './EditControl';
+import { EditOnlyControl, DrawRectangleControl } from './EditControl';
 
 const defaultPosition = [44.494704, 11.342005];
 const THRESHOLD = 0.000001;
@@ -100,8 +100,9 @@ const normalizeList = (tweets) =>
       return groups;
     }, {});
 
-const Map = ({ tweetsList }) => {
+const Map = ({ tweetsList, setCoordinates }) => {
   const classes = useStyles();
+  const [bboxRect, setBBoxRect] = useState();
   const markers = useMemo(
     () =>
       Object.entries(normalizeList(tweetsList)).map(([coords, tweets], index) => (
@@ -151,6 +152,26 @@ const Map = ({ tweetsList }) => {
     [tweetsList, classes]
   );
 
+  useEffect(() => {
+    if (bboxRect) {
+      const { _northEast, _southWest } = bboxRect;
+      setCoordinates(_northEast.lat, _northEast.lng, _southWest.lat, _southWest.lng);
+    } else {
+      setCoordinates('', '', '', '');
+    }
+  }, [bboxRect, setCoordinates]);
+
+  const onEdit = useCallback((evt) => {
+    setBBoxRect(evt.layer._bounds);
+  }, []);
+
+  const onDeleted = useCallback((evt) => {
+    const layers = evt.layers.getLayers();
+    if (layers.length > 0) {
+      setBBoxRect(null);
+    }
+  }, []);
+
   return (
     <MapContainer center={defaultPosition} zoom={9} scrollWheelZoom={true}>
       <TileLayer
@@ -158,12 +179,13 @@ const Map = ({ tweetsList }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {markers}
-      <EditControl
-        position="topleft"
-        draw={{
-          rectangle: false,
-        }}
-      />
+      <FeatureGroup>
+        {!bboxRect ? (
+          <DrawRectangleControl position="topleft" onCreated={onEdit} />
+        ) : (
+          <EditOnlyControl position="topleft" onEdit={onEdit} onDeleted={onDeleted} />
+        )}
+      </FeatureGroup>
     </MapContainer>
   );
 };
