@@ -1,120 +1,124 @@
 import { useCallback, useEffect, useRef } from 'react';
+// eslint-disable-next-line
 import Draw from 'leaflet-draw';
 import {
   useLeafletContext,
-  createPathComponent,
-  createControlComponent,
+  createElementHook,
+  createLeafComponent,
 } from '@react-leaflet/core';
-import leaflet, { Map, Control } from 'leaflet';
+import leaflet, { Control } from 'leaflet';
 
-const eventHandlers = {
-  onEdited: 'draw:edited',
-  onDrawStart: 'draw:drawstart',
-  onDrawStop: 'draw:drawstop',
-  onDrawVertex: 'draw:drawvertex',
-  onEditStart: 'draw:editstart',
-  onEditMove: 'draw:editmove',
-  onEditResize: 'draw:editresize',
-  onEditVertex: 'draw:editvertex',
-  onEditStop: 'draw:editstop',
-  onDeleted: 'draw:deleted',
-  onDeleteStart: 'draw:deletestart',
-  onDeleteStop: 'draw:deletestop',
+const createControlComponent = (createInstance) => {
+  function createElement(props, context) {
+    const { layerContainer } = context;
+    const { position } = props;
+    const options = {
+      position,
+      edit: {
+        featureGroup: layerContainer,
+      },
+    };
+
+    return { instance: createInstance(options), context };
+  }
+  const useElement = createElementHook(createElement);
+  const useControl = createControlHook(useElement);
+  return createLeafComponent(useControl);
 };
 
-const createEditControl = (props, context) => {
-  const { draw, edit, position } = props;
-  const options = {
-    edit: {
-      ...edit,
-      featureGroup: context.layerContainer,
-    },
+const createControlHook = (useElement) => {
+  return function useLeafletControl(props) {
+    const context = useLeafletContext();
+    const elementRef = useElement(props, context);
+    const { instance } = elementRef.current;
+    const positionRef = useRef(props.position);
+    const { position, onCreated, onEdit, onDeleted } = props;
+
+    const onDrawCreate = useCallback(
+      (e) => {
+        context.layerContainer.addLayer(e.layer);
+        onCreated(e);
+      },
+      [context.layerContainer, onCreated]
+    );
+
+    useEffect(
+      function addControl() {
+        instance.addTo(context.map);
+        context.map.on(leaflet.Draw.Event.CREATED, onDrawCreate);
+
+        if (onDeleted) {
+          context.map.on(leaflet.Draw.Event.DELETED, onDeleted);
+        }
+
+        if (onEdit) {
+          context.map.on(leaflet.Draw.Event.EDITRESIZE, onEdit);
+          context.map.on(leaflet.Draw.Event.EDITMOVE, onEdit);
+        }
+
+        return function removeControl() {
+          context.map.off(leaflet.Draw.Event.CREATED, onDrawCreate);
+
+          if (onDeleted) {
+            context.map.off(leaflet.Draw.Event.DELETED, onDeleted);
+          }
+
+          if (onEdit) {
+            context.map.off(leaflet.Draw.Event.EDITRESIZE, onEdit);
+            context.map.off(leaflet.Draw.Event.EDITMOVE, onEdit);
+          }
+
+          instance.remove();
+        };
+      },
+      [context.map, instance, onDrawCreate, onDeleted, onEdit]
+    );
+
+    useEffect(
+      function updateControl() {
+        if (position != null && position !== positionRef.current) {
+          instance.setPosition(position);
+          positionRef.current = position;
+        }
+      },
+      [instance, position]
+    );
+
+    return elementRef;
   };
-
-  if (draw) {
-    options.draw = { ...draw };
-  }
-
-  if (position) {
-    options.position = position;
-  }
-  /* return { instance: new leaflet.Circle([50.5, 30.5], { radius: 200 }), context }; */
-  return { instance: new leaflet.Control.Draw(options), context };
 };
 
-const updateEditControl = (instance, props, prevProps) => {
-  if (
-    props.draw !== prevProps.draw ||
-    props.edit !== prevProps.edit ||
-    props.position !== prevProps.position
-  ) {
-    // const { map } = props.leaflet;
-    // instance.remove(map);
-    // instance = createDrawElement(props);
-    // instance.addTo(map);
-    // // Remount the new draw control
-    // const { onMounted } = props;
-    // onMounted && onMounted(instance);
-  }
-};
+export const DrawRectangleControl = createControlComponent(
+  (options) =>
+    new Control.Draw({
+      ...options,
+      draw: {
+        polyline: false,
+        polygon: false,
+        rectangle: true,
+        circle: false,
+        marker: false,
+        circlemarker: false,
+      },
+      edit: {
+        ...options.edit,
+        edit: false,
+        remove: false,
+      },
+    })
+);
 
-const EditControl = createControlComponent((props) => new Control.Draw(props));
-
-// const EditControl = ({ onCreated, onMounted, ...otherListeners }) => {
-//   const { map, layerContainer } = useLeafletContext();
-//   const leafletElement = useRef();
-
-//   const onDrawCreate = useCallback(
-//     (e) => {
-//       layerContainer.addLayer(e.layer);
-//       onCreated && onCreated(e);
-//     },
-//     [layerContainer, onCreated]
-//   );
-
-//   useEffect(() => {
-//     for (const key in eventHandlers) {
-//       map.on(eventHandlers[key], (evt) => {
-//         let handlers = Object.keys(eventHandlers).filter(
-//           (handler) => eventHandlers[handler] === evt.type
-//         );
-//         if (handlers.length === 1) {
-//           let handler = handlers[0];
-//           otherListeners[handler] && otherListeners[handler](evt);
-//         }
-//       });
-//     }
-
-//     map.on(leaflet.Draw.Event.CREATED, onDrawCreate);
-
-//     onMounted && onMounted(this.leafletElement);
-
-//     return () => {
-//       map.off(leaflet.Draw.Event.CREATED, onDrawCreate);
-
-//       for (const key in eventHandlers) {
-//         if (props[key]) {
-//           map.off(eventHandlers[key], otherListeners[key]);
-//         }
-//       }
-//     };
-//   }, [map, onMounted, otherListeners, onDrawCreate]);
-
-//   useEffect(() => {
-//     const { map } = this.props.leaflet;
-
-//     if (leafletElement.current) {
-//       .remove(map);
-//     }
-//     leafletElement.current = createDrawElement(props);
-//     leafletElement.current.addTo(map);
-
-//     // Remount the new draw control
-//     const { onMounted } = this.props;
-//     onMounted && onMounted(this.leafletElement);
-//   }, []);
-
-//   return null;
-// };
-
-export default EditControl;
+export const EditOnlyControl = createControlComponent(
+  (options) =>
+    new Control.Draw({
+      ...options,
+      draw: {
+        polyline: false,
+        polygon: false,
+        rectangle: false,
+        circle: false,
+        marker: false,
+        circlemarker: false,
+      },
+    })
+);

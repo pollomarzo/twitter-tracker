@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { makeStyles, Button } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -62,6 +62,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 const MainContainer = () => {
+  const [coordinates, setCoordinates] = useState({
+    ne: {
+      lat: null,
+      lng: null,
+    },
+    sw: {
+      lat: null,
+      lng: null,
+    },
+  });
   const classes = useStyles();
   const propagateError = useErrorHandler();
   // To set the id of the current stream
@@ -153,10 +163,25 @@ const MainContainer = () => {
     }
   };
 
+  const onAddRect = useCallback(
+    (nelat, nelng, swlat, swlng) =>
+      setCoordinates({
+        ne: { lat: nelat, lng: nelng },
+        sw: { lat: swlat, lng: swlng },
+      }),
+    []
+  );
+
   return (
     <div className={classes.container}>
       <header className={classes.header}>
         <h1 className={classes.title}>TWITTER TRACKER</h1>
+        <p>
+          Coordinates: NE: {coordinates.ne.lat && coordinates.ne.lat.toFixed(2)},{' '}
+          {coordinates.ne.lng && coordinates.ne.lng.toFixed(2)}, SW:{' '}
+          {coordinates.sw.lat && coordinates.sw.lat.toFixed(2)},{' '}
+          {coordinates.sw.lng && coordinates.sw.lng.toFixed(2)}
+        </p>
       </header>
       <div className={classes.content}>
         <div className={classes.leftContent}>
@@ -173,7 +198,7 @@ const MainContainer = () => {
         </div>
         <div className={classes.rightContent}>
           <div id={MAP_ID} className={classes.mapWrapper}>
-            <Map tweetsList={tweets} />
+            <Map tweetsList={tweets} setCoordinates={onAddRect} />
           </div>
           <div className={classes.listWrapper}>
             <TweetList list={tweets} setList={setTweets} />
