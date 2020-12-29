@@ -198,7 +198,11 @@ const MainContainer = () => {
         </div>
         <div className={classes.rightContent}>
           <div id={MAP_ID} className={classes.mapWrapper}>
-            <Map tweetsList={tweets} setCoordinates={onAddRect} />
+            <Map
+              tweetsList={tweets}
+              setCoordinates={onAddRect}
+              showToolbars={!streamId}
+            />
           </div>
           <div className={classes.listWrapper}>
             <TweetList list={tweets} setList={setTweets} />

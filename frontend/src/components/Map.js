@@ -100,7 +100,7 @@ const normalizeList = (tweets) =>
       return groups;
     }, {});
 
-const Map = ({ tweetsList, setCoordinates }) => {
+const Map = ({ tweetsList, setCoordinates, showToolbars }) => {
   const classes = useStyles();
   const [bboxRect, setBBoxRect] = useState();
   const markers = useMemo(
@@ -180,11 +180,12 @@ const Map = ({ tweetsList, setCoordinates }) => {
       />
       {markers}
       <FeatureGroup>
-        {!bboxRect ? (
-          <DrawRectangleControl position="topleft" onCreated={onEdit} />
-        ) : (
-          <EditOnlyControl position="topleft" onEdit={onEdit} onDeleted={onDeleted} />
-        )}
+        {showToolbars &&
+          (!bboxRect ? (
+            <DrawRectangleControl position="topleft" onCreated={onEdit} />
+          ) : (
+            <EditOnlyControl position="topleft" onEdit={onEdit} onDeleted={onDeleted} />
+          ))}
       </FeatureGroup>
     </MapContainer>
   );
