@@ -210,7 +210,11 @@ const detachSocket = (socket) => {
 };
 
 const getSettings = async (streamId) => {
-  const ids = streams[streamId].settings.follow.join();
+  console.log('settings', streams[streamId].settings.oldFollow);
+  if (!streams[streamId].settings.oldFollow) {
+    streams[streamId].settings.oldFollow = streams[streamId].settings.follow;
+  }
+  const ids = streams[streamId].settings.oldFollow.join();
   const users = await appClient.get('users/lookup', {
     user_id: ids,
   });
