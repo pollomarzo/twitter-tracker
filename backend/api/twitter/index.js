@@ -204,15 +204,23 @@ const detachSocket = (socket) => {
 };
 
 const getSettings = async (streamId) => {
+  console.log(
+    'oldFollow, follow are: ',
+    streams[streamId].settings.oldFollow,
+    streams[streamId].settings.follow
+  );
   if (!streams[streamId].settings.oldFollow) {
-    streams[streamId].settings.oldFollow = streams[streamId].settings.follow;
+    streams[streamId].settings.oldFollow = streams[streamId].settings.follow || '';
   }
-  const ids = streams[streamId].settings.oldFollow.join();
-  const users = await appClient.get('users/lookup', {
-    user_id: ids,
-  });
-  const usernames = users.map((user) => user.screen_name);
-  streams[streamId].settings.follow = usernames.join();
+  const ids = streams[streamId].settings.oldFollow;
+  if (ids) {
+    const users = await appClient.get('users/lookup', {
+      user_id: ids,
+    });
+    const usernames = users.map((user) => user.screen_name);
+    streams[streamId].settings.follow = usernames.join(',');
+  }
+
   return streams[streamId].settings;
 };
 

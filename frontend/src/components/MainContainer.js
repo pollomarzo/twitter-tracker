@@ -121,7 +121,6 @@ const MainContainer = () => {
         }
 
         if (settings.follow) {
-          console.log(settings.follow);
           setParams({ follow: settings.follow });
         }
       } catch (err) {
@@ -136,7 +135,6 @@ const MainContainer = () => {
       fetchSettings(oldStreamId);
       socket.emit('attach', { streamId: oldStreamId });
       socket.on('tweet', (tweet) => {
-        console.log(tweet.text);
         setTweets((prevTweets) => [...prevTweets, tweet]);
       });
     }

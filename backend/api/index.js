@@ -90,12 +90,13 @@ router.get('/auth', async (req, res) => {
 
 router.get('/settings', async (req, res) => {
   const { streamId } = req.query;
-  // try {
-  const params = await twitter.getSettings(streamId);
-  res.status(200).send(params);
-  // } catch (err) {
-  //   res.status(500).json({ message: err });
-  // }
+  try {
+    const params = await twitter.getSettings(streamId);
+    res.status(200).send(params);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err });
+  }
 });
 
 module.exports = router;
