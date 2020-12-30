@@ -6,7 +6,6 @@ import {
   Marker,
   Popup,
   FeatureGroup,
-  Circle,
 } from 'react-leaflet';
 import {
   List,
@@ -17,8 +16,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-draw/dist/leaflet.draw.css';
+
 import markerImg from '../assets/twitter-marker.png';
 import { EditOnlyControl, DrawRectangleControl } from './EditControl';
 
@@ -134,8 +132,9 @@ const Map = ({ tweetsList, setCoordinates, showToolbars }) => {
                     secondary={tweet.text}
                   />
                   <div>
-                    {tweet.images.map((image) => (
+                    {tweet.images.map((image, index) => (
                       <img
+                        key={index}
                         src={image.media_url}
                         alt="User's shared content"
                         width="80"

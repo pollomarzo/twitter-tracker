@@ -1,45 +1,29 @@
 import React, { useMemo } from 'react';
-import { useErrorHandler } from 'react-error-boundary';
-import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
-import { Typography, Button, makeStyles } from '@material-ui/core';
+import { Typography, Button, Grid, Avatar } from '@material-ui/core';
+import { List, ListItem, ListItemText, ListItemAvatar } from '@material-ui/core';
 import JSZip from 'jszip';
+
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PublishIcon from '@material-ui/icons/Publish';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 
+import { useErrorHandler } from 'react-error-boundary';
 import { generateError } from './AlertWindow';
 
-const useStyles = makeStyles(() => ({
-  grid: {
-    marginTop: 5,
-    marginBottom: 5,
-    borderWidth: '2px',
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    flex: '1 1 auto',
-    height: '100%',
-    overflow: 'hidden',
-  },
-  listStyle: {
-    overflowY: 'scroll',
-  },
-  listHeader: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexGrow: 1,
-    justifyContent: 'space-between',
-  },
-}));
-
+// The single tweet item in the list
 const Tweet = ({ user, text, id }) => {
   return (
     <ListItem key={`tcard_id${id}`} alignItems="flex-start">
       <ListItemAvatar>
         <Avatar alt={user.name} src={user.profile_image_url_https} />
       </ListItemAvatar>
-      <ListItemText primary={user.name} secondary={text} />
+      <ListItemText
+        primary={user.name}
+        secondary={text}
+        secondaryTypographyProps={{ align: 'justify', variant: 'body1' }}
+      />
     </ListItem>
   );
 };
@@ -64,7 +48,6 @@ const triggerUpload = (onChangeHandler) => {
 };
 
 const TweetList = ({ list, setList }) => {
-  const classes = useStyles();
   const propagateError = useErrorHandler();
   const imgFiles = useMemo(
     () =>
@@ -141,12 +124,9 @@ const TweetList = ({ list, setList }) => {
   };
 
   return (
-    <div className={classes.grid}>
-      <div className={classes.listHeader}>
-        <Typography variant="h6" style={{ display: 'inline-block' }}>
-          Tweets List
-        </Typography>
-        <span className={classes.buttons}>
+    <>
+      <Grid container>
+        <Grid item xs={12}>
           <Tooltip title="Import tweet list">
             <Button onClick={() => triggerUpload(importJSON)}>
               <PublishIcon />
@@ -167,16 +147,17 @@ const TweetList = ({ list, setList }) => {
               <DeleteIcon />
             </Button>
           </Tooltip>
-        </span>
-      </div>
-      <div className={classes.listStyle}>
-        <List>
-          {list.map((tweet) => (
-            <Tweet key={tweet.id} {...tweet} />
-          ))}
-        </List>
-      </div>
-    </div>
+        </Grid>
+
+        <Grid item xs={12}>
+          <List>
+            {list.map((tweet) => (
+              <Tweet key={tweet.id} {...tweet} />
+            ))}
+          </List>
+        </Grid>
+      </Grid>
+    </>
   );
 };
 

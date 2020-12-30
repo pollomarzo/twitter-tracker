@@ -1,63 +1,37 @@
 import React, { useState, useCallback } from 'react';
-import axios from 'axios';
-import { makeStyles, Button } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
-import io from 'socket.io-client';
 import { useErrorHandler } from 'react-error-boundary';
+import io from 'socket.io-client';
+import axios from 'axios';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
 
-import Map from './Map';
-import CoordsForm from './CoordsForm';
-import TweetList from './TweetList';
-import NotifySettings from './NotifySettings';
+import { Paper, Grid, Typography, makeStyles } from '@material-ui/core';
+
+import { BASE_URL, GEO_FILTER, GET_IDS, REQUEST_TOKEN, MAP_ID } from '../constants';
+import { CollapsableBox, CoordsForm, Map, InsightTabs, TweetList, WordCloud } from '.';
+//import { Map, CoordsForm, TweetList, NotifySettings, WordCloud, ScheduleTweet } from '.';
 import { generateError } from './AlertWindow';
-import WordCloud from './WordCloud';
-import { fakeTweets } from '../misc/fakeTweets';
-import { MAP_ID } from '../constants';
-
 import { useUser } from '../context/UserContext';
 
-import { BASE_URL, GEO_FILTER, GET_IDS, REQUEST_TOKEN, SEND_TWEET } from '../constants';
-// TODO: For testing purposes only, needs to be removed for production
-import ScheduleTweet from './ScheduleTweet';
-
-const useStyles = makeStyles(() => ({
-  container: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    padding: '1vh',
-    height: '100vh',
-    overflow: 'scroll',
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    top: 0,
+    left: 0,
+    margin: 0,
+    padding: 0,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: theme.palette.background.default,
   },
-  header: {
-    fontSize: '20px',
-  },
-  title: {
-    margin: '20px',
-    textAlign: 'center',
-    color: '#1da1f2',
-  },
-  content: {
-    display: 'flex',
-    flexFlow: 'row nowrap',
-  },
-  leftContent: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    justifyContent: 'space-between',
-    maxWidth: '50vw',
-  },
-  rightContent: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    flex: '1 0 auto',
-    overflow: 'hidden',
-  },
-  mapWrapper: {
-    flexGrow: 1,
-  },
-  listWrapper: {
-    overflow: 'hidden',
-    maxHeight: '40vh',
+  
+  mapContainer: {
+    height: 850,
+    '& .leaflet-container': {
+      margin: 20,
+      width: '90%',
+      height: '95%',
+    },
   },
 }));
 
@@ -72,13 +46,12 @@ const MainContainer = () => {
       lng: null,
     },
   });
-  const classes = useStyles();
   const propagateError = useErrorHandler();
   // To set the id of the current stream
-  const [streamId, setStreamId] = useState();
-  const [tweets, setTweets] = useState(fakeTweets);
-  const [streamError, setStreamError] = useState();
   const { authProps } = useUser();
+  const [streamId, setStreamId] = useState();
+  const [tweets, setTweets] = useState([]);
+  const { paper, mapContainer } = useStyles();
 
   const getIDs = async (names) => {
     try {
@@ -173,44 +146,55 @@ const MainContainer = () => {
   );
 
   return (
-    <div className={classes.container}>
-      <header className={classes.header}>
-        <h1 className={classes.title}>TWITTER TRACKER</h1>
-        <p>
-          Coordinates: NE: {coordinates.ne.lat && coordinates.ne.lat.toFixed(2)},{' '}
-          {coordinates.ne.lng && coordinates.ne.lng.toFixed(2)}, SW:{' '}
-          {coordinates.sw.lat && coordinates.sw.lat.toFixed(2)},{' '}
-          {coordinates.sw.lng && coordinates.sw.lng.toFixed(2)}
-        </p>
+    <div className={paper}>
+      <header>
+        <Typography color="primary" variant="h4" align="center">
+          TWITTER TRACKER
+        </Typography>
+        {/* Here goes the tooltips */}
       </header>
-      <div className={classes.content}>
-        <div className={classes.leftContent}>
+
+      {/* Box with stream params */}
+      <CollapsableBox name="Stream params">
+        <CoordsForm onStart={startStream} onStop={stopStream} open={streamId} />
+      </CollapsableBox>
+
+      {/* Grid layout for Map and InsightTabs */}
+      <Grid container>
+        <Grid item xs={6} id={MAP_ID} className={mapContainer}>
+          <Map tweetsList={tweets} setCoordinates={onAddRect} showToolbars={!streamId} />
+        </Grid>
+        <Grid item xs={6}>
+          <InsightTabs>
+            <TweetList list={tweets} setList={setTweets} tabName="Tweet List" />
+            <WordCloud list={tweets} tabName="Wordcloud" />
+            {/* TODO here will go Graphs from Lorenz */}
+          </InsightTabs>
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
+
+export default MainContainer;
+/*
+      <div >
+        <div>
           <NotifySettings count={tweets.length} />
-          <CoordsForm onStart={startStream} onStop={stopStream} open={!!streamId} />
           <ScheduleTweet handleAuth={handleAuthentication} />
-          {streamError && (
-            <Alert severity="error" variant="filled">
-              <AlertTitle>Error</AlertTitle>
-              {streamError.source}
-            </Alert>
-          )}
           <WordCloud list={tweets} />
         </div>
-        <div className={classes.rightContent}>
-          <div id={MAP_ID} className={classes.mapWrapper}>
+        <div>
+          <div id={MAP_ID}>
             <Map
               tweetsList={tweets}
               setCoordinates={onAddRect}
               showToolbars={!streamId}
             />
           </div>
-          <div className={classes.listWrapper}>
+          <div >
             <TweetList list={tweets} setList={setTweets} />
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-export default MainContainer;
+*/
