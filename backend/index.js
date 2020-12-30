@@ -13,7 +13,12 @@ const port = process.env.PORT || 4000;
 const api = require('./api');
 const twitter = require('./api/twitter');
 
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(
+  cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'http://2e6dd6fc010c.eu.ngrok.io'],
+  })
+);
 /** needs to accept:
  * localhost:3000
  * frontend MEDIATED by ngrok (right now http://de98d2531c38.eu.ngrok.io)

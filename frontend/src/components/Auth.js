@@ -28,6 +28,7 @@ const Auth = () => {
         setAuthProps(result.data);
         history.push('/');
       } catch (err) {
+        console.log('handling error');
         console.error(err);
       }
     };
