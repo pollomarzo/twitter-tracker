@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
 const WordCloud = ({ list }) => {
   const { slider } = useStyles();
   const [arrayOfWords, setArrayOfWords] = useState([]);
-  const [numWords, setNumWords] = useState(7);
+  const [numWords, setNumWords] = useState(20);
   const handleSlider = (event, newValue) => {
     setNumWords(newValue);
   };

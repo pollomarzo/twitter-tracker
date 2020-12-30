@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
-import { Fade, Button, Grid, CircularProgress, makeStyles } from '@material-ui/core';
+import { Fade, Button, CircularProgress, makeStyles } from '@material-ui/core';
 
 import { UserError } from './AlertWindow';
 import InputField from './InputField';
@@ -61,39 +61,31 @@ const CoordsForm = ({ onStart, onStop, open }) => {
   };
 
   return (
-    <Grid container justify="center">
-      <Grid item xs={3}>
-        <InputField
-          label="Hashtag"
-          fieldName="track"
-          text="#"
-          handler={handleParamsChange}
-        />
-      </Grid>
-
-      <Grid item xs={3}>
-        <InputField
-          label="Username"
-          fieldName="follow"
-          text="@"
-          handler={handleParamsChange}
-        />
-      </Grid>
-
-      <Grid item xs={3}>
-        <Button
-          variant="contained"
-          color="primary"
-          className={submitButton}
-          onClick={open ? onStop : handleSubmit}
-        >
-          {open ? 'STOP' : 'START'}
-        </Button>
-        <Fade in={open} unmountOnExit>
-          <CircularProgress />
-        </Fade>
-      </Grid>
-    </Grid>
+    <>
+      <InputField
+        label="Hashtag"
+        fieldName="track"
+        text="#"
+        handler={handleParamsChange}
+      />
+      <InputField
+        label="Username"
+        fieldName="follow"
+        text="@"
+        handler={handleParamsChange}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        className={submitButton}
+        onClick={open ? onStop : handleSubmit}
+      >
+        {open ? 'STOP' : 'START'}
+      </Button>
+      <Fade in={open} unmountOnExit>
+        <CircularProgress />
+      </Fade>
+    </>
   );
 };
 

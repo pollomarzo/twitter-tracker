@@ -1,12 +1,6 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import leaflet from 'leaflet';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  FeatureGroup,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, FeatureGroup } from 'react-leaflet';
 import {
   List,
   ListItem,
@@ -15,7 +9,6 @@ import {
   ListItemText,
   makeStyles,
 } from '@material-ui/core';
-
 
 import markerImg from '../assets/twitter-marker.png';
 import { EditOnlyControl, DrawRectangleControl } from './EditControl';
@@ -40,6 +33,7 @@ const useStyles = makeStyles(() => ({
   listSecondary: {
     '& p': {
       margin: '0',
+      color: 'black',
     },
   },
 }));

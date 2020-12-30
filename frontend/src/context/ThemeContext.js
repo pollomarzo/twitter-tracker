@@ -13,10 +13,8 @@ const TwitterTrackerTheme = createMuiTheme({
   },
   status: {
     danger: '#ff0033',
+    info: "#ffffff"
   },
-  info: {
-    main: '#ffffff',
-  }
 });
 
 const ThemeContext = ({ children }) => {
