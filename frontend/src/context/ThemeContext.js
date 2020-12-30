@@ -5,7 +5,7 @@ const TwitterTrackerTheme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: {
-      main: '#6FC9E7',
+      main: '#1DA1F2',
     },
     secondary: {
         main: '#FECCA8',
@@ -14,6 +14,9 @@ const TwitterTrackerTheme = createMuiTheme({
   status: {
     danger: '#ff0033',
   },
+  info: {
+    main: '#ffffff',
+  }
 });
 
 const ThemeContext = ({ children }) => {

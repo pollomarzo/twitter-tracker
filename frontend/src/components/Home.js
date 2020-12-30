@@ -1,8 +1,7 @@
 import React from 'react';
 import { useSpring, animated } from 'react-spring';
 
-import WelcomingAnimation from './WelcomingAnimation';
-import MainContainer from './MainContainer';
+import { WelcomingAnimation, MainContainer } from '.';
 
 const ANIMATED = process.env.NODE_ENV === 'production';
 

@@ -5,12 +5,12 @@ import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
-import { Paper, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
 
 import { BASE_URL, GEO_FILTER, GET_IDS, REQUEST_TOKEN, MAP_ID } from '../constants';
 import { CollapsableBox, CoordsForm, Map, InsightTabs, TweetList, WordCloud } from '.';
 //import { Map, CoordsForm, TweetList, NotifySettings, WordCloud, ScheduleTweet } from '.';
-import { generateError } from './AlertWindow';
+import { UserError } from './AlertWindow';
 import { useUser } from '../context/UserContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     height: 850,
     '& .leaflet-container': {
       margin: 20,
-      width: '90%',
+      width: '95%',
       height: '95%',
     },
   },
@@ -46,7 +46,7 @@ const MainContainer = () => {
       lng: null,
     },
   });
-  const propagateError = useErrorHandler();
+  const launch = useErrorHandler();
   // To set the id of the current stream
   const { authProps } = useUser();
   const [streamId, setStreamId] = useState();
@@ -59,7 +59,7 @@ const MainContainer = () => {
       const res = await axios.get(`${GET_IDS}?names=${names}`);
       return res.data;
     } catch (err) {
-      propagateError(generateError("One of the users you asked for doesn't exist!"));
+      launch(UserError("One of the users you asked for doesn't exist!"));
     }
   };
 
@@ -108,7 +108,7 @@ const MainContainer = () => {
       });
       socket.on('error', (error) => console.log(error));
     } catch (err) {
-      propagateError(generateError("Couldn't start stream on server, please retry!"));
+      launch(UserError("Couldn't start stream on server, please retry!"));
     }
   };
 
@@ -120,7 +120,7 @@ const MainContainer = () => {
       });
       setStreamId(null);
     } catch (err) {
-      propagateError(generateError("Couldn't stop stream on the server, please retry!"));
+      launch(UserError("Couldn't stop stream on the server, please retry!"));
     }
   };
 
@@ -182,10 +182,10 @@ export default MainContainer;
         <div>
           <NotifySettings count={tweets.length} />
           <ScheduleTweet handleAuth={handleAuthentication} />
-          <WordCloud list={tweets} />
-        </div>
-        <div>
+          </div>
+          <div>
           <div id={MAP_ID}>
+          <WordCloud list={tweets} />
             <Map
               tweetsList={tweets}
               setCoordinates={onAddRect}

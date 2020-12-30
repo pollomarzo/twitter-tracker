@@ -4,22 +4,23 @@ import { DialogContent, DialogContentText, DialogActions } from '@material-ui/co
 
 import { ErrorBoundary } from 'react-error-boundary';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   dialog: {
-    color: '#1DA1F2',
+    color: theme.palette.primary.main,
   },
+  
   submitButton: {
     margin: 10,
     width: 100,
     fontWeight: 800,
     color: 'white',
-    backgroundColor: '#1DA1F2',
+    backgroundColor: theme.palette.primary.main,
     '&:hover': {
-      backgroundColor: 'lightblue',
-      color: '#1DA1F2',
+      backgroundColor: theme.palette.primary.dark,
+      color: theme.palette.primary.light,
     },
   },
-});
+}));
 
 const AlertWindow = ({error, resetErrorBoundary}) => {
   const { submitButton, dialog } = useStyles();
@@ -45,7 +46,7 @@ const AlertWindow = ({error, resetErrorBoundary}) => {
 };
 
 
-const generateError = (message, reset, title) => {
+const UserError = (message, reset, title) => {
   const error = Error(message);
   const defaultCB = () => {};
 
@@ -75,5 +76,5 @@ const ErrorCatcher = ({ children }) => {
 };
 
 
-export { generateError, AlertWindow };
+export { UserError, AlertWindow };
 export default ErrorCatcher;

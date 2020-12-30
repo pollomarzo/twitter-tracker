@@ -11,7 +11,6 @@ const CollapsableBox = ({ name, children }) => {
         >
           {name}
         </ListItemText>
-        {/*<Typography variant="h6" align="center" color="primary">*/}
       </ListItem>
       <Collapse in={isOpen} unmountOnExit>
         <Box borderColor="primary">{children}</Box>

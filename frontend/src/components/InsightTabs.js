@@ -5,21 +5,28 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
+    margin: 20,
+    width: '95%',
+  },
+  container: {
+    margin: 10,
+    maxHeight: '78vh',
+    overflowY: 'auto'
   },
 }));
 
 const InsightTabs = ({ children }) => {
-  const { root } = useStyles();
+  const { root, container } = useStyles();
   const [focusedTab, setFocused] = useState(0);
 
   return (
     <div className={root}>
-      <Tabs onChange={(_, newVal) => setFocused(newVal)}>
+      <Tabs value={focusedTab} onChange={(_, newVal) => setFocused(newVal)} textColor="secondary">
         {children.map((child, index) => (
           <Tab value={index} key={index} label={child.props.tabName} />
         ))}
       </Tabs>
-      <Box>{children[focusedTab]}</Box>
+      <Box className={container}>{children[focusedTab]}</Box>
     </div>
   );
 };

@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Slider, makeStyles, Grid } from '@material-ui/core';
 import ReactWordcloud from 'react-wordcloud';
-import { Slider, Typography, makeStyles } from '@material-ui/core';
-import { WORDCLOUD_ID } from '../constants';
 
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/material.css';
 
 const useStyles = makeStyles(() => ({
-  container: {
-    flexGrow: 0,
-    display: 'flex',
-    flexFlow: 'column nowrap',
-  },
-  wordCloud: {
-    width: '100%',
-  },
-  sliderStyle: {
-    width: '40vh',
+  slider: {
+    width: '80%',
+    marginTop: 40,
+    marginLeft: 70,
   },
 }));
 
 const WordCloud = ({ list }) => {
-  const classes = useStyles();
+  const { slider } = useStyles();
   const [arrayOfWords, setArrayOfWords] = useState([]);
   const [numWords, setNumWords] = useState(7);
   const handleSlider = (event, newValue) => {
@@ -57,41 +50,46 @@ const WordCloud = ({ list }) => {
   }, [list]);
 
   const options = {
-    colors: ['blue', '#2F4F4F', '#011f4b', '#03396c', '#008080', '#05E9FF', '#525C65'],
+    colors: ['blue', '#1DA1F2', '#011f4b', '#03396c', '#008080', '#05E9FF', '#3434eb'],
     enableTooltip: true,
     deterministic: true,
-    fontFamily: 'impact',
-    fontSizes: [15, 60],
+    fontFamily: 'Helvetica',
+    fontSizes: [15, 70],
     fontStyle: 'normal',
-    fontWeight: 'normal',
+    fontWeight: 'bold',
     rotations: 0,
     transitionDuration: 1000,
-    tooltipOptions: {
-      theme: 'material',
-    },
+    tooltipOptions: { theme: 'material' },
   };
 
   const getWordTooltip = (word) => `${word.text} (${word.value})`;
 
   return (
-    <div className={classes.container}>
-      <Typography>How many words would you like to show?</Typography>
-      <Slider
-        className={classes.sliderStyle}
-        value={numWords}
-        onChange={handleSlider}
-        max={Math.min(100, arrayOfWords.length)}
-        min={1}
-      />
-      <div id={WORDCLOUD_ID} className={classes.wordCloud}>
+    <Grid container>
+      <Grid item xs={12}>
+        <Slider
+          color="secondary"
+          valueLabelDisplay="on"
+          className={slider}
+          onChange={handleSlider}
+          value={numWords}
+          max={100}
+          min={1}
+          marks={[ 
+            {value: 1, label: 'Sola una parola'},
+            {value: 100, label: '100 parole'},
+          ]}
+        />
+      </Grid>
+      <Grid item xs={12}>
         <ReactWordcloud
           callbacks={{ getWordTooltip }}
           options={options}
           maxWords={numWords}
           words={arrayOfWords}
         />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

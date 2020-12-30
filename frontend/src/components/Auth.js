@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import { useLocation, useHistory } from 'react-router-dom';
+import axios from 'axios';
 
 import { AUTH } from '../constants';
 import { useUser } from '../context/UserContext';
-import { useHistory } from 'react-router-dom';
 
 const useQuery = () => {
   const location = useLocation();
@@ -13,13 +12,12 @@ const useQuery = () => {
 };
 
 const Auth = () => {
-  const { authProps, setAuthProps } = useUser();
-  const history = useHistory();
-  const query = useQuery();
   const oauthToken = query.get('oauth_token');
   const oauthVerifier = query.get('oauth_verifier');
 
-  const [loading, setLoading] = useState(true);
+  const { setAuthProps } = useUser();
+  const history = useHistory();
+  const query = useQuery();
 
   useEffect(() => {
     const requestAccess = async () => {

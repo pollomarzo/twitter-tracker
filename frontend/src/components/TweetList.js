@@ -1,19 +1,18 @@
 import React, { useMemo } from 'react';
-import { Typography, Button, Grid, Avatar } from '@material-ui/core';
-import { List, ListItem, ListItemText, ListItemAvatar } from '@material-ui/core';
+import { List, Button, Grid, Avatar, Tooltip } from '@material-ui/core';
+import { ListItem, ListItemText, ListItemAvatar } from '@material-ui/core';
 import JSZip from 'jszip';
 
-import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PublishIcon from '@material-ui/icons/Publish';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 
 import { useErrorHandler } from 'react-error-boundary';
-import { generateError } from './AlertWindow';
+import { UserError } from './AlertWindow';
 
 // The single tweet item in the list
-const Tweet = ({ user, text, id }) => {
+const Tweet = ({ user, text, extended_tweet, id }) => {
   return (
     <ListItem key={`tcard_id${id}`} alignItems="flex-start">
       <ListItemAvatar>
@@ -21,7 +20,7 @@ const Tweet = ({ user, text, id }) => {
       </ListItemAvatar>
       <ListItemText
         primary={user.name}
-        secondary={text}
+        secondary={extended_tweet ? extended_tweet.full_text : text}
         secondaryTypographyProps={{ align: 'justify', variant: 'body1' }}
       />
     </ListItem>
@@ -48,20 +47,18 @@ const triggerUpload = (onChangeHandler) => {
 };
 
 const TweetList = ({ list, setList }) => {
-  const propagateError = useErrorHandler();
+  const launch = useErrorHandler();
   const imgFiles = useMemo(
     () =>
       list.reduce((images, tweet) => {
         if (tweet.extended_entities && tweet.extended_entities.media) {
           const medias = tweet.extended_entities.media;
-          medias.forEach((media) => {
-            if (media.type === 'photo') {
-              const mediaUrl = media.media_url;
+          medias.forEach(({ type, media_url }) => {
+            if (type === 'photo')
               images.push({
-                file: mediaUrl.substr(mediaUrl.lastIndexOf('/') + 1),
-                url: mediaUrl,
+                file: media_url.substr(media_url.lastIndexOf('/') + 1),
+                url: media_url,
               });
-            }
           });
         }
 
@@ -96,9 +93,7 @@ const TweetList = ({ list, setList }) => {
           validateJSON(dump);
           setList((old) => [...old, ...dump]);
         } catch (err) {
-          propagateError(
-            generateError("The given file doesn't match the format requested")
-          );
+          launch(UserError('The given log do not match the format requested'));
         }
       };
       reader.readAsText(uploadedFile, 'utf-8');
@@ -118,14 +113,17 @@ const TweetList = ({ list, setList }) => {
       const url = URL.createObjectURL(result);
       triggerDownload({ name: 'Photos.zip', url });
     } catch (err) {
-      const downloadError = generateError("Couldn't start image download");
-      propagateError(downloadError);
+      launch(UserError("Couldn't start image download"));
     }
   };
+
+  const isTweetListEmpty = list.length === 0;
+  const isImageListEmpty = imgFiles.length === 0;
 
   return (
     <>
       <Grid container>
+        {/* Tooltip to manipulate the data */}
         <Grid item xs={12}>
           <Tooltip title="Import tweet list">
             <Button onClick={() => triggerUpload(importJSON)}>
@@ -133,22 +131,23 @@ const TweetList = ({ list, setList }) => {
             </Button>
           </Tooltip>
           <Tooltip title="Export tweets">
-            <Button onClick={exportJSON} disabled={list.length === 0}>
+            <Button onClick={exportJSON} disabled={isTweetListEmpty}>
               <GetAppIcon />
             </Button>
           </Tooltip>
           <Tooltip title="Download Images">
-            <Button onClick={downloadImages} disabled={imgFiles.length === 0}>
+            <Button onClick={downloadImages} disabled={isImageListEmpty}>
               <PhotoLibraryIcon />
             </Button>
           </Tooltip>
           <Tooltip title="Clear list">
-            <Button onClick={() => setList([])} disabled={list.length === 0}>
+            <Button onClick={() => setList([])} disabled={isTweetListEmpty}>
               <DeleteIcon />
             </Button>
           </Tooltip>
         </Grid>
 
+        {/* List of th tweets captured by the client */}
         <Grid item xs={12}>
           <List>
             {list.map((tweet) => (
