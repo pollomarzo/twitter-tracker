@@ -140,20 +140,20 @@ const MainContainer = () => {
     }
   }, []);
 
-  const getIDs = async (names) => {
-    try {
-      // pray that it is formatted correctly
-      const res = await axios.get(`${GET_IDS}?names=${names}`);
-      return res.data;
-    } catch (err) {
-      propagateError(generateError("One of the users you asked for doesn't exist!"));
-    }
-  };
+  const getIDs = async (names) => {};
 
   const startStream = async ({ coords, params }) => {
     let streamParameters; // in OR
     let constraints; // in AND, AFTER collection
-    const follow = params.follow && (await getIDs(params.follow));
+    let follow;
+    try {
+      // pray that it is formatted correctly
+      const res = await axios.get(`${GET_IDS}?names=${params.follow}`);
+      follow = res.data;
+    } catch (err) {
+      propagateError(generateError("One of the users you asked for doesn't exist!"));
+      return;
+    }
 
     // if coordinates were given, they have the priority, and after we'll check everything else
     if (coords) {
