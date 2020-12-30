@@ -105,7 +105,6 @@ const MainContainer = () => {
       try {
         const res = await axios.get(`${SETTINGS}?streamId=${streamId}`);
         const settings = res.data;
-        console.log(settings);
 
         if (settings.locations) {
           const coords = settings.locations.split(',');
@@ -191,11 +190,8 @@ const MainContainer = () => {
       );
 
       setStreamId(res.data);
-      console.log('stream id axios', res.data);
-
       socket.emit('attach', { streamId: res.data });
       socket.on('tweet', (tweet) => {
-        console.log(tweet);
         setTweets((prevTweets) => [...prevTweets, tweet]);
       });
       socket.on('error', console.log);
@@ -223,7 +219,6 @@ const MainContainer = () => {
   const handleAuthentication = async () => {
     try {
       const res = await axios.get(REQUEST_TOKEN);
-      console.log(res);
       window.location.replace(
         `https://api.twitter.com/oauth/authenticate?oauth_token=${res.data.token}`
       );

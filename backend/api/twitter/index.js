@@ -35,8 +35,6 @@ function check(tweet, constraints) {
     'entities.hashtags': constraints.track || 'ANY',
   };
 
-  console.log(twConstraints);
-
   for (const [key, value] of Object.entries(twConstraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
@@ -53,7 +51,6 @@ function check(tweet, constraints) {
     } else {
       //insert specifics value check here e.g if key == "place.bounding_box.coordinates" checkpointinrect(value, tweetvalue)
       if (key === 'entities.hashtags') {
-        console.log(tweetvalue);
         // if there is no value return false
         if (!tweetvalue) return false;
         // if it's only one item convert to array
@@ -72,7 +69,6 @@ const startStream = (constraints, parameters) => {
   const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
   streams[streamId] = { stream, settings: { ...constraints, ...parameters }, data: [] };
-  console.log(streams[streamId].settings);
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
     if (streams[streamId].socket) {
@@ -83,7 +79,7 @@ const startStream = (constraints, parameters) => {
   });
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {
-      console.log(`Inside stream:data: ${tweet.text}`);
+      console.log(tweet.text);
       streams[streamId].data.push(tweet);
 
       if (streams[streamId].socket) {
@@ -96,7 +92,6 @@ const startStream = (constraints, parameters) => {
 
 const closeStream = (streamId) => {
   const { stream, data } = streams[streamId];
-  // console.log('closeStream data:', data);
   stream.destroy();
   delete streams[streamId];
   const dataJson = exportJSON(data);
@@ -194,7 +189,6 @@ const attachSocket = (socket, streamId) => {
   streams[streamId].socket = socket;
   const oldData = [...streams[streamId].data];
   oldData.forEach((tweet) => {
-    console.log(`In attachSocket: ${tweet.text}`);
     socket.emit('tweet', tweet);
   });
 };
@@ -210,7 +204,6 @@ const detachSocket = (socket) => {
 };
 
 const getSettings = async (streamId) => {
-  console.log('settings', streams[streamId].settings.oldFollow);
   if (!streams[streamId].settings.oldFollow) {
     streams[streamId].settings.oldFollow = streams[streamId].settings.follow;
   }

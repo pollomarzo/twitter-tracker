@@ -17,7 +17,7 @@ const StartStopStream = ({ stopStream, streamId }) => {
   const startBgStream = () => {
     const { tweetTreshold, dayTreshold } = APIparams;
     if (tweetTreshold <= 1000 && dayTreshold <= 7) {
-      // API call here to make it background 
+      // API call here to make it background
       propagateError(
         generateError(
           `Save this code '${streamId}' in order to recover a session`,

@@ -65,15 +65,12 @@ const ScheduleTweet = ({ handleAuth }) => {
   const handleInterval = (e) => {
     const input = e.target.value;
     if (NUMBER_RE.test(input) || input === '') {
-      console.log(`going to send tweet every ${input} hours`);
       setHours(input);
       setError('');
     }
   };
   const confirmation = 'Seems your tweet went through!';
   const handleSend = async () => {
-    console.log('Shooting scheduled tweet!');
-    console.log(selectedComponents);
     try {
       const screenshots = await Promise.all(
         selectedComponents.map((id) =>
@@ -92,9 +89,8 @@ const ScheduleTweet = ({ handleAuth }) => {
       };
       const response = await axios.post(SEND_TWEET, { msg, authProps });
       setSent(true);
-      console.log(response);
     } catch (err) {
-      console.log(err.response.data.message);
+      console.error(err.response.data.message);
     }
   };
   const handleConfirm = () => {

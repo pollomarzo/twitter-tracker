@@ -60,7 +60,6 @@ router.put('/notification', (req, res) => {
 
 router.post('/sendTweet', async (req, res) => {
   const { msg, authProps } = req.body;
-  // console.log('inside sendTweet', req.body);
   try {
     const response = await twitter.sendTweet(msg, authProps);
     res.status(200).send(response);
