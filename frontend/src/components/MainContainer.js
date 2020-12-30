@@ -12,6 +12,7 @@ import NotifySettings from './NotifySettings';
 import { generateError } from './AlertWindow';
 import WordCloud from './WordCloud';
 import StartStopStream from './StartStopStream';
+import Graphs from './Graphs';
 import { fakeTweets } from '../misc/fakeTweets';
 import { MAP_ID } from '../constants';
 import Filters from './Filters';
@@ -310,6 +311,7 @@ const MainContainer = () => {
           )}
           <Filters list={tweets} setList={setTweetsFiltered} />
           <WordCloud list={tweetsFiltered} />
+          <Graphs list={tweetsFiltered} />
         </div>
         <div className={classes.rightContent}>
           <div id={MAP_ID} className={classes.mapWrapper}>
