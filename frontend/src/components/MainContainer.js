@@ -14,6 +14,7 @@ import WordCloud from './WordCloud';
 import StartStopStream from './StartStopStream';
 import { fakeTweets } from '../misc/fakeTweets';
 import { MAP_ID } from '../constants';
+import Filters from './Filters';
 
 import { useUser } from '../context/UserContext';
 
@@ -97,8 +98,9 @@ const MainContainer = () => {
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
+  const [tweetsFiltered, setTweetsFiltered] = useState(tweets);
   const [streamError, setStreamError] = useState();
-  const [coords, setCoordinates] = useState({
+  const [coords, setCoords] = useState({
     latitudeSW: '',
     longitudeSW: '',
     latitudeNE: '',
@@ -108,6 +110,9 @@ const MainContainer = () => {
     track: '', // hashtag
     follow: '', // user
   });
+  useEffect(() => {
+    setTweetsFiltered(tweets);
+  }, [tweets]);
 
   //cookie
   useEffect(() => {
@@ -118,7 +123,7 @@ const MainContainer = () => {
 
         if (settings.locations) {
           const coords = settings.locations.split(',');
-          setCoordinates({
+          setCoords({
             latitudeSW: coords[1],
             longitudeSW: coords[0],
             latitudeNE: coords[3],
@@ -150,19 +155,19 @@ const MainContainer = () => {
     }
   }, []);
 
-  const getIDs = async (names) => {};
-
   const startStream = async ({ coords, params }) => {
     let streamParameters; // in OR
     let constraints; // in AND, AFTER collection
-    let follow;
-    try {
-      // pray that it is formatted correctly
-      const res = await axios.get(`${GET_IDS}?names=${params.follow}`);
-      follow = res.data;
-    } catch (err) {
-      propagateError(generateError("One of the users you asked for doesn't exist!"));
-      return;
+    let follow = undefined;
+    if (params.follow) {
+      try {
+        // pray that it is formatted correctly
+        const res = await axios.get(`${GET_IDS}?names=${params.follow}`);
+        follow = res.data;
+      } catch (err) {
+        propagateError(generateError("One of the users you asked for doesn't exist!"));
+        return;
+      }
     }
 
     // if coordinates were given, they have the priority, and after we'll check everything else
@@ -244,7 +249,7 @@ const MainContainer = () => {
     []
   );
   const handleCoordChange = (e) =>
-    setCoordinates({ ...coords, [e.target.name]: e.target.value });
+    setCoords({ ...coords, [e.target.name]: e.target.value });
 
   const handleParamsChange = (e) =>
     setParams({ ...params, [e.target.name]: e.target.value });
@@ -260,7 +265,7 @@ const MainContainer = () => {
       startStream({ coords, params });
     else {
       const onReset = () =>
-        setCoordinates((prevCoords) =>
+        setCoords((prevCoords) =>
           Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
         );
       propagateError(
@@ -303,18 +308,19 @@ const MainContainer = () => {
               {streamError.source}
             </Alert>
           )}
-          <WordCloud list={tweets} />
+          <Filters list={tweets} setList={setTweetsFiltered} />
+          <WordCloud list={tweetsFiltered} />
         </div>
         <div className={classes.rightContent}>
           <div id={MAP_ID} className={classes.mapWrapper}>
             <Map
-              tweetsList={tweets}
+              tweetsList={tweetsFiltered}
               setCoordinates={onAddRect}
               showToolbars={!streamId}
             />
           </div>
           <div className={classes.listWrapper}>
-            <TweetList list={tweets} setList={setTweets} />
+            <TweetList list={tweetsFiltered} setList={setTweets} />
           </div>
         </div>
       </div>

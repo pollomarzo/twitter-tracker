@@ -115,11 +115,7 @@ const requestToken = async () => {
     consumer_secret: credentials.consumer_secret, // from Twitter.
   });
 
-<<<<<<< HEAD
   const res = await client.getRequestToken(credentials.auth_url);
-=======
-  const res = await client.getRequestToken('http://2e6dd6fc010c.eu.ngrok.io/auth');
->>>>>>> feat/background-stream
   return { token: res.oauth_token, secret: res.oauth_token_secret };
 };
 
