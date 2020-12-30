@@ -30,7 +30,12 @@ const appClient = new Twitter({
 });
 
 function check(tweet, constraints) {
-  for (const [key, value] of Object.entries(constraints)) {
+  const twConstraints = {
+    'user.id_str': constraints.follow || 'ANY',
+    'entities.hashtags': constraints.track || 'ANY',
+  };
+
+  for (const [key, value] of Object.entries(twConstraints)) {
     var nesting = key.split('.');
     var tweetvalue = tweet;
     nesting.forEach((item) => {
@@ -40,7 +45,7 @@ function check(tweet, constraints) {
         return false;
       }
     });
-    if (value.toUpperCase() === 'ANY') {
+    if (value === 'ANY') {
       //any value
       if (!tweetvalue) return false; //check if the value is defined in the tweet
     } else {
@@ -51,9 +56,10 @@ function check(tweet, constraints) {
         // if it's only one item convert to array
         else if (!Array.isArray(tweetvalue)) tweetvalue = [tweetvalue];
         // check if any of the expected hashtags are included
-        return tweetvalue.some((hashtag) => value.includes(hashtag));
+        return tweetvalue.some((hashtag) => value.includes(hashtag.text));
+      } else {
+        return value.includes(tweetvalue);
       }
-      return tweetvalue === value;
     }
   }
   return true;
@@ -62,17 +68,23 @@ function check(tweet, constraints) {
 const startStream = (constraints, parameters) => {
   const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
-  streams[streamId] = { stream, data: [] };
+  streams[streamId] = { stream, settings: { ...constraints, ...parameters }, data: [] };
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
-    streams[streamId].socket.emit('error', error);
+    if (streams[streamId].socket) {
+      streams[streamId].socket.emit('error', error);
+    }
+
     console.log(error);
-  }); //todo handler error
+  });
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {
       console.log(tweet.text);
       streams[streamId].data.push(tweet);
-      streams[streamId].socket.emit('tweet', tweet);
+
+      if (streams[streamId].socket) {
+        streams[streamId].socket.emit('tweet', tweet);
+      }
     }
   });
   return streamId;
@@ -80,15 +92,10 @@ const startStream = (constraints, parameters) => {
 
 const closeStream = (streamId) => {
   const { stream, data } = streams[streamId];
-  console.log('closeStream data:', data);
   stream.destroy();
   delete streams[streamId];
   const dataJson = exportJSON(data);
   return { dataJson };
-};
-
-const register = (socket, streamId) => {
-  streams[streamId].socket = socket;
 };
 
 //returns an Array of IDs
@@ -108,7 +115,11 @@ const requestToken = async () => {
     consumer_secret: credentials.consumer_secret, // from Twitter.
   });
 
+<<<<<<< HEAD
   const res = await client.getRequestToken(credentials.auth_url);
+=======
+  const res = await client.getRequestToken('http://2e6dd6fc010c.eu.ngrok.io/auth');
+>>>>>>> feat/background-stream
   return { token: res.oauth_token, secret: res.oauth_token_secret };
 };
 
@@ -161,21 +172,6 @@ const sendTweet = async (msg, authProps) => {
     access_token_secret: authProps.accessTokenSecret,
   });
 
-  // var media_ids_list = []
-  // msg.forEach(el => {
-  //   const TEST_IMAGE = fs.readFileSync(path.join(__dirname, 'test.jpg'));
-  //   const base64Image = new Buffer.from(TEST_IMAGE).toString('base64');
-
-  //   const mediaUploadResponse = await uploadClient.post('media/upload', {
-  //     media_data: base64Image,
-  //   });
-
-  //   media_ids_list.push(mediaUploadResponse.media_id_string)
-  // })
-
-  // const TEST_IMAGE = fs.readFileSync(path.join(__dirname, 'test.jpg'));
-  // const base64Image = new Buffer.from(TEST_IMAGE).toString('base64');
-
   const mediaUploadResponses = await Promise.all(
     msg.media.map((media) =>
       uploadClient.post('media/upload', {
@@ -193,11 +189,53 @@ const sendTweet = async (msg, authProps) => {
   return tweet;
 };
 
-register.requestToken = requestToken;
-register.requestAccess = requestAccess;
-register.startStream = startStream;
-register.closeStream = closeStream;
-register.getIDs = getIDs;
-register.sendTweet = sendTweet;
+const attachSocket = (socket, streamId) => {
+  streams[streamId].socket = socket;
+  const oldData = [...streams[streamId].data];
+  oldData.forEach((tweet) => {
+    socket.emit('tweet', tweet);
+  });
+};
 
-module.exports = register;
+const detachSocket = (socket) => {
+  const targetStream = Object.entries(streams).find(
+    ([_, stream]) => stream.socket.id === socket.id
+  );
+
+  if (targetStream) {
+    targetStream.socket = null;
+  }
+};
+
+const getSettings = async (streamId) => {
+  console.log(
+    'oldFollow, follow are: ',
+    streams[streamId].settings.oldFollow,
+    streams[streamId].settings.follow
+  );
+  if (!streams[streamId].settings.oldFollow) {
+    streams[streamId].settings.oldFollow = streams[streamId].settings.follow || '';
+  }
+  const ids = streams[streamId].settings.oldFollow;
+  if (ids) {
+    const users = await appClient.get('users/lookup', {
+      user_id: ids,
+    });
+    const usernames = users.map((user) => user.screen_name);
+    streams[streamId].settings.follow = usernames.join(',');
+  }
+
+  return streams[streamId].settings;
+};
+
+module.exports = {
+  requestToken,
+  requestAccess,
+  startStream,
+  closeStream,
+  getIDs,
+  sendTweet,
+  attachSocket,
+  detachSocket,
+  getSettings,
+};

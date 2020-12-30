@@ -27,13 +27,23 @@ const useStyles = makeStyles({
   },
 });
 
-const InputField = ({ label, fieldName, handler, text, helperText, hasError, ...others}) => {
+const InputField = ({
+  label,
+  fieldName,
+  value,
+  handler,
+  text,
+  helperText,
+  hasError,
+  ...others
+}) => {
   const { textField } = useStyles();
   return (
     <TextField
       variant="outlined"
       className={textField}
       label={label}
+      value={value}
       name={fieldName}
       onChange={handler}
       helperText={hasError && helperText}

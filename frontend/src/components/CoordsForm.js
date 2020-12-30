@@ -6,8 +6,6 @@ import { CircularProgress, makeStyles } from '@material-ui/core';
 import { generateError } from './AlertWindow';
 import InputField from './InputField';
 
-const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
-
 const useStyles = makeStyles(() => ({
   form: {
     display: 'flex',
@@ -29,77 +27,65 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const CoordsForm = ({ onStart, onStop, open }) => {
+const CoordsForm = ({
+  open,
+  coords,
+  params,
+  onStart,
+  onStop,
+  onCoordChange,
+  onParamChange,
+}) => {
   const { form, submitContainer, submitButton } = useStyles();
-  const propagateError = useErrorHandler();
-  // A set of coords to initialize a geolocalized stream
-  const [coords, setCoordinates] = useState({
-    latitudeSW: '',
-    longitudeSW: '',
-    latitudeNE: '',
-    longitudeNE: '',
-  });
-  const [params, setParams] = useState({
-    track: '', // hashtag
-    follow: '', // user
-  });
-
-  const handleCoordChange = (e) =>
-    setCoordinates({ ...coords, [e.target.name]: e.target.value });
-
-  const handleParamsChange = (e) =>
-    setParams({ ...params, [e.target.name]: e.target.value });
-
-  const handleSubmit = () => {
-    const values = Object.values(coords);
-    // Start a not geolocalized
-    if (values.every((value) => value === '')) {
-      onStart({ coords: '', params });
-    }
-    // Start a geolocalized
-    else if (values.every((value) => value && COORDINATE_RE.test(value)))
-      onStart({ coords, params });
-    else {
-      const onReset = () =>
-        setCoordinates((prevCoords) =>
-          Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
-        );
-      propagateError(
-        generateError(
-          'An acceptable input is a number in range [-180.00, 180.00]',
-          onReset
-        )
-      );
-    }
-  };
-
   return (
     <div className={form}>
       <div className="inputForm">
         <Typography>North-East Corner</Typography>
         <InputField
+          value={coords.longitudeNE}
           label="Longitude"
           fieldName="longitudeNE"
-          handler={handleCoordChange}
+          handler={onCoordChange}
         />
-        <InputField label="Latitude" fieldName="latitudeNE" handler={handleCoordChange} />
+        <InputField
+          value={coords.latitudeNE}
+          label="Latitude"
+          fieldName="latitudeNE"
+          handler={onCoordChange}
+        />
       </div>
       <div className="inputForm">
         <Typography>South-West Corner</Typography>
         <InputField
+          value={coords.longitudeSW}
           label="Longitude"
           fieldName="longitudeSW"
-          handler={handleCoordChange}
+          handler={onCoordChange}
         />
-        <InputField label="Latitude" fieldName="latitudeSW" handler={handleCoordChange} />
+        <InputField
+          value={coords.latitudeSW}
+          label="Latitude"
+          fieldName="latitudeSW"
+          handler={onCoordChange}
+        />
       </div>
       <div className="inputForm">
         <Typography>Hashtag</Typography>
-        <InputField fieldName="track" text="#" handler={handleParamsChange} />
+        <InputField
+          value={params.track}
+          fieldName="track"
+          text="#"
+          handler={onParamChange}
+        />
       </div>
       <div className="inputForm">
         <Typography>User</Typography>
-        <InputField fieldName="follow" text="@" handler={handleParamsChange} />
+        <InputField
+          value={params.follow}
+          fieldName="follow"
+          text="@"
+          handler={onParamChange}
+        />
       </div>
 
       <div className={submitContainer}>
@@ -114,7 +100,7 @@ const CoordsForm = ({ onStart, onStop, open }) => {
           </Button>
         ) : (
           <Button
-            onClick={handleSubmit}
+            onClick={onStart}
             variant="contained"
             className={submitButton}
             color="default"
