@@ -3,11 +3,6 @@ const twitter = require('./twitter');
 const SMTP = require('./email');
 const router = express.Router();
 
-const converter = (oldParams) => ({
-  'user.id_str': oldParams.follow || 'ANY',
-  'entities.hashtags': oldParams.track || 'ANY',
-});
-
 // twitter API expects
 //   - username: follow
 //   - hashtags: track
@@ -21,8 +16,9 @@ router.post('/geoFilter', (req, res) => {
   // between how we handle (search in hashtag) and twitter, wecan  either prepend '#' to
   // user input or search over whole twitter text ourselves (making us less efficient)
   // alternatively, leave it as is and leave everyone baffled. TODO!
-  const streamID = twitter.startStream(converter(constraints), streamParameters);
+  const streamID = twitter.startStream(constraints, streamParameters);
   res.setHeader('Content-Type', 'text/plain');
+  res.cookie('streamId', streamID, { maxAge: 259200000 });
   res.status(200).send(streamID);
 });
 
@@ -64,7 +60,6 @@ router.put('/notification', (req, res) => {
 
 router.post('/sendTweet', async (req, res) => {
   const { msg, authProps } = req.body;
-  // console.log('inside sendTweet', req.body);
   try {
     const response = await twitter.sendTweet(msg, authProps);
     res.status(200).send(response);
@@ -89,6 +84,17 @@ router.get('/auth', async (req, res) => {
     const response = await twitter.requestAccess(oauthToken, oauthVerifier);
     res.status(200).send(response);
   } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
+
+router.get('/settings', async (req, res) => {
+  const { streamId } = req.query;
+  try {
+    const params = await twitter.getSettings(streamId);
+    res.status(200).send(params);
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err });
   }
 });
