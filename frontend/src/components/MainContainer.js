@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
 import io from 'socket.io-client';
 import axios from 'axios';
@@ -11,12 +11,17 @@ import SearchIcon from '@material-ui/icons/Search';
 import AlarmIcon from '@material-ui/icons/Alarm';
 import EmailIcon from '@material-ui/icons/Email';
 
-import { BASE_URL, GEO_FILTER, GET_IDS, REQUEST_TOKEN, FABsDesc } from '../constants';
+import {
+  BASE_URL,
+  GEO_FILTER,
+  GET_IDS,
+  REQUEST_TOKEN,
+  SETTINGS,
+  FABsDesc,
+} from '../constants';
 import { ShowDialogIcon, CoordsForm, Map, InsightTabs, TweetList, WordCloud } from '.';
-import { NotifySettings, ScheduleTweet } from '.';
-//import { Map, CoordsForm, TweetList, NotifySettings, WordCloud, ScheduleTweet } from '.';
+import { NotifySettings, ScheduleTweet, Filters, Graphs } from '.';
 import { UserError } from './AlertWindow';
-import { useUser } from '../context/UserContext';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -51,23 +56,20 @@ const socket = io(BASE_URL, {
   path: '/socket', // needed for cors in dev
 });
 
+function getCookieValue(a) {
+  const b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
+  return b ? b.pop() : null;
+}
+
+const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
+
 const MainContainer = () => {
-  const [coordinates, setCoordinates] = useState({
-    ne: {
-      lat: null,
-      lng: null,
-    },
-    sw: {
-      lat: null,
-      lng: null,
-    },
-  });
   const launch = useErrorHandler();
+  const { paper, header, mainContainer } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
   const [tweetsFiltered, setTweetsFiltered] = useState(tweets);
-  const [streamError, setStreamError] = useState();
   const [coords, setCoords] = useState({
     latitudeSW: '',
     longitudeSW: '',
@@ -133,7 +135,7 @@ const MainContainer = () => {
         const res = await axios.get(`${GET_IDS}?names=${params.follow}`);
         follow = res.data;
       } catch (err) {
-        propagateError(generateError("One of the users you asked for doesn't exist!"));
+        launch(UserError("One of the users you asked for doesn't exist!"));
         return;
       }
     }
@@ -210,14 +212,12 @@ const MainContainer = () => {
 
   const onAddRect = useCallback(
     (nelat, nelng, swlat, swlng) =>
-      setCoordinates({
+      setCoords({
         ne: { lat: nelat, lng: nelng },
         sw: { lat: swlat, lng: swlng },
       }),
     []
   );
-  const handleCoordChange = (e) =>
-    setCoords({ ...coords, [e.target.name]: e.target.value });
 
   const handleParamsChange = (e) =>
     setParams({ ...params, [e.target.name]: e.target.value });
@@ -236,41 +236,37 @@ const MainContainer = () => {
         setCoords((prevCoords) =>
           Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
         );
-      propagateError(
-        generateError(
-          'An acceptable input is a number in range [-180.00, 180.00]',
-          onReset
-        )
-      );
+      launch(UserError('There is an error with your geolocalized box', onReset));
     }
   };
 
   return (
+    // prettier-ignore
     <div className={paper}>
-      <Grid container className={header} justifyContent="space-around" alignItems="center" >
+      <Grid container className={header} justify="space-around" alignItems="center" >
         {/* Box with stream params */}
         <Grid item xs={4}>
-          <ShowDialogIcon icon={<Settings />} name="Stream settings" desc={FABsDesc['params']}>
-            <CoordsForm onStart={startStream} onStop={stopStream} open={streamId} />
+          <ShowDialogIcon icon={<Settings />} name="Stream settings" desc={FABsDesc['params']} >
+            <CoordsForm activeStream={streamId} params={params} onStart={handleStart}
+              onStop={stopStream} onParamChange={handleParamsChange} />
           </ShowDialogIcon>
         </Grid>
         <Grid item xs={4}>
-          <Typography color="primary" variant="h3" align="center" justifyContent="center">
+          <Typography color="primary" variant="h3" align="center" justify="center">
             TWITTER TRACKER
           </Typography>
         </Grid>
         <Grid item container xs={4} justify="flex-end">
-          <ShowDialogIcon icon={<SearchIcon />} iconOnly name="Filter tweets" desc={FABsDesc['filter']}>
-            <NotifySettings count={tweets.length} />
+          <ShowDialogIcon icon={<SearchIcon />} iconOnly name="Filter tweets" desc={FABsDesc['filter']} >
+            <Filters list={tweets} setList={setTweetsFiltered} />
           </ShowDialogIcon>
-          <ShowDialogIcon icon={<AlarmIcon />} iconOnly name="Scheduled tweet"  desc={FABsDesc['schedule']}>
+          <ShowDialogIcon icon={<AlarmIcon />} iconOnly name="Scheduled tweet" desc={FABsDesc['schedule']} >
             <ScheduleTweet handleAuth={handleAuthentication} />
           </ShowDialogIcon>
-          <ShowDialogIcon icon={<EmailIcon />} iconOnly name="E-mail notification"  desc={FABsDesc['email']}>
+          <ShowDialogIcon icon={<EmailIcon />} iconOnly name="E-mail notification" desc={FABsDesc['email']} >
             <NotifySettings count={tweets.length} />
           </ShowDialogIcon>
         </Grid>
-        {/* Here goes the tooltips */}
       </Grid>
 
       {/* Grid layout for Map and InsightTabs */}
@@ -282,7 +278,7 @@ const MainContainer = () => {
           <InsightTabs>
             <TweetList list={tweets} setList={setTweets} tabName="Tweet List" />
             <WordCloud list={tweets} tabName="Wordcloud" />
-            {/* TODO here will go Graphs from Lorenz */}
+            <Graphs list={tweetsFiltered} tabName="Graphs" />
           </InsightTabs>
         </Grid>
       </Grid>

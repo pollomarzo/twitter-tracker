@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
-import { useErrorHandler } from 'react-error-boundary';
+import React from 'react';
 import { Fade, Button, CircularProgress, makeStyles } from '@material-ui/core';
 
-import { UserError } from './AlertWindow';
-import InputField from './InputField';
-
-const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
+import { InputField } from '.';
 
 const useStyles = makeStyles((theme) => ({
   submitButton: {
@@ -21,44 +17,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CoordsForm = ({ onStart, onStop, open }) => {
+const CoordsForm = ({ activeStream, params, onStart, onStop, onParamChange }) => {
   const { submitButton } = useStyles();
-  const launch = useErrorHandler();
-
-  // A set of coords to initialize a geolocalized stream
-  const [coords, setCoordinates] = useState({
-    latitudeSW: '',
-    longitudeSW: '',
-    latitudeNE: '',
-    longitudeNE: '',
-  });
-  const [params, setParams] = useState({
-    track: '', // hashtag
-    follow: '', // user
-  });
-
-  const handleParamsChange = (e) =>
-    setParams({ ...params, [e.target.name]: e.target.value });
-
-  const handleSubmit = () => {
-    const values = Object.values(coords);
-    // Start a not geolocalized
-    if (values.every((value) => value === '')) {
-      onStart({ coords: '', params });
-    }
-    // Start a geolocalized
-    else if (values.every((value) => value && COORDINATE_RE.test(value)))
-      onStart({ coords, params });
-    else {
-      const onReset = () =>
-        setCoordinates((prevCoords) =>
-          Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
-        );
-      launch(
-        UserError('An acceptable input is a number in range [-180.00, 180.00]', onReset)
-      );
-    }
-  };
 
   return (
     <>
@@ -66,23 +26,25 @@ const CoordsForm = ({ onStart, onStop, open }) => {
         label="Hashtag"
         fieldName="track"
         text="#"
-        handler={handleParamsChange}
+        value={params.track}
+        handler={onParamChange}
       />
       <InputField
-        label="Username"
+        label="User"
         fieldName="follow"
         text="@"
-        handler={handleParamsChange}
+        value={params.follow}
+        handler={onParamChange}
       />
       <Button
         variant="contained"
         color="primary"
         className={submitButton}
-        onClick={open ? onStop : handleSubmit}
+        onClick={activeStream ? onStop : onStart}
       >
-        {open ? 'STOP' : 'START'}
+        {activeStream ? 'STOP' : 'START'}
       </Button>
-      <Fade in={open} unmountOnExit>
+      <Fade in={activeStream} unmountOnExit>
         <CircularProgress />
       </Fade>
     </>

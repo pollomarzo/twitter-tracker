@@ -12,12 +12,12 @@ const useQuery = () => {
 };
 
 const Auth = () => {
+  const query = useQuery();
   const oauthToken = query.get('oauth_token');
   const oauthVerifier = query.get('oauth_verifier');
 
   const { setAuthProps } = useUser();
   const history = useHistory();
-  const query = useQuery();
 
   useEffect(() => {
     const requestAccess = async () => {
@@ -31,7 +31,7 @@ const Auth = () => {
     };
 
     requestAccess();
-  }, [oauthToken, oauthVerifier]);
+  }, [oauthToken, oauthVerifier, history, setAuthProps]);
 
   return (
     <div>

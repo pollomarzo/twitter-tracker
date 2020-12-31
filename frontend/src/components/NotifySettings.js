@@ -1,41 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Slider, makeStyles, Divider } from '@material-ui/core';
+import { Typography, Slider, Grid, makeStyles } from '@material-ui/core';
 import axios from 'axios';
 
-import InputField from './InputField';
+import { InputField } from '.';
 import { NOTIFICATION } from '../constants';
 
-const useStyles = makeStyles(() => ({
-  container: {
-    marginBottom: '5vh',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  email: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  counter: {
-    marginLeft: '2vh',
-    alignItems: 'center',
-  },
-  threshold: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  sliderStyle: {
-    width: '50%',
-    marginLeft: '5vh',
-  },
-  sliderInput: {
-    marginTop: '2vh',
+const useStyles = makeStyles((theme) => ({
+  tresholdSlider: {
+    width: 70,
   },
 }));
 
 const NotifySettings = ({ count }) => {
-  const classes = useStyles();
+  const { tresholdSlider } = useStyles();
   const [email, setEmail] = useState(undefined);
   const [treshold, setTreshold] = useState(100);
   const [mailSent, setSent] = useState(false);
@@ -50,21 +27,18 @@ const NotifySettings = ({ count }) => {
   }, [mailSent, email, treshold, count]);
 
   return (
-    <div className={classes.container}>
-      <div className={classes.email}>
+    <>
+      <Grid item xs={4}>
         <InputField
           label="e-mail"
           handler={(event) => setEmail(event.target.value)}
           disabled={mailSent}
         />
-        <Typography
-          className={classes.counter}
-        >{`Already got ${count} tweets`}</Typography>
-      </div>
-      <div className={classes.threshold}>
+      </Grid>
+      <Grid item xs={4}>
         <Typography gutterBottom>Treshold</Typography>
         <Slider
-          className={classes.sliderStyle}
+          classNames={tresholdSlider}
           value={treshold}
           onChange={(_, newT) => setTreshold(newT)}
           valueLabelDisplay="auto"
@@ -72,9 +46,8 @@ const NotifySettings = ({ count }) => {
           max={1000}
           disabled={mailSent}
         />
-      </div>
-      <Divider variant="middle" />
-    </div>
+      </Grid>
+    </>
   );
 };
 

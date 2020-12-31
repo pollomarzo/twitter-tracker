@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
-import { Fab, makeStyles } from '@material-ui/core';
+import { Fab, Grid, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   fabIcon: {
     marginLeft: 30,
     marginRight: 30,
   },
+  childrenContainer: {
+    height: 'auto',
+  }
 }));
 
 const ShowDialogIcon = ({ icon, iconOnly, name, desc, children }) => {
   const [isOpen, setOpen] = useState(false);
-  const { fabIcon } = useStyles();
+  const { fabIcon, childrenContainer} = useStyles();
 
   return (
     <>
@@ -27,7 +30,9 @@ const ShowDialogIcon = ({ icon, iconOnly, name, desc, children }) => {
         <DialogTitle>{name}</DialogTitle>
         <DialogContent>
           <DialogContentText>{desc}</DialogContentText>
-          {children}
+          <Grid container className={childrenContainer} justify="space-evenly">
+            {children}
+          </Grid>
         </DialogContent>
       </Dialog>
     </>

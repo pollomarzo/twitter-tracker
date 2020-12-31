@@ -1,6 +1,8 @@
 import { default as AlertWindow } from './AlertWindow';
 import { default as Auth } from './Auth';
 import { default as CoordsForm } from './CoordsForm';
+import { default as Filters } from './Filters';
+import { default as Graphs } from './Graphs';
 import { default as Home } from './Home';
 import { default as InputField } from './InputField';
 import { default as InsightTabs } from './InsightTabs';
@@ -17,6 +19,8 @@ export {
   AlertWindow,
   Auth,
   CoordsForm,
+  Filters,
+  Graphs,
   Home,
   InputField,
   InsightTabs,

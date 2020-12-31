@@ -88,10 +88,10 @@ const Graphs = ({ list }) => {
       }
     }
     return Object.keys(result).map(function (p) {
-      if (p == 'Not geolocated') return { name: p, country: 'Not geolocated',  count: result[p] };
-      else if (p.length == 2) return { name: getName(p), count: result[p] };
+      if (p === 'Not geolocated') return { name: p, country: 'Not geolocated',  count: result[p] };
+      else if (p.length === 2) return { name: getName(p), count: result[p] };
       else {
-        var tmp = p.split('-')[0] == 'undefined' ? 'Unknown' : p.split('-')[0];
+        var tmp = p.split('-')[0] === 'undefined' ? 'Unknown' : p.split('-')[0];
         return { name: tmp, country: getName(p.split('-')[1]), count: result[p] };
       }
     });
