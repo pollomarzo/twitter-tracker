@@ -31,11 +31,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   header: {
-    marginTop: 15,
-    marginBottom: 15,
+    height: '10%',
+    marginTop: 10,
+    marginBottom: 10,
   },
 
-  mapContainer: {
+  mainContainer: {
     height: 850,
     '& .leaflet-container': {
       margin: 20,
@@ -61,7 +62,7 @@ const MainContainer = () => {
   const { authProps } = useUser();
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
-  const { paper, header, mapContainer } = useStyles();
+  const { paper, header, mainContainer } = useStyles();
 
   const getIDs = async (names) => {
     try {
@@ -157,7 +158,7 @@ const MainContainer = () => {
 
   return (
     <div className={paper}>
-      <Grid container className={header}>
+      <Grid container className={header} justifyContent="space-around" alignItems="center" >
         {/* Box with stream params */}
         <Grid item xs={4}>
           <ShowDialogIcon icon={<Settings />} name="Stream settings" desc={FABsDesc['params']}>
@@ -165,11 +166,11 @@ const MainContainer = () => {
           </ShowDialogIcon>
         </Grid>
         <Grid item xs={4}>
-          <Typography color="primary" variant="h4" align="center">
+          <Typography color="primary" variant="h3" align="center" justifyContent="center">
             TWITTER TRACKER
           </Typography>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item container xs={4} justify="flex-end">
           <ShowDialogIcon icon={<SearchIcon />} iconOnly name="Filter tweets" desc={FABsDesc['filter']}>
             <NotifySettings count={tweets.length} />
           </ShowDialogIcon>
@@ -185,10 +186,10 @@ const MainContainer = () => {
 
       {/* Grid layout for Map and InsightTabs */}
       <Grid container>
-        <Grid item xs={6} className={mapContainer}>
+        <Grid item xs={6} className={mainContainer}>
           <Map tweetsList={tweets} setCoordinates={onAddRect} showToolbars={!streamId} />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} className={mainContainer}>
           <InsightTabs>
             <TweetList list={tweets} setList={setTweets} tabName="Tweet List" />
             <WordCloud list={tweets} tabName="Wordcloud" />
@@ -201,24 +202,3 @@ const MainContainer = () => {
 };
 
 export default MainContainer;
-/*
-      <div >
-        <div>
-          <NotifySettings count={tweets.length} />
-         
-          </div>
-          <div>
-          <div id={MAP_ID}>
-          <WordCloud list={tweets} />
-            <Map
-              tweetsList={tweets}
-              setCoordinates={onAddRect}
-              showToolbars={!streamId}
-            />
-          </div>
-          <div >
-            <TweetList list={tweets} setList={setTweets} />
-          </div>
-        </div>
-      </div>
-*/

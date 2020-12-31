@@ -4,7 +4,8 @@ import { Fab, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   fabIcon: {
-    marginLeft: 20,
+    marginLeft: 30,
+    marginRight: 30,
   },
 }));
 

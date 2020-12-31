@@ -11,7 +11,8 @@ const useStyles = makeStyles((theme) => ({
   container: {
     margin: 10,
     maxHeight: '78vh',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    scrollbarWidth: 'none',
   },
 }));
 
