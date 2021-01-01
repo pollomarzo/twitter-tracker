@@ -1,35 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from 'recharts';
-import { AgGridColumn, AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { getName } from 'country-list';
+import React, { useMemo } from 'react';
+import { Grid, Typography } from '@material-ui/core';
 
-const Graphs = ({ list }) => {
-  const [hours, setHours] = useState([]);
-  const [days, setDays] = useState([]);
-  const [geo, setGeo] = useState([]);
-  const [country, setCountry] = useState([]);
-  const [city, setCity] = useState([]);
-  const [region, setRegion] = useState([]);
-  const [retweet, setRetweet] = useState([]);
+import { AreaChart, BarChart, PieChart, TableChart } from './GraphSnippets';
 
-  var hoursObject = [
+const statsTemplate = {
+  hours: [
     { name: '00', value: '0', count: 0 },
     { name: '01', value: '1', count: 0 },
     { name: '02', value: '2', count: 0 },
@@ -54,178 +29,125 @@ const Graphs = ({ list }) => {
     { name: '21', value: '21', count: 0 },
     { name: '22', value: '22', count: 0 },
     { name: '23', value: '23', count: 0 },
-  ];
-
-  var daysObject = [
+  ],
+  days: [
+    { name: 'Sun', subject: 'Sunday', count: 0 },
     { name: 'Mon', subject: 'Monday', count: 0 },
     { name: 'Tue', subject: 'Tuesday', count: 0 },
     { name: 'Wed', subject: 'Wednesday', count: 0 },
     { name: 'Thu', subject: 'Thursday', count: 0 },
     { name: 'Fri', subject: 'Friday', count: 0 },
     { name: 'Sat', subject: 'Saturday', count: 0 },
-    { name: 'Sun', subject: 'Sunday', count: 0 },
-  ];
-
-  const geoObject = [
-    { name: 'Yes', count: 0 },
+  ],
+  geolocalization: [
     { name: 'No', count: 0 },
-  ];
-
-  const retweetObject = [
     { name: 'Yes', count: 0 },
+  ],
+  retweet: [
     { name: 'No', count: 0 },
-  ];
+    { name: 'Yes', count: 0 },
+  ],
+  cities: [],
+  countries: [],
+};
 
-  function removeDupes(arr) {
-    var result = {};
-    var i = arr.length;
-    while (i--) {
-      if (result.hasOwnProperty(arr[i])) {
-        result[arr[i]]++;
-        arr.splice(i, 1);
-      } else {
-        result[arr[i]] = 1;
-      }
-    }
-    return Object.keys(result).map(function (p) {
-      if (p === 'Not geolocated') return { name: p, country: 'Not geolocated',  count: result[p] };
-      else if (p.length === 2) return { name: getName(p), count: result[p] };
-      else {
-        var tmp = p.split('-')[0] === 'undefined' ? 'Unknown' : p.split('-')[0];
-        return { name: tmp, country: getName(p.split('-')[1]), count: result[p] };
-      }
-    });
-  }
+const Graphs = ({ list }) => {
+  const updatedStats = useMemo(() => {
+    const stats = { ...statsTemplate };
 
-  useEffect(() => {
-    let nation = [];
-    let cityName = [];
-    let regionName = [];
-    list.forEach((listElement) => {
-      hoursObject.forEach((hourElement) => {
-        if (listElement.created_at.substring(11, 13) === hourElement.name) {
-          hourElement.count += 1;
-        }
+    const updateStats = (next) => {
+      const { hours, days, geolocalization, retweet, cities, countries } = stats;
+      hours[next.creationHour].count++;
+      days[next.creationDay].count++;
+      geolocalization[Number(next.isGeolocalized)].count++;
+      retweet[Number(next.isRetweeted)].count++;
+
+      const cityToUpdate = cities.find((city) => city.name === next.cityName);
+      const { countryCode, countryName } = next.country;
+      const countryToUpdate = countries.find((country) => country.code === countryCode);
+
+      if (cityToUpdate) cityToUpdate.count++;
+      else cities.push({ name: next.cityName, count: 1 });
+
+      if (countryToUpdate) countryToUpdate.count++;
+      else
+        countries.push({
+          name: countryName,
+          code: countryCode,
+          count: 1,
+        });
+    };
+
+    list.forEach((tweet) => {
+      const timestamp = new Date(tweet.created_at);
+      const creationHour = timestamp.getHours();
+      const creationDay = timestamp.getDay();
+      const isGeolocalized = tweet.user.geo_enabled;
+      const isRetweeted = Boolean(tweet.retweet_count);
+      const cityName = tweet.place.name;
+      const countryName = tweet.place.country;
+      const countryCode = tweet.place.country_code;
+      updateStats({
+        creationHour,
+        creationDay,
+        isGeolocalized,
+        isRetweeted,
+        cityName,
+        country: { countryName, countryCode },
       });
-      daysObject.forEach((dayElement) => {
-        if (listElement.created_at.substring(0, 3) === dayElement.name) {
-          dayElement.count += 1;
-        }
-      });
-      if (
-        (listElement.coordinates && listElement.coordinates.type === 'Point') ||
-        (listElement.place && listElement.place.bounding_box)
-      ) {
-        geoObject[0].count += 1;
-      } else {
-        geoObject[1].count += 1;
-      }
-      if (listElement.place != null) {
-        nation.push(listElement.place.country_code);
-        cityName.push(listElement.place.name + '-' + listElement.place.country_code);
-        regionName.push(
-          listElement.place.full_name.split(',')[1] + '-' + listElement.place.country_code
-        );
-      } else {
-        nation.push('Not geolocated');
-        cityName.push('Not geolocated');
-        regionName.push('Not geolocated');
-      }
-      if (listElement.retweeted_status) {
-        retweetObject[0].count += 1;
-      } else {
-        retweetObject[1].count += 1;
-      }
     });
-    setHours(hoursObject);
-    setDays(daysObject);
-    setGeo(geoObject);
-    setCountry(removeDupes(nation));
-    setCity(removeDupes(cityName));
-    setRegion(removeDupes(regionName));
-    setRetweet(retweetObject);
+
+    return stats;
   }, [list]);
 
   return (
-    <div className="graphsContainer">
-      <div className="infoArea">
-        <h1 className="infoTitle">TOTAL TWEETS</h1>
-        <div className="infoNumber">{list.length}</div>
-      </div>
-      <div className="graphArea">
-        <h1 className="infoTitle">AMOUNT TWEETS BY HOURS</h1>
-        <AreaChart width={700} height={300} data={hours}>
-          <CartesianGrid strokeDasharray="1 1" />
-          <XAxis dataKey="value" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="count" stroke="#1da1f2" fill="#1da1f2" />
-        </AreaChart>
-      </div>
-      <div className="graphRadar">
-        <h1 className="infoTitle">AMOUNT TWEETS BY DAYS</h1>
-        <RadarChart width={700} height={300} data={days}>
-          <PolarGrid />
-          <PolarAngleAxis dataKey="subject" />
-          <Tooltip />
-          <Radar dataKey="count" stroke="#1da1f2" fill="#1da1f2" fillOpacity={0.6} />
-        </RadarChart>
-      </div>
-      <div className="graphPie">
-        <h1 className="infoTitle">TWEETS GEOLOCATED</h1>
-        <PieChart width={700} height={300}>
-          <Pie dataKey="count" isAnimationActive={false} data={geo} outerRadius={80} label >
-            {
-              geo.map((entry, index) => <Cell name={entry.name + ": " + ((geo[index].count / list.length)*100).toFixed(0)  + "%"} key={`cell-${index}`} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
-            }
-          </Pie>
-          <Tooltip />
-          <Legend verticalAlign="top" height={36} iconSize={30} iconType="circle" />
-        </PieChart>
-      </div>
-      <div className="graphPie" >
-        <h1 className="infoTitle">TWEETS RE-TWEETED</h1>
-        <PieChart width={700} height={300}>
-          <Pie dataKey="count" isAnimationActive={false} data={retweet} outerRadius={80} label >
-            {
-              retweet.map((entry, index) => <Cell name={entry.name + ": " + ((retweet[index].count / list.length)*100).toFixed(0) + "%"} key={`cell-${index}`} fill={['#1da1f2', '#00C49F'][index % 2]} />)
-            }
-          </Pie>
-          <Tooltip />
-          <Legend verticalAlign="top" height={36} iconSize={30} iconType="circle" />
-        </PieChart>
-      </div>
-      <div className="graphTable">
-        <h1 className="infoTitle">COUNTRY STATS</h1>
-        <div className="ag-theme-alpine" style={{ height: 400, width: 400 }}>
-          <AgGridReact rowData={country}>
-            <AgGridColumn field="name" sortable={true} filter={true}></AgGridColumn>
-            <AgGridColumn field="count" sortable={true} filter={true}></AgGridColumn>
-          </AgGridReact>
-        </div>
-      </div>
-      <div className="graphTable">
-        <h1 className="infoTitle">CITY STATS</h1>
-        <div className="ag-theme-alpine" style={{ height: 400, width: 500 }}>
-          <AgGridReact rowData={city}>
-            <AgGridColumn field="name" sortable={true} filter={true}></AgGridColumn>
-            <AgGridColumn field="country" sortable={true} filter={true}></AgGridColumn>
-            <AgGridColumn field="count" sortable={true} filter={true}></AgGridColumn>
-          </AgGridReact>
-        </div>
-      </div>
-      <div className="graphTable">
-        <h1 className="infoTitle">REGION STATS</h1>
-        <div className="ag-theme-alpine" style={{ height: 400, width: 500 }}>
-          <AgGridReact rowData={region}>
-            <AgGridColumn field="name" sortable={true} filter={true}></AgGridColumn>
-            <AgGridColumn field="country" sortable={true} filter={true}></AgGridColumn>
-            <AgGridColumn field="count" sortable={true} filter={true}></AgGridColumn>
-          </AgGridReact>
-        </div>
-    </div>
-  </div>
+    <>
+      <Grid container justify="center" xs={12}>
+        <Typography variant="h6" color="primary" align="center">
+          Tweets volume by hour
+        </Typography>
+        <BarChart data={updatedStats.hours} />
+      </Grid>
+
+      <Grid container justify="center" xs={12}>
+        <Typography variant="h6" color="primary" align="center">
+          Tweets volume by day
+        </Typography>
+        <AreaChart data={updatedStats.days} />
+      </Grid>
+      <Grid container justify="center" xs={12}>
+        <Typography variant="h6" color="primary" align="center">
+          % of geolocalized tweets
+        </Typography>
+        <PieChart data={updatedStats.geolocalization} colors={['#1da1f2', '#00C49F']} />
+      </Grid>
+
+      <Grid container justify="center" xs={12}>
+        <Typography variant="h6" color="primary" align="center">
+          % of retweeted tweets
+        </Typography>
+        <PieChart data={updatedStats.retweet} colors={['#1da1f2', '#00C49F']} />
+      </Grid>
+
+      <Grid container justify="center" xs={12}>
+        <Typography variant="h6" color="primary" align="center">
+          Tweets country origin
+        </Typography>
+        <TableChart data={updatedStats.countries} header={['Country', 'Tweet No.']} />
+      </Grid>
+
+      <Grid container justify="center" xs={12}>
+        <Typography variant="h6" color="primary" align="center">
+          Tweets city origin
+        </Typography>
+        <TableChart data={updatedStats.cities} header={['City', 'Tweet No.']} />
+      </Grid>
+    </>
   );
 };
 
 export default Graphs;
+/* 
+  ToDo minor fixing to the tables 
+  (they need scroll a smaller size an to be centered)
+*/

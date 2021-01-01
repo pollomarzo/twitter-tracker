@@ -71,10 +71,14 @@ const MainContainer = () => {
   const [tweets, setTweets] = useState([]);
   const [tweetsFiltered, setTweetsFiltered] = useState(tweets);
   const [coords, setCoords] = useState({
-    latitudeSW: '',
-    longitudeSW: '',
-    latitudeNE: '',
-    longitudeNE: '',
+    ne:{
+      lat: '',
+      lng: '',
+    },
+    sw: {
+      lat: '',
+      lng: '',
+    }
   });
   const [params, setParams] = useState({
     track: '', // hashtag
@@ -92,12 +96,16 @@ const MainContainer = () => {
         const settings = res.data;
 
         if (settings.locations) {
-          const coords = settings.locations.split(',');
+          const coordinates = settings.locations.split(',');
           setCoords({
-            latitudeSW: coords[1],
-            longitudeSW: coords[0],
-            latitudeNE: coords[3],
-            longitudeNE: coords[2],
+            ne:{
+              lat: coordinates[3],
+              lng: coordinates[2],
+            },
+            sw: {
+              lat: coordinates[1],
+              lng: coordinates[0],
+            }
           });
         }
 
@@ -143,7 +151,7 @@ const MainContainer = () => {
     // if coordinates were given, they have the priority, and after we'll check everything else
     if (coords) {
       streamParameters = {
-        locations: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
+        locations: `${coords.sw.lng},${coords.sw.lat},${coords.ne.lng},${coords.ne.lat}`,
       };
       constraints = { ...params, follow };
     }
@@ -223,7 +231,8 @@ const MainContainer = () => {
     setParams({ ...params, [e.target.name]: e.target.value });
 
   const handleStart = () => {
-    const values = Object.values(coords);
+    // get all values flattened
+    const values = Object.values(coords).map((value) => [value.lat, value.lng]).flat();
     // Start a not geolocalized
     if (values.every((value) => value === '')) {
       startStream({ coords: '', params });
@@ -233,15 +242,22 @@ const MainContainer = () => {
       startStream({ coords, params });
     else {
       const onReset = () =>
-        setCoords((prevCoords) =>
-          Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
+        setCoords({
+          ne:{
+            lat: '',
+            lng: '',
+          },
+          sw: {
+            lat: '',
+            lng: '',
+          }
+        }
         );
       launch(UserError('There is an error with your geolocalized box', onReset));
     }
   };
 
   return (
-    // prettier-ignore
     <div className={paper}>
       <Grid container className={header} justify="space-around" alignItems="center" >
         {/* Box with stream params */}

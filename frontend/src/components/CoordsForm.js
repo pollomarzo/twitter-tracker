@@ -44,7 +44,7 @@ const CoordsForm = ({ activeStream, params, onStart, onStop, onParamChange }) =>
       >
         {activeStream ? 'STOP' : 'START'}
       </Button>
-      <Fade in={activeStream} unmountOnExit>
+      <Fade in={!!activeStream} unmountOnExit>
         <CircularProgress />
       </Fade>
     </>
@@ -54,6 +54,6 @@ const CoordsForm = ({ activeStream, params, onStart, onStop, onParamChange }) =>
 export default CoordsForm;
 /* 
   ToDo here there are still some cleanings to be done
-  Some things are not centered and the CircularProgress just sucks 
+  Some things are not centered and the CircularProgress just sucks (true!)
   There's a strange issue with autocompleton in the input form
 */
