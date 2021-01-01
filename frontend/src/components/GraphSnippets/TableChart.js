@@ -1,11 +1,23 @@
 import React from 'react';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableCell, TableBody, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles(theme => ({
+  table: {
+    minWidth: "max-content",
+    width: "70%",
+    height: "auto",
+    marginRight: "20%",
+    marginLeft: "20%",
+    marginBottom: 60
+  }
+}));
 
 const TableChart = ({ data, header }) => {
+  const { table } = useStyles();
   data.sort((prev, next) => next.count - prev.count);
 
   return (
-    <Table stickyHeader>
+    <Table stickyHeader className={table}>
       <TableHead>
         <TableRow>
           <TableCell align="center">{header[0]}</TableCell>

@@ -83,7 +83,7 @@ const Graphs = ({ list }) => {
       const creationHour = timestamp.getHours();
       const creationDay = timestamp.getDay();
       const isGeolocalized = tweet.user.geo_enabled;
-      const isRetweeted = Boolean(tweet.retweet_count);
+      const isRetweeted = Boolean(tweet.retweeted_status);
       const cityName = tweet.place.name;
       const countryName = tweet.place.country;
       const countryCode = tweet.place.country_code;

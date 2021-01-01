@@ -1,9 +1,19 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core';
 import { RadarChart, PolarGrid, PolarAngleAxis, Tooltip, Radar } from 'recharts';
 
+const useStyles = makeStyles((theme) => ({
+  areachart: {
+    '& tspan': {
+      fill: theme.palette.type === 'dark' ? 'white' : 'black',
+    },
+  },
+}));
+
 const AreaChart = ({ data }) => {
+  const { areachart } = useStyles();
   return (
-    <RadarChart width={700} height={300} data={data}>
+    <RadarChart width={700} height={300} data={data} className={areachart}>
       <PolarGrid />
       <PolarAngleAxis dataKey="subject" />
       <Tooltip />

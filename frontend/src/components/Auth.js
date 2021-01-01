@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { Grid, CircularProgress, Typography } from '@material-ui/core';
 import { useLocation, useHistory } from 'react-router-dom';
 import axios from 'axios';
 
@@ -34,10 +34,14 @@ const Auth = () => {
   }, [oauthToken, oauthVerifier, history, setAuthProps]);
 
   return (
-    <div>
-      You are about to be redirected... Let's hope everything goes well!
-      <CircularProgress />
-    </div>
+    <>
+      <Grid container justify="center" xs={12}>
+        <Typography variant="h3" color="primary">
+          You are about to be redirected... Let's hope everything goes well!
+        </Typography>
+        <CircularProgress />
+      </Grid>
+    </>
   );
 };
 
