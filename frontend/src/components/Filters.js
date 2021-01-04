@@ -5,7 +5,7 @@ import { InputField, SelectField } from './InputComponent';
 const useStyles = makeStyles((theme) => ({
   genericInput: {
     height: 50,
-    width: 150,
+    width: 200,
     marginBottom: 20,
   },
 }));
@@ -20,8 +20,8 @@ const Filters = ({ list, setFilteredList }) => {
   };
 
   const onChangeFilter = (e) => {
-    console.log(typeof e.target.value);
     setFilters({ ...filters, [e.target.name]: e.target.value });
+    console.log({ ...filters, [e.target.name]: e.target.value });
   };
 
   const { countryList, cityList } = useMemo(() => {
@@ -44,20 +44,21 @@ const Filters = ({ list, setFilteredList }) => {
     const { minDate, maxDate, minTime, maxTime, geoloc, country, city } = filters;
     const filteredTweets = list.filter((tweet) => {
       const timestamp = new Date(tweet.created_at);
-      const minTimestamp = new Date(`${minDate} ${minTime || '00:00'}`);
-      const maxTimestamp = new Date(`${maxDate} ${maxTime || '23:59'}`);
+      const minTimestamp = minDate && new Date(`${minDate} ${minTime || '00:00'}`);
+      const maxTimestamp = maxDate && new Date(`${maxDate} ${maxTime || '23:59'}`);
       const isGeolocalized = tweet.user.geo_enabled;
       const cityName = (tweet.place || {}).name;
       const countryCode = (tweet.place || {}).country_code;
-
+      
       return (
-        (isNaN(minTimestamp) ? true : timestamp >= minTimestamp) &&
-        (isNaN(maxTimestamp) ? true : timestamp <= maxTimestamp) &&
-        (geoloc === '' ? true : geoloc === isGeolocalized) &&
-        (country === '' ? true : country === countryCode) &&
-        (city === '' ? true : city === cityName)
+        (!minTimestamp ? true : timestamp >= minTimestamp) &&
+        (!maxTimestamp ? true : timestamp <= maxTimestamp) &&
+        (!geoloc ? true : geoloc === isGeolocalized) &&
+        (!country ? true : country === countryCode) &&
+        (!city ? true : city === cityName)
       );
     });
+    
     setFilteredList(filteredTweets);
   };
 
@@ -106,7 +107,7 @@ const Filters = ({ list, setFilteredList }) => {
         <SelectField
           id="geoloc"
           label="Geolocalization"
-          value={filters.geolocation}
+          value={filters.geoloc}
           onChange={onChangeFilter}
         >
           <MenuItem value={true}>Yes</MenuItem>
@@ -116,7 +117,7 @@ const Filters = ({ list, setFilteredList }) => {
         <SelectField
           id="country"
           label="Country"
-          value={filters.countries}
+          value={filters.country}
           onChange={onChangeFilter}
         >
           {countryList.map((element) => {
@@ -127,7 +128,7 @@ const Filters = ({ list, setFilteredList }) => {
         <SelectField
           id="city"
           label="City"
-          value={filters.cities}
+          value={filters.city}
           onChange={onChangeFilter}
         >
           {cityList.map((element) => {

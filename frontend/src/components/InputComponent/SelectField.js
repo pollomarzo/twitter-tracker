@@ -15,7 +15,13 @@ const SelectField = ({ id, label, value, onChange, children }) => {
   return (
     <FormControl>
       <InputLabel id={id}>{label}</InputLabel>
-      <Select name={id} labelId={id} value={value || ""} className={select} onChange={onChange}>
+      <Select
+        name={id}
+        labelId={id}
+        value={value === undefined ? '' : value}
+        className={select}
+        onChange={onChange}
+      >
         <MenuItem value="">-----</MenuItem>
         {children}
       </Select>

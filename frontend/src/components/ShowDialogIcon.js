@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Fab, Grid, makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   fabIcon: {
     marginLeft: 30,
     marginRight: 30,
@@ -10,9 +10,9 @@ const useStyles = makeStyles((theme) => ({
   childrenContainer: {
     height: 'auto',
   }
-}));
+});
 
-const ShowDialogIcon = ({ icon, iconOnly, name, desc, children }) => {
+const ShowDialogIcon = ({ icon, iconOnly, name, desc, disabled, children }) => {
   const [isOpen, setOpen] = useState(false);
   const { fabIcon, childrenContainer} = useStyles();
 
@@ -22,11 +22,12 @@ const ShowDialogIcon = ({ icon, iconOnly, name, desc, children }) => {
         className={fabIcon}
         variant={iconOnly ? 'round' : 'extended'}
         onClick={() => setOpen((prev) => !prev)}
+        disabled={disabled}
       >
         {icon}
         {iconOnly || name}
       </Fab>
-      <Dialog open={isOpen} onClose={() => setOpen(false)} maxWidth="md">
+      <Dialog open={isOpen} onClose={() => setOpen(false)} maxWidth="md" keepMounted>
         <DialogTitle>{name}</DialogTitle>
         <DialogContent>
           <DialogContentText>{desc}</DialogContentText>

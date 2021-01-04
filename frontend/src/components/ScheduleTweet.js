@@ -1,4 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
+import axios from 'axios';
+
 import {
   Button,
   DialogActions,
@@ -8,11 +10,8 @@ import {
   FormControlLabel,
   Typography,
 } from '@material-ui/core';
-import axios from 'axios';
 import { useUser } from '../context/UserContext';
-import { SEND_TWEET } from '../constants';
-import TooltipButton from '../fun/TooltipButton';
-import { MAP_ID, WORDCLOUD_ID } from '../constants';
+import { MAP_ID, WORDCLOUD_ID, SEND_TWEET } from '../constants';
 
 import html2canvas from 'html2canvas';
 
@@ -41,7 +40,7 @@ const H_TO_MS = (hours) => Math.floor(hours * 60 * 60 * 1000);
 // and if not calls handleAuth to complete authentication.
 const ScheduleTweet = ({ handleAuth }) => {
   const { authProps } = useUser();
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState(true);
   const [text, setText] = useState('');
   const [pass, setPass] = useState('');
   const [timer, setTimer] = useState(undefined);
@@ -67,7 +66,7 @@ const ScheduleTweet = ({ handleAuth }) => {
       setError('');
     }
   };
-  const confirmation = 'Seems your tweet went through!';
+
   const handleSend = async () => {
     try {
       const screenshots = await Promise.all(
@@ -106,7 +105,7 @@ const ScheduleTweet = ({ handleAuth }) => {
 
   return (
     <>
-      {!authProps ? (
+      {authProps ? (
         <Button variant="contained" color="secondary" onClick={handleAuth}>
           AUTHENTICATE
         </Button>
@@ -169,39 +168,21 @@ const ScheduleTweet = ({ handleAuth }) => {
             }
             label="Word cloud"
           />
-          <div style={{ display: !sent ? 'none' : 'block' }}>{confirmation}</div>
+          {sent && <div>Seems your tweet went through!</div>}
           <DialogActions>
-            <TooltipButton
-              tooltipText={
-                !timer ? 'set an interval first' : 'kill previous interval and change'
-              }
-              tooltipPlacement="top"
-              onClick={cleanAll}
-              color="primary"
-              disabled={!timer}
-            >
+            <Button onClick={cleanAll} color="primary" disabled={!timer}>
               Change Interval
-            </TooltipButton>
-            <TooltipButton
-              tooltipText={!text ? 'set some text first' : 'click me for a quick test!'}
-              tooltipPlacement="top"
-              className={classes.leftButton}
-              onClick={handleSend}
-              disabled={!text}
-            >
+            </Button>
+            <Button className={classes.leftButton} onClick={handleSend} disabled={!text}>
               SEND NOW!
-            </TooltipButton>
-            <TooltipButton
-              tooltipText={
-                !(hours && text) ? 'input some values first' : 'already running!'
-              }
-              tooltipPlacement="top"
+            </Button>
+            <Button
               onClick={handleConfirm}
               color="primary"
               disabled={!(hours && text && !timer)}
             >
               Confirm
-            </TooltipButton>
+            </Button>
           </DialogActions>
         </>
       )}

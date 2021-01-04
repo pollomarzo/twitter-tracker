@@ -147,7 +147,3 @@ const Graphs = ({ list }) => {
 };
 
 export default Graphs;
-/* 
-  ToDo minor fixing to the tables 
-  (they need scroll a smaller size an to be centered)
-*/

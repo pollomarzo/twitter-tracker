@@ -71,6 +71,7 @@ const MainContainer = () => {
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
   const [tweetsFiltered, setTweetsFiltered] = useState(tweets);
+
   const [coords, setCoords] = useState({
     ne: {
       lat: '',
@@ -85,6 +86,7 @@ const MainContainer = () => {
     track: '', // hashtag
     follow: '', // user
   });
+
   useEffect(() => {
     setTweetsFiltered(tweets);
   }, [tweets]);
@@ -281,7 +283,7 @@ const MainContainer = () => {
         <Grid item xs={4}>
           <Typography color="primary" variant="h3" align="center" justify="center">
             TWITTER TRACKER
-          <Typography>{tweets.length}</Typography>
+          <Typography>{tweets.length} tweets collected</Typography>
           </Typography>
         </Grid>
         <Grid item container xs={4} justify="flex-end">
@@ -301,8 +303,9 @@ const MainContainer = () => {
             iconOnly
             name="E-mail notification"
             desc={FABsDesc['email']}
+            disabled={!streamId}
           >
-            <NotifySettings count={tweets.length} />
+            <NotifySettings streamId={streamId} />
           </ShowDialogIcon>
         </Grid>
       </Grid>
@@ -310,12 +313,12 @@ const MainContainer = () => {
       {/* Grid layout for Map and InsightTabs */}
       <Grid container>
         <Grid item xs={6} className={mainContainer}>
-          <Map tweetsList={tweets} setCoordinates={onAddRect} showToolbars={!streamId} />
+          <Map tweetsList={tweetsFiltered} setCoordinates={onAddRect} showToolbars={!streamId} />
         </Grid>
         <Grid item xs={6} className={mainContainer}>
           <InsightTabs>
-            <TweetList list={tweets} setList={setTweets} tabName="Tweet List" />
-            <WordCloud list={tweets} tabName="Wordcloud" />
+            <TweetList list={tweetsFiltered} setList={setTweets} tabName="Tweet List" />
+            <WordCloud list={tweetsFiltered} tabName="Wordcloud" />
             <Graphs list={tweetsFiltered} tabName="Graphs" />
           </InsightTabs>
         </Grid>

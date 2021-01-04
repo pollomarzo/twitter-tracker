@@ -85,6 +85,11 @@ const startStream = (constraints, parameters) => {
       if (streams[streamId].socket) {
         streams[streamId].socket.emit('tweet', tweet);
       }
+
+      if (streams[streamId].notifications) {
+        streams[streamId].notifications.forEach(async () => {
+        });
+      }
     }
   });
   return streamId;
@@ -224,6 +229,16 @@ const getSettings = async (streamId) => {
   return streams[streamId].settings;
 };
 
+const setNotification = ({ streamId, email, treshold }) => {
+  if (streams[streamId]) {
+    if (streams[streamId].notifications) {
+      streams[streamId].notifications = [{ email, treshold }];
+    } else {
+      streams[streamId].notifications.push({ email, treshold });
+    }
+  }
+}
+
 module.exports = {
   requestToken,
   requestAccess,
@@ -234,4 +249,5 @@ module.exports = {
   attachSocket,
   detachSocket,
   getSettings,
+  setNotification
 };

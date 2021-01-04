@@ -3,6 +3,9 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 
 const DarkTheme = createMuiTheme({
+  typography: {
+    fontFamily: 'Montserrat, Roboto, Helvetica, sans-serif',
+  },
   palette: {
     type: 'dark',
     primary: {

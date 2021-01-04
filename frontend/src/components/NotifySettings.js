@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Slider, Grid, makeStyles } from '@material-ui/core';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Typography, Slider, Grid, Button, makeStyles } from '@material-ui/core';
 import axios from 'axios';
 
 import { InputField } from './InputComponent';
@@ -9,22 +9,41 @@ const useStyles = makeStyles((theme) => ({
   tresholdSlider: {
     width: 70,
   },
+  submitButton: {
+    margin: 10,
+    width: 100,
+    fontWeight: 800,
+    color: 'white',
+    backgroundColor: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+      color: theme.palette.primary.light,
+    },
+  },
 }));
 
-const NotifySettings = ({ count }) => {
-  const { tresholdSlider } = useStyles();
+const NotifySettings = ({ streamId }) => {
+  const { tresholdSlider, submitButton } = useStyles();
   const [email, setEmail] = useState(undefined);
   const [treshold, setTreshold] = useState(100);
-  const [mailSent, setSent] = useState(false);
+  // const [mailSent, setSent] = useState(false);
 
-  useEffect(() => {
-    if (!mailSent && email && treshold && count >= treshold) {
-      setSent(true);
-      axios
-        .put(NOTIFICATION, { address: email, count: count })
-        .catch((_) => setSent(false));
+  // useEffect(() => {
+  //   if (!mailSent && email && count >= treshold) {
+  //     setSent(true);
+  //     axios
+  //       .put(NOTIFICATION, { address: email, count: count })
+  //       .catch((_) => setSent(false));
+  //   }
+  // }, [mailSent, email, count, treshold]);
+
+  const confirm = useCallback(async () => {
+    try {
+      await axios.put(NOTIFICATION, { streamId, email, treshold });
+    } catch (err) {
+      console.error(err);
     }
-  }, [mailSent, email, treshold, count]);
+  }, [streamId, email, treshold]);
 
   return (
     <>
@@ -32,7 +51,6 @@ const NotifySettings = ({ count }) => {
         <InputField
           label="e-mail"
           handler={(event) => setEmail(event.target.value)}
-          disabled={mailSent}
         />
       </Grid>
       <Grid item xs={4}>
@@ -44,8 +62,17 @@ const NotifySettings = ({ count }) => {
           valueLabelDisplay="auto"
           min={0}
           max={1000}
-          disabled={mailSent}
         />
+      </Grid>
+      <Grid item xs={4}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={submitButton}
+          onClick={confirm}
+        >
+          Confirm
+        </Button>
       </Grid>
     </>
   );
