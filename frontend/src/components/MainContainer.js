@@ -35,13 +35,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
     overflow: 'hidden',
   },
-
   header: {
     height: '10%',
     marginTop: 10,
     marginBottom: 10,
   },
-
   mainContainer: {
     height: 850,
     '& .leaflet-container': {
@@ -49,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
       width: '95%',
       height: '84vh',
     },
+  },
+  settingsIcon: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -66,7 +67,7 @@ const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
 
 const MainContainer = () => {
   const launch = useErrorHandler();
-  const { paper, header, mainContainer } = useStyles();
+  const { paper, header, mainContainer, settingsIcon } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
@@ -267,7 +268,7 @@ const MainContainer = () => {
         {/* Box with stream params */}
         <Grid item xs={4}>
           <ShowDialogIcon
-            icon={<Settings />}
+            icon={<Settings className={settingsIcon} />}
             name="Stream settings"
             desc={FABsDesc['params']}
           >
@@ -283,11 +284,16 @@ const MainContainer = () => {
         <Grid item xs={4}>
           <Typography color="primary" variant="h3" align="center" justify="center">
             TWITTER TRACKER
-          <Typography>{tweets.length} tweets collected</Typography>
+            <Typography>{tweets.length} tweets collected</Typography>
           </Typography>
         </Grid>
         <Grid item container xs={4} justify="flex-end">
-          <ShowDialogIcon icon={<SearchIcon />} iconOnly name="Filter tweets" desc={FABsDesc['filter']} >
+          <ShowDialogIcon
+            icon={<SearchIcon />}
+            iconOnly
+            name="Filter tweets"
+            desc={FABsDesc['filter']}
+          >
             <Filters list={tweets} setFilteredList={setTweetsFiltered} />
           </ShowDialogIcon>
           <ShowDialogIcon
@@ -313,7 +319,11 @@ const MainContainer = () => {
       {/* Grid layout for Map and InsightTabs */}
       <Grid container>
         <Grid item xs={6} className={mainContainer}>
-          <Map tweetsList={tweetsFiltered} setCoordinates={onAddRect} showToolbars={!streamId} />
+          <Map
+            tweetsList={tweetsFiltered}
+            setCoordinates={onAddRect}
+            showToolbars={!streamId}
+          />
         </Grid>
         <Grid item xs={6} className={mainContainer}>
           <InsightTabs>

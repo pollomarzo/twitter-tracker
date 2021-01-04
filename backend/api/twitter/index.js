@@ -1,8 +1,10 @@
+const fs = require('fs');
+const path = require('path');
 const { nanoid } = require('nanoid');
 const Twitter = require('twitter-lite');
 const credentials = require('./.credentials.json');
-const fs = require('fs');
-const path = require('path');
+const mailClient = require('../email');
+const mail = require('@sendgrid/mail');
 
 let streams = {};
 
@@ -68,7 +70,12 @@ function check(tweet, constraints) {
 const startStream = (constraints, parameters) => {
   const streamId = nanoid(8);
   const stream = client.stream('statuses/filter', parameters);
-  streams[streamId] = { stream, settings: { ...constraints, ...parameters }, data: [] };
+  streams[streamId] = {
+    stream,
+    settings: { ...constraints, ...parameters },
+    data: [],
+    notifications: {},
+  };
   stream.on('start', () => console.log('stream started'));
   stream.on('error', (error) => {
     if (streams[streamId].socket) {
@@ -80,16 +87,20 @@ const startStream = (constraints, parameters) => {
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {
       console.log(tweet.text);
-      streams[streamId].data.push(tweet);
+      const stream = streams[streamId];
+      stream.data.push(tweet);
 
-      if (streams[streamId].socket) {
-        streams[streamId].socket.emit('tweet', tweet);
+      if (stream.socket) {
+        stream.socket.emit('tweet', tweet);
       }
 
-      if (streams[streamId].notifications) {
-        streams[streamId].notifications.forEach(async () => {
-        });
-      }
+      const tweetCount = stream.data.length;
+      Object.entries(stream.notifications).forEach(async ([email, data]) => {
+        if (!data.sent && tweetCount >= data.treshold) {
+          await mailClient.sendNotification({ email, tweetCount });
+          data.sent = true;
+        }
+      });
     }
   });
   return streamId;
@@ -230,14 +241,11 @@ const getSettings = async (streamId) => {
 };
 
 const setNotification = ({ streamId, email, treshold }) => {
-  if (streams[streamId]) {
-    if (streams[streamId].notifications) {
-      streams[streamId].notifications = [{ email, treshold }];
-    } else {
-      streams[streamId].notifications.push({ email, treshold });
-    }
+  const stream = streams[streamId];
+  if (stream) {
+    stream.notifications[email] = { treshold, sent: false };
   }
-}
+};
 
 module.exports = {
   requestToken,
@@ -249,5 +257,5 @@ module.exports = {
   attachSocket,
   detachSocket,
   getSettings,
-  setNotification
+  setNotification,
 };

@@ -1,6 +1,5 @@
 const express = require('express');
 const twitter = require('./twitter');
-const SMTP = require('./email');
 const router = express.Router();
 
 // twitter API expects

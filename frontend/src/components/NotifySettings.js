@@ -48,10 +48,7 @@ const NotifySettings = ({ streamId }) => {
   return (
     <>
       <Grid item xs={4}>
-        <InputField
-          label="e-mail"
-          handler={(event) => setEmail(event.target.value)}
-        />
+        <InputField label="e-mail" handler={(event) => setEmail(event.target.value)} />
       </Grid>
       <Grid item xs={4}>
         <Typography gutterBottom>Treshold</Typography>
