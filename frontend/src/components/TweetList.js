@@ -21,7 +21,8 @@ const Tweet = ({ user, text, extended_tweet, id }) => {
       <ListItemText
         primary={user.name}
         secondary={extended_tweet ? extended_tweet.full_text : text}
-        secondaryTypographyProps={{ align: 'justify', variant: 'body1' }}
+        primaryTypographyProps={{ variant: 'body1', color: 'secondary' }}
+        secondaryTypographyProps={{ align: 'justify', variant: 'body2' }}
       />
     </ListItem>
   );
