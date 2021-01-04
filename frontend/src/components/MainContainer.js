@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     backgroundColor: theme.palette.background.default,
+    overflow: 'hidden',
   },
 
   header: {
@@ -71,14 +72,14 @@ const MainContainer = () => {
   const [tweets, setTweets] = useState([]);
   const [tweetsFiltered, setTweetsFiltered] = useState(tweets);
   const [coords, setCoords] = useState({
-    ne:{
+    ne: {
       lat: '',
       lng: '',
     },
     sw: {
       lat: '',
       lng: '',
-    }
+    },
   });
   const [params, setParams] = useState({
     track: '', // hashtag
@@ -98,14 +99,14 @@ const MainContainer = () => {
         if (settings.locations) {
           const coordinates = settings.locations.split(',');
           setCoords({
-            ne:{
+            ne: {
               lat: coordinates[3],
               lng: coordinates[2],
             },
             sw: {
               lat: coordinates[1],
               lng: coordinates[0],
-            }
+            },
           });
         }
 
@@ -232,7 +233,9 @@ const MainContainer = () => {
 
   const handleStart = () => {
     // get all values flattened
-    const values = Object.values(coords).map((value) => [value.lat, value.lng]).flat();
+    const values = Object.values(coords)
+      .map((value) => [value.lat, value.lng])
+      .flat();
     // Start a not geolocalized
     if (values.every((value) => value === '')) {
       startStream({ coords: '', params });
@@ -243,28 +246,36 @@ const MainContainer = () => {
     else {
       const onReset = () =>
         setCoords({
-          ne:{
+          ne: {
             lat: '',
             lng: '',
           },
           sw: {
             lat: '',
             lng: '',
-          }
-        }
-        );
+          },
+        });
       launch(UserError('There is an error with your geolocalized box', onReset));
     }
   };
 
   return (
     <div className={paper}>
-      <Grid container className={header} justify="space-around" alignItems="center" >
+      <Grid container className={header} justify="space-around" alignItems="center">
         {/* Box with stream params */}
         <Grid item xs={4}>
-          <ShowDialogIcon icon={<Settings />} name="Stream settings" desc={FABsDesc['params']} >
-            <CoordsForm activeStream={streamId} params={params} onStart={handleStart}
-              onStop={stopStream} onParamChange={handleParamsChange} />
+          <ShowDialogIcon
+            icon={<Settings />}
+            name="Stream settings"
+            desc={FABsDesc['params']}
+          >
+            <CoordsForm
+              activeStream={streamId}
+              params={params}
+              onStart={handleStart}
+              onStop={stopStream}
+              onParamChange={handleParamsChange}
+            />
           </ShowDialogIcon>
         </Grid>
         <Grid item xs={4}>
@@ -273,13 +284,28 @@ const MainContainer = () => {
           </Typography>
         </Grid>
         <Grid item container xs={4} justify="flex-end">
-          <ShowDialogIcon icon={<SearchIcon />} iconOnly name="Filter tweets" desc={FABsDesc['filter']} >
+          <ShowDialogIcon
+            icon={<SearchIcon />}
+            iconOnly
+            name="Filter tweets"
+            desc={FABsDesc['filter']}
+          >
             <Filters list={tweets} setList={setTweetsFiltered} />
           </ShowDialogIcon>
-          <ShowDialogIcon icon={<AlarmIcon />} iconOnly name="Scheduled tweet" desc={FABsDesc['schedule']} >
+          <ShowDialogIcon
+            icon={<AlarmIcon />}
+            iconOnly
+            name="Scheduled tweet"
+            desc={FABsDesc['schedule']}
+          >
             <ScheduleTweet handleAuth={handleAuthentication} />
           </ShowDialogIcon>
-          <ShowDialogIcon icon={<EmailIcon />} iconOnly name="E-mail notification" desc={FABsDesc['email']} >
+          <ShowDialogIcon
+            icon={<EmailIcon />}
+            iconOnly
+            name="E-mail notification"
+            desc={FABsDesc['email']}
+          >
             <NotifySettings count={tweets.length} />
           </ShowDialogIcon>
         </Grid>
