@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Slider, Grid, makeStyles } from '@material-ui/core';
 import axios from 'axios';
 
-import { InputField } from '.';
+import { InputField } from './InputComponent';
 import { NOTIFICATION } from '../constants';
 
 const useStyles = makeStyles((theme) => ({

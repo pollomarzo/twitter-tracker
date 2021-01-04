@@ -1,17 +1,11 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
   DialogActions,
   TextField,
   makeStyles,
   Checkbox,
   FormControlLabel,
-  CircularProgress,
-  ButtonBase,
   Typography,
 } from '@material-ui/core';
 import axios from 'axios';
@@ -112,7 +106,7 @@ const ScheduleTweet = ({ handleAuth }) => {
 
   return (
     <>
-      {authProps ? (
+      {!authProps ? (
         <Button variant="contained" color="secondary" onClick={handleAuth}>
           AUTHENTICATE
         </Button>

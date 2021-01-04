@@ -1,7 +1,7 @@
 import React from 'react';
 import { Fade, Button, CircularProgress, makeStyles } from '@material-ui/core';
 
-import { InputField } from '.';
+import { InputField } from './InputComponent';
 
 const useStyles = makeStyles((theme) => ({
   submitButton: {

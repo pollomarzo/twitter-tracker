@@ -270,11 +270,12 @@ const MainContainer = () => {
         <Grid item xs={4}>
           <Typography color="primary" variant="h3" align="center" justify="center">
             TWITTER TRACKER
+          <Typography>{tweets.length}</Typography>
           </Typography>
         </Grid>
         <Grid item container xs={4} justify="flex-end">
           <ShowDialogIcon icon={<SearchIcon />} iconOnly name="Filter tweets" desc={FABsDesc['filter']} >
-            <Filters list={tweets} setList={setTweetsFiltered} />
+            <Filters list={tweets} setFilteredList={setTweetsFiltered} />
           </ShowDialogIcon>
           <ShowDialogIcon icon={<AlarmIcon />} iconOnly name="Scheduled tweet" desc={FABsDesc['schedule']} >
             <ScheduleTweet handleAuth={handleAuthentication} />
