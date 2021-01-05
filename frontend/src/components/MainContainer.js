@@ -19,7 +19,7 @@ import {
   SETTINGS,
   FABsDesc,
 } from '../constants';
-import { ShowDialogIcon, CoordsForm, Map, InsightTabs, TweetList, WordCloud } from '.';
+import { ShowDialogIcon, StreamParams, Map, InsightTabs, TweetList, WordCloud } from '.';
 import { NotifySettings, ScheduleTweet, Filters, Graphs } from '.';
 import { UserError } from './AlertWindow';
 
@@ -272,7 +272,7 @@ const MainContainer = () => {
             name="Stream settings"
             desc={FABsDesc['params']}
           >
-            <CoordsForm
+            <StreamParams
               activeStream={streamId}
               params={params}
               onStart={handleStart}

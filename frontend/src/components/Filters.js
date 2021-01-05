@@ -8,11 +8,12 @@ const useStyles = makeStyles((theme) => ({
     width: 200,
     marginBottom: 20,
   },
+  button: { padding: 10, fontWeight: 800, color: 'white' },
 }));
 
 const Filters = ({ list, setFilteredList }) => {
   const [filters, setFilters] = useState({});
-  const { genericInput } = useStyles();
+  const { genericInput, button } = useStyles();
 
   const specificInputFieldProps = {
     shrink: true,
@@ -49,7 +50,7 @@ const Filters = ({ list, setFilteredList }) => {
       const isGeolocalized = tweet.user.geo_enabled;
       const cityName = (tweet.place || {}).name;
       const countryCode = (tweet.place || {}).country_code;
-      
+
       return (
         (!minTimestamp ? true : timestamp >= minTimestamp) &&
         (!maxTimestamp ? true : timestamp <= maxTimestamp) &&
@@ -58,7 +59,7 @@ const Filters = ({ list, setFilteredList }) => {
         (!city ? true : city === cityName)
       );
     });
-    
+
     setFilteredList(filteredTweets);
   };
 
@@ -137,7 +138,12 @@ const Filters = ({ list, setFilteredList }) => {
         </SelectField>
       </Grid>
       <Grid container xs={12} justify="space-evenly">
-        <Button color="primary" variant="contained" onClick={applyFilter}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={applyFilter}
+          className={button}
+        >
           Apply
         </Button>
         <Button
@@ -147,6 +153,7 @@ const Filters = ({ list, setFilteredList }) => {
             setFilters({});
             setFilteredList(list);
           }}
+          className={button}
         >
           Reset
         </Button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fade, Button, CircularProgress, makeStyles } from '@material-ui/core';
+import { Button, CircularProgress, makeStyles } from '@material-ui/core';
 
 import { InputField } from './InputComponent';
 
@@ -14,10 +14,13 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.primary.dark,
       color: theme.palette.primary.light,
     },
+    '&:.MuiButton-text': {
+      marginLeft: 70
+    },
   },
 }));
 
-const CoordsForm = ({ activeStream, params, onStart, onStop, onParamChange }) => {
+const StreamParams = ({ activeStream, params, onStart, onStop, onParamChange }) => {
   const { submitButton } = useStyles();
 
   return (
@@ -41,19 +44,16 @@ const CoordsForm = ({ activeStream, params, onStart, onStop, onParamChange }) =>
         color="primary"
         className={submitButton}
         onClick={activeStream ? onStop : onStart}
+        startIcon={activeStream ? <CircularProgress color="#ffffff" size={20}/> : undefined}
       >
-        {activeStream ? 'STOP' : 'START'}
+        {activeStream ? 'STOP ' : 'START'}
       </Button>
-      <Fade in={!!activeStream} unmountOnExit>
-        <CircularProgress />
-      </Fade>
     </>
   );
 };
 
-export default CoordsForm;
+export default StreamParams;
 /* 
   ToDo here there are still some cleanings to be done
-  Some things are not centered and the CircularProgress just sucks (true!)
   There's a strange issue with autocompleton in the input form
 */

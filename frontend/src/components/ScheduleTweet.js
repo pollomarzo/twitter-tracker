@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: '1 0 0',
   },
 }));
-const NUMBER_RE = /^[0-9|\.]+$/;
+
+const NUMBER_RE = /^[0-9|.]+$/;
 const CONFIRM_RE = /^[0-9]+(\.[0-9]+)?$/;
 const H_TO_MS = (hours) => Math.floor(hours * 60 * 60 * 1000);
 
@@ -40,9 +41,8 @@ const H_TO_MS = (hours) => Math.floor(hours * 60 * 60 * 1000);
 // and if not calls handleAuth to complete authentication.
 const ScheduleTweet = ({ handleAuth }) => {
   const { authProps } = useUser();
-  const [sent, setSent] = useState(true);
+  const [sent, setSent] = useState(false);
   const [text, setText] = useState('');
-  const [pass, setPass] = useState('');
   const [timer, setTimer] = useState(undefined);
   const [hours, setHours] = useState('');
   const [error, setError] = useState(false);
@@ -84,7 +84,7 @@ const ScheduleTweet = ({ handleAuth }) => {
         text: text,
         media,
       };
-      const response = await axios.post(SEND_TWEET, { msg, authProps });
+      await axios.post(SEND_TWEET, { msg, authProps });
       setSent(true);
     } catch (err) {
       console.error(err.response.data.message);
@@ -105,7 +105,7 @@ const ScheduleTweet = ({ handleAuth }) => {
 
   return (
     <>
-      {authProps ? (
+      {!authProps ? (
         <Button variant="contained" color="secondary" onClick={handleAuth}>
           AUTHENTICATE
         </Button>
@@ -131,7 +131,6 @@ const ScheduleTweet = ({ handleAuth }) => {
           </span>
           <TextField
             multiline
-            helperText={"don't forget the length limit!"}
             value={text}
             onChange={(event) => {
               if (event.target.value.length <= 140) setText(event.target.value);

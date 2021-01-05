@@ -22,5 +22,5 @@ export const FABsDesc = {
     account with the given text and an image of the map and/or the picture odf the wordcloud`,
 
     email: `Here you can set a reminder for when a certain treshold (in number of tweet captured) is surpassed
-    Once the treshold is reached an email to the given address will be sent, remember to check the spam`
+    once the treshold is reached an email to the given address will be sent, remember to check the spam`
 }

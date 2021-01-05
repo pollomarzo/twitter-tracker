@@ -116,7 +116,6 @@ const Map = ({ tweetsList, setCoordinates, showToolbars }) => {
             <List className={classes.list}>
               {tweets.map((tweet) => (
                 <ListItem key={tweet.id} alignItems="flex-start">
-                  {/*TODO: LESS PADDINGGG*/}
                   <ListItemAvatar>
                     <Avatar alt={tweet.user.name} src={tweet.user.profile_image_url} />
                   </ListItemAvatar>

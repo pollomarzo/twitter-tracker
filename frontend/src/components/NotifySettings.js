@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Typography, Slider, Grid, Button, makeStyles } from '@material-ui/core';
 import axios from 'axios';
 
@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     width: 70,
   },
   submitButton: {
-    margin: 10,
+    margin: 20,
     width: 100,
     fontWeight: 800,
     color: 'white',
