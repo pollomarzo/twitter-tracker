@@ -16,8 +16,8 @@ const Home = () => {
   const MainAnimation = useSpring({
     from: { opacity: 0 },
     to: { opacity: 1 },
-    delay: 3500,
-    config: { duration: 1000 },
+    delay: 3700,
+    config: { duration: 800 },
   });
 
   useEffect(() => {
