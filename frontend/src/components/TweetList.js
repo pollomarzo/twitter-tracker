@@ -75,9 +75,7 @@ const TweetList = ({ list, setList }) => {
   };
 
   const validateJSON = (toValidate) => {
-    const isCompliant = toValidate.every(
-      (item) => item.id && item.user && item.text && (item.coordinates || item.place)
-    );
+    const isCompliant = toValidate.every((item) => item.id && item.user && item.text);
     if (!isCompliant) {
       throw new Error();
     }

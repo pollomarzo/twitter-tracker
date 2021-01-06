@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.js": "/static/js/main.0e8f2454.chunk.js",
+    "main.js.map": "/static/js/main.0e8f2454.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.fad4999f.js",
+    "runtime-main.js.map": "/static/js/runtime-main.fad4999f.js.map",
+    "static/css/2.7b6321b6.chunk.css": "/static/css/2.7b6321b6.chunk.css",
+    "static/js/2.aa3dbf34.chunk.js": "/static/js/2.aa3dbf34.chunk.js",
+    "static/js/2.aa3dbf34.chunk.js.map": "/static/js/2.aa3dbf34.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.7b6321b6.chunk.css.map": "/static/css/2.7b6321b6.chunk.css.map",
+    "static/js/2.aa3dbf34.chunk.js.LICENSE.txt": "/static/js/2.aa3dbf34.chunk.js.LICENSE.txt",
+    "static/media/leaflet.draw.css": "/static/media/spritesheet.a4e0eb7a.svg",
+    "static/media/twitter-marker.9ed4db7e.png": "/static/media/twitter-marker.9ed4db7e.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.fad4999f.js",
+    "static/css/2.7b6321b6.chunk.css",
+    "static/js/2.aa3dbf34.chunk.js",
+    "static/js/main.0e8f2454.chunk.js"
+  ]
+}

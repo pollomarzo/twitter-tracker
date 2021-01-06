@@ -269,7 +269,7 @@ const MainContainer = () => {
         <Grid item xs={4}>
           <ShowDialogIcon
             icon={<Settings className={settingsIcon} />}
-            name="Stream settings"
+            name={!streamId ? 'Start' : 'Running...'}
             desc={FABsDesc['params']}
           >
             <StreamParams

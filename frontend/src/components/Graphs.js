@@ -53,7 +53,7 @@ const statsTemplate = {
 
 const Graphs = ({ list }) => {
   const updatedStats = useMemo(() => {
-    const stats = JSON.parse(JSON.stringify((statsTemplate)));
+    const stats = JSON.parse(JSON.stringify(statsTemplate));
 
     const updateStats = (next) => {
       const { hours, days, geolocalization, retweet, cities, countries } = stats;
@@ -82,11 +82,11 @@ const Graphs = ({ list }) => {
       const timestamp = new Date(tweet.created_at);
       const creationHour = timestamp.getHours();
       const creationDay = timestamp.getDay();
-      const isGeolocalized = tweet.user.geo_enabled;
+      const isGeolocalized = Boolean(tweet.coordinates || tweet.place);
       const isRetweeted = Boolean(tweet.retweeted_status);
-      const cityName = (tweet.place || {}).name || "Not known";
-      const countryName = (tweet.place || {}).country || "Not known";
-      const countryCode = (tweet.place || {}).country_code || "Not known";
+      const cityName = (tweet.place || {}).name || 'Not known';
+      const countryName = (tweet.place || {}).country || 'Not known';
+      const countryCode = (tweet.place || {}).country_code || 'Not known';
       updateStats({
         creationHour,
         creationDay,

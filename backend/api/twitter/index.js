@@ -97,10 +97,17 @@ const startStream = (constraints, parameters) => {
       const tweetCount = stream.data.length;
       Object.entries(stream.notifications).forEach(async ([email, data]) => {
         if (!data.sent && tweetCount >= data.treshold) {
-          await mailClient.sendNotification({ email, tweetCount });
           data.sent = true;
+          try {
+            await mailClient.sendNotification({ email, tweetCount });
+            console.log('Email sent');
+          } catch (err) {
+            console.error(`Unable to send email due to: ${err.message}`);
+            data.sent = false;
+          }
         }
       });
+      console.log(`Notifications for stream ${streamId}`, stream.notifications);
     }
   });
   return streamId;
