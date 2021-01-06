@@ -50,7 +50,7 @@ const WordCloud = ({ list }) => {
   }, [list]);
 
   const options = {
-    colors: ['blue', '#1DA1F2', '#011f4b', '#03396c', '#008080', '#05E9FF', '#3434eb'],
+    colors: ['#f6d7de', '#bed2f8', '#f8f8b0', '#77DD77', '#FFCBA5', '#B3EEFF'],
     enableTooltip: true,
     deterministic: true,
     fontFamily: 'Helvetica',
@@ -75,9 +75,9 @@ const WordCloud = ({ list }) => {
           value={numWords}
           max={100}
           min={1}
-          marks={[ 
-            {value: 1, label: 'Sola una parola'},
-            {value: 100, label: '100 parole'},
+          marks={[
+            { value: 1, label: 'Sola una parola' },
+            { value: 100, label: '100 parole' },
           ]}
         />
       </Grid>
