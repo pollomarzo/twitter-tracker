@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSpring, animated } from 'react-spring';
 
 import { WelcomingAnimation, MainContainer } from '.';
@@ -20,12 +20,19 @@ const Home = () => {
     config: { duration: 1000 },
   });
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      document.getElementById("logo").style.display = "none"; 
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
       {ANIMATED ? (
         <>
           <animated.div style={IntroAnimation}>
-            <WelcomingAnimation />
+            <WelcomingAnimation/>
           </animated.div>
           <animated.div style={MainAnimation}>
             <MainContainer />
