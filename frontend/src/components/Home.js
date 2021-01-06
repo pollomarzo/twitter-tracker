@@ -9,14 +9,14 @@ const Home = () => {
   const IntroAnimation = useSpring({
     from: { opacity: 1 },
     to: { opacity: 0 },
-    delay: 4000,
-    config: { duration: 500 },
+    delay: 3300,
+    config: { duration: 1000 },
   });
 
   const MainAnimation = useSpring({
     from: { opacity: 0 },
     to: { opacity: 1 },
-    delay: 4500,
+    delay: 3500,
     config: { duration: 1000 },
   });
 

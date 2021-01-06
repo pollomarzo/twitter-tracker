@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core';
+import { createMuiTheme, ThemeProvider, CssBaseline } from '@material-ui/core';
 
 const DarkTheme = createMuiTheme({
   typography: {
@@ -18,6 +18,18 @@ const DarkTheme = createMuiTheme({
   status: {
     danger: '#ff0033',
     info: '#ffffff',
+  },
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        html: {
+          fontSize: 16,
+        },
+        body: {
+          background: "#303030"
+        }
+      },
+    },
   },
 });
 
@@ -37,7 +49,7 @@ const ThemeContext = ({ children }) => {
   const theme = useMemo(() => (prefersDarkMode ? DarkTheme : LightTheme), [
     prefersDarkMode,
   ]);
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  return <ThemeProvider theme={theme}><CssBaseline/>{children}</ThemeProvider>;
 };
 
 export default ThemeContext;
