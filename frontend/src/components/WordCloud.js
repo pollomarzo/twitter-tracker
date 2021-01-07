@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect} from 'react';
 import { Slider, makeStyles, Grid } from '@material-ui/core';
 import ReactWordcloud from 'react-wordcloud';
 
@@ -12,20 +12,6 @@ const useStyles = makeStyles(() => ({
     marginLeft: 70,
   },
 }));
-
-const options = {
-  colors: ['#f6d7de', '#bed2f8', '#f8f8b0', '#77DD77', '#FFCBA5', '#B3EEFF'],
-  enableTooltip: true,
-  enableOptimizations: true,
-  deterministic: false,
-  fontFamily: 'Helvetica',
-  fontSizes: [15, 70],
-  fontStyle: 'normal',
-  fontWeight: 'bold',
-  rotations: 0,
-  transitionDuration: 1000,
-  tooltipOptions: { theme: 'material' },
-};
 
 const collapse = (toCollapse) => {
   const collapsed = [];
@@ -58,6 +44,31 @@ const WordCloud = ({ list }) => {
   const handleSlider = (_, newValue) => {
     setNumWords(newValue);
   };
+
+  const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [colorWords, setColorWords] = useState([]);
+
+
+  useEffect(() => {
+    if (prefersDarkMode) setColorWords(['#9FFCDF', '#D4DCFF', '#7D83FF', '#590925', '#1AFFD5'])
+    else setColorWords(['#447604', '#007FFF', '#47624F', '#6CC551', '#52AD9C'])
+  }, [prefersDarkMode])
+
+
+  const options = {
+    colors: colorWords,
+    enableTooltip: true,
+    enableOptimizations: true,
+    deterministic: false,
+    fontFamily: 'Helvetica',
+    fontSizes: [15, 70],
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    rotations: 0,
+    transitionDuration: 1000,
+    tooltipOptions: { theme: 'material' },
+  };
+
 
   useLayoutEffect(() => {
     if (list.length > 0) {

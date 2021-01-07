@@ -3,7 +3,7 @@ import { useSpring, animated } from 'react-spring';
 
 import { WelcomingAnimation, MainContainer } from '.';
 
-const ANIMATED = process.env.NODE_ENV === 'production';
+const ANIMATED = true;
 
 const Home = () => {
   const IntroAnimation = useSpring({

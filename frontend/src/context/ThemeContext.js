@@ -41,6 +41,16 @@ const LightTheme = createMuiTheme({
     danger: '#ff0033',
     info: '#ffffff',
   },
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        html: {
+          fontSize: 16,
+        },
+      },
+    },
+  },
+  
 });
 
 const ThemeContext = ({ children }) => {
