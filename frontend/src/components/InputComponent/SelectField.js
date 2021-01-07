@@ -22,7 +22,7 @@ const SelectField = ({ id, label, value, onChange, children }) => {
         className={select}
         onChange={onChange}
       >
-        <MenuItem value="">-----</MenuItem>
+        <MenuItem value={undefined}>-----</MenuItem>
         {children}
       </Select>
     </FormControl>

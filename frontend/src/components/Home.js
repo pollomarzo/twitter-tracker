@@ -21,10 +21,12 @@ const Home = () => {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      document.getElementById("logo").style.display = "none"; 
-    }, 5000);
-    return () => clearTimeout(timer);
+    if (ANIMATED) {
+      const timer = setTimeout(() => {
+        document.getElementById('logo').style.display = 'none';
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
@@ -32,7 +34,7 @@ const Home = () => {
       {ANIMATED ? (
         <>
           <animated.div style={IntroAnimation}>
-            <WelcomingAnimation/>
+            <WelcomingAnimation />
           </animated.div>
           <animated.div style={MainAnimation}>
             <MainContainer />

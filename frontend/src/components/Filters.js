@@ -47,14 +47,14 @@ const Filters = ({ list, setFilteredList }) => {
       const timestamp = new Date(tweet.created_at);
       const minTimestamp = minDate && new Date(`${minDate} ${minTime || '00:00'}`);
       const maxTimestamp = maxDate && new Date(`${maxDate} ${maxTime || '23:59'}`);
-      const isGeolocalized = tweet.user.geo_enabled;
+      const isGeolocalized = Boolean(tweet.coordinates || tweet.place);
       const cityName = (tweet.place || {}).name;
       const countryCode = (tweet.place || {}).country_code;
 
       return (
         (!minTimestamp ? true : timestamp >= minTimestamp) &&
         (!maxTimestamp ? true : timestamp <= maxTimestamp) &&
-        (!geoloc ? true : geoloc === isGeolocalized) &&
+        (geoloc === undefined ? true : geoloc === isGeolocalized) &&
         (!country ? true : country === countryCode) &&
         (!city ? true : city === cityName)
       );
