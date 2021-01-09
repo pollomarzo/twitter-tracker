@@ -15,10 +15,6 @@ const DarkTheme = createMuiTheme({
       main: '#FECCA8',
     },
   },
-  status: {
-    danger: '#ff0033',
-    info: '#ffffff',
-  },
   overrides: {
     MuiCssBaseline: {
       '@global': {
@@ -34,12 +30,17 @@ const DarkTheme = createMuiTheme({
 });
 
 const LightTheme = createMuiTheme({
+  typography: {
+    fontFamily: 'Montserrat, Roboto, Helvetica, sans-serif',
+  },
   palette: {
     type: 'light',
-  },
-  status: {
-    danger: '#ff0033',
-    info: '#ffffff',
+    primary: {
+      main: '#4287f5',
+    },
+    secondary: {
+      main: '#f5426f',
+    },
   },
   overrides: {
     MuiCssBaseline: {

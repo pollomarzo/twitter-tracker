@@ -20,10 +20,8 @@ const Filters = ({ list, setFilteredList }) => {
     style: { color: 'white' },
   };
 
-  const onChangeFilter = (e) => {
+  const onChangeFilter = (e) =>
     setFilters({ ...filters, [e.target.name]: e.target.value });
-    console.log({ ...filters, [e.target.name]: e.target.value });
-  };
 
   const { countryList, cityList } = useMemo(() => {
     const countryList = list.reduce((accList, tweet) => {
@@ -143,6 +141,7 @@ const Filters = ({ list, setFilteredList }) => {
           variant="contained"
           onClick={applyFilter}
           className={button}
+          disabled={!Object.values(filters).length}
         >
           Apply
         </Button>

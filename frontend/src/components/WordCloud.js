@@ -1,5 +1,6 @@
-import React, { useState, useLayoutEffect, useEffect} from 'react';
-import { Slider, makeStyles, Grid } from '@material-ui/core';
+import React, { useState, useLayoutEffect } from 'react';
+import { Slider, makeStyles, Grid, useMediaQuery } from '@material-ui/core';
+
 import ReactWordcloud from 'react-wordcloud';
 
 import 'tippy.js/dist/tippy.css';
@@ -45,18 +46,12 @@ const WordCloud = ({ list }) => {
     setNumWords(newValue);
   };
 
-  const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const [colorWords, setColorWords] = useState([]);
-
-
-  useEffect(() => {
-    if (prefersDarkMode) setColorWords(['#9FFCDF', '#D4DCFF', '#7D83FF', '#590925', '#1AFFD5'])
-    else setColorWords(['#447604', '#007FFF', '#47624F', '#6CC551', '#52AD9C'])
-  }, [prefersDarkMode])
-
+  const wordsColors = useMediaQuery('(prefers-color-scheme: dark)')
+    ? ['#f6d7de', '#bed2f8', '#f8f8b0', '#77DD77', '#FFCBA5', '#B3EEFF']
+    : ['#7AE4FF', '#F5A86C', '#7EE083', '#E07CA5'];
 
   const options = {
-    colors: colorWords,
+    colors: wordsColors,
     enableTooltip: true,
     enableOptimizations: true,
     deterministic: false,
@@ -68,7 +63,6 @@ const WordCloud = ({ list }) => {
     transitionDuration: 1000,
     tooltipOptions: { theme: 'material' },
   };
-
 
   useLayoutEffect(() => {
     if (list.length > 0) {
