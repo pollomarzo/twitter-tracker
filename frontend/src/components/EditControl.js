@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
-// eslint-disable-next-line
+import leaflet, { Control } from 'leaflet';
+// How is possible that this is not used but the component fails if this is not imported
 import Draw from 'leaflet-draw';
 import {
   useLeafletContext,
   createElementHook,
   createLeafComponent,
 } from '@react-leaflet/core';
-import leaflet, { Control } from 'leaflet';
 
 const createControlComponent = (createInstance) => {
   function createElement(props, context) {

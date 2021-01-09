@@ -1,13 +1,6 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import leaflet from 'leaflet';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  FeatureGroup,
-  Circle,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, FeatureGroup } from 'react-leaflet';
 import {
   List,
   ListItem,
@@ -17,8 +10,6 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-draw/dist/leaflet.draw.css';
 import markerImg from '../assets/twitter-marker.png';
 import { EditOnlyControl, DrawRectangleControl } from './EditControl';
 
@@ -42,6 +33,7 @@ const useStyles = makeStyles(() => ({
   listSecondary: {
     '& p': {
       margin: '0',
+      color: 'black',
     },
   },
 }));
@@ -124,7 +116,6 @@ const Map = ({ tweetsList, setCoordinates, showToolbars }) => {
             <List className={classes.list}>
               {tweets.map((tweet) => (
                 <ListItem key={tweet.id} alignItems="flex-start">
-                  {/*TODO: LESS PADDINGGG*/}
                   <ListItemAvatar>
                     <Avatar alt={tweet.user.name} src={tweet.user.profile_image_url} />
                   </ListItemAvatar>
@@ -134,8 +125,9 @@ const Map = ({ tweetsList, setCoordinates, showToolbars }) => {
                     secondary={tweet.text}
                   />
                   <div>
-                    {tweet.images.map((image) => (
+                    {tweet.images.map((image, index) => (
                       <img
+                        key={index}
                         src={image.media_url}
                         alt="User's shared content"
                         width="80"

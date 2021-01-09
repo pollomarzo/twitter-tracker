@@ -4,14 +4,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import animationData from '../assets/TwitterLottie.json';
 import lottie from 'lottie-web';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   logo: {
-    height: '100vh',
-    width: '100vw',
+    top: 0,
+    left: 0,
+    height: '100%',
+    width: '100%',
     display: 'flex',
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: "hidden",
+    backgroundColor: theme.palette.background.default,
   },
   logoImg: {
     height: '250px',
@@ -20,6 +24,7 @@ const useStyles = makeStyles(() => ({
   logoTitle: {
     marginLeft: '-20px',
     color: '#1da1f2',
+    fontFamily: "Helvetica",
   },
 }));
 

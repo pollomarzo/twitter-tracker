@@ -1,80 +1,55 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { makeStyles } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
-import io from 'socket.io-client';
 import { useErrorHandler } from 'react-error-boundary';
+import io from 'socket.io-client';
+import axios from 'axios';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
 
-import Map from './Map';
-import CoordsForm from './CoordsForm';
-import TweetList from './TweetList';
-import NotifySettings from './NotifySettings';
-import { generateError } from './AlertWindow';
-import WordCloud from './WordCloud';
-import StartStopStream from './StartStopStream';
-import Graphs from './Graphs';
-import { fakeTweets } from '../misc/fakeTweets';
-import { MAP_ID } from '../constants';
-import Filters from './Filters';
-
-import { useUser } from '../context/UserContext';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
+import Settings from '@material-ui/icons/Settings';
+import SearchIcon from '@material-ui/icons/Search';
+import AlarmIcon from '@material-ui/icons/Alarm';
+import EmailIcon from '@material-ui/icons/Email';
 
 import {
   BASE_URL,
   GEO_FILTER,
   GET_IDS,
   REQUEST_TOKEN,
-  SEND_TWEET,
   SETTINGS,
+  FABsDesc,
 } from '../constants';
-// TODO: For testing purposes only, needs to be removed for production
-import ScheduleTweet from './ScheduleTweet';
+import { ShowDialogIcon, StreamParams, Map, InsightTabs, TweetList, WordCloud } from '.';
+import { NotifySettings, ScheduleTweet, Filters, Graphs } from '.';
+import { UserError } from './AlertWindow';
 
-function getCookieValue(a) {
-  const b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
-  return b ? b.pop() : null;
-}
-
-const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
-
-const useStyles = makeStyles(() => ({
-  container: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    padding: '1vh',
-    height: '100vh',
-    overflow: 'scroll',
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    top: 0,
+    left: 0,
+    margin: 0,
+    padding: 0,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: theme.palette.background.default,
+    overflow: 'hidden',
   },
   header: {
-    fontSize: '20px',
+    height: '10%',
+    marginTop: 10,
+    marginBottom: 10,
   },
-  title: {
-    margin: '20px',
-    textAlign: 'center',
-    color: '#1da1f2',
+  mainContainer: {
+    height: 850,
+    '& .leaflet-container': {
+      margin: 20,
+      width: '95%',
+      height: '84vh',
+    },
   },
-  content: {
-    display: 'flex',
-    flexFlow: 'row nowrap',
-  },
-  leftContent: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    justifyContent: 'space-between',
-    maxWidth: '50vw',
-  },
-  rightContent: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    flex: '1 0 auto',
-    overflow: 'hidden',
-  },
-  mapWrapper: {
-    flexGrow: 1,
-  },
-  listWrapper: {
-    overflow: 'hidden',
-    maxHeight: '40vh',
+  settingsIcon: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -83,34 +58,36 @@ const socket = io(BASE_URL, {
   path: '/socket', // needed for cors in dev
 });
 
+function getCookieValue(a) {
+  const b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
+  return b ? b.pop() : null;
+}
+
+const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
+
 const MainContainer = () => {
-  const [coordinates, setCoordinates] = useState({
-    ne: {
-      lat: null,
-      lng: null,
-    },
-    sw: {
-      lat: null,
-      lng: null,
-    },
-  });
-  const classes = useStyles();
-  const propagateError = useErrorHandler();
+  const launch = useErrorHandler();
+  const { paper, header, mainContainer, settingsIcon } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
   const [tweetsFiltered, setTweetsFiltered] = useState(tweets);
-  const [streamError, setStreamError] = useState();
+
   const [coords, setCoords] = useState({
-    latitudeSW: '',
-    longitudeSW: '',
-    latitudeNE: '',
-    longitudeNE: '',
+    ne: {
+      lat: '',
+      lng: '',
+    },
+    sw: {
+      lat: '',
+      lng: '',
+    },
   });
   const [params, setParams] = useState({
     track: '', // hashtag
     follow: '', // user
   });
+
   useEffect(() => {
     setTweetsFiltered(tweets);
   }, [tweets]);
@@ -123,12 +100,16 @@ const MainContainer = () => {
         const settings = res.data;
 
         if (settings.locations) {
-          const coords = settings.locations.split(',');
+          const coordinates = settings.locations.split(',');
           setCoords({
-            latitudeSW: coords[1],
-            longitudeSW: coords[0],
-            latitudeNE: coords[3],
-            longitudeNE: coords[2],
+            ne: {
+              lat: coordinates[3],
+              lng: coordinates[2],
+            },
+            sw: {
+              lat: coordinates[1],
+              lng: coordinates[0],
+            },
           });
         }
 
@@ -166,7 +147,7 @@ const MainContainer = () => {
         const res = await axios.get(`${GET_IDS}?names=${params.follow}`);
         follow = res.data;
       } catch (err) {
-        propagateError(generateError("One of the users you asked for doesn't exist!"));
+        launch(UserError("One of the users you asked for doesn't exist!"));
         return;
       }
     }
@@ -174,7 +155,7 @@ const MainContainer = () => {
     // if coordinates were given, they have the priority, and after we'll check everything else
     if (coords) {
       streamParameters = {
-        locations: `${coords.longitudeSW},${coords.latitudeSW},${coords.longitudeNE},${coords.latitudeNE}`,
+        locations: `${coords.sw.lng},${coords.sw.lat},${coords.ne.lng},${coords.ne.lat}`,
       };
       constraints = { ...params, follow };
     }
@@ -210,7 +191,7 @@ const MainContainer = () => {
       });
       socket.on('error', console.log);
     } catch (err) {
-      propagateError(generateError("Couldn't start stream on server, please retry!"));
+      launch(UserError("Couldn't start stream on server, please retry!"));
     }
   };
 
@@ -226,7 +207,7 @@ const MainContainer = () => {
       socket.off('error');
       document.cookie = 'streamId=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     } catch (err) {
-      propagateError(generateError("Couldn't stop stream on the server, please retry!"));
+      launch(UserError("Couldn't stop stream on the server, please retry!"));
     }
   };
 
@@ -243,20 +224,21 @@ const MainContainer = () => {
 
   const onAddRect = useCallback(
     (nelat, nelng, swlat, swlng) =>
-      setCoordinates({
+      setCoords({
         ne: { lat: nelat, lng: nelng },
         sw: { lat: swlat, lng: swlng },
       }),
     []
   );
-  const handleCoordChange = (e) =>
-    setCoords({ ...coords, [e.target.name]: e.target.value });
 
   const handleParamsChange = (e) =>
     setParams({ ...params, [e.target.name]: e.target.value });
 
   const handleStart = () => {
-    const values = Object.values(coords);
+    // get all values flattened
+    const values = Object.values(coords)
+      .map((value) => [value.lat, value.lng])
+      .flat();
     // Start a not geolocalized
     if (values.every((value) => value === '')) {
       startStream({ coords: '', params });
@@ -266,69 +248,93 @@ const MainContainer = () => {
       startStream({ coords, params });
     else {
       const onReset = () =>
-        setCoords((prevCoords) =>
-          Object.keys(prevCoords).forEach((key) => (prevCoords[key] = 0))
-        );
-      propagateError(
-        generateError(
-          'An acceptable input is a number in range [-180.00, 180.00]',
-          onReset
-        )
-      );
+        setCoords({
+          ne: {
+            lat: '',
+            lng: '',
+          },
+          sw: {
+            lat: '',
+            lng: '',
+          },
+        });
+      launch(UserError('There is an error with your geolocalized box', onReset));
     }
   };
 
   return (
-    <div className={classes.container}>
-      <header className={classes.header}>
-        <h1 className={classes.title}>TWITTER TRACKER</h1>
-        <p>
-          Coordinates: NE: {coordinates.ne.lat && coordinates.ne.lat.toFixed(2)},{' '}
-          {coordinates.ne.lng && coordinates.ne.lng.toFixed(2)}, SW:{' '}
-          {coordinates.sw.lat && coordinates.sw.lat.toFixed(2)},{' '}
-          {coordinates.sw.lng && coordinates.sw.lng.toFixed(2)}
-        </p>
-      </header>
-      <div className={classes.content}>
-        <div className={classes.leftContent}>
-          <NotifySettings count={tweets.length} />
-          <StartStopStream stopStream={() => setStreamId(null)} streamId={streamId} />
-          <CoordsForm
-            open={!!streamId}
-            coords={coords}
-            params={params}
-            onStart={handleStart}
-            onStop={stopStream}
-            onCoordChange={handleCoordChange}
-            onParamChange={handleParamsChange}
-          />
-          <ScheduleTweet handleAuth={handleAuthentication} />
-          {streamError && (
-            <Alert severity="error" variant="filled">
-              <AlertTitle>Error</AlertTitle>
-              {streamError.source}
-            </Alert>
-          )}
-          <Filters list={tweets} setList={setTweetsFiltered} />
-          <WordCloud list={tweetsFiltered} />
-          <Graphs list={tweetsFiltered} />
-        </div>
-        <div className={classes.rightContent}>
-          <div id={MAP_ID} className={classes.mapWrapper}>
-            <Map
-              tweetsList={tweetsFiltered}
-              setCoordinates={onAddRect}
-              showToolbars={!streamId}
+    <div className={paper}>
+      <Grid container className={header} justify="space-around" alignItems="center">
+        {/* Box with stream params */}
+        <Grid item xs={4}>
+          <ShowDialogIcon
+            icon={<Settings className={settingsIcon} />}
+            name={!streamId ? 'Start' : 'Running...'}
+            desc={FABsDesc['params']}
+          >
+            <StreamParams
+              activeStream={streamId}
+              params={params}
+              onStart={handleStart}
+              onStop={stopStream}
+              onParamChange={handleParamsChange}
             />
-          </div>
-          <div className={classes.listWrapper}>
-            <TweetList list={tweetsFiltered} setList={setTweets} />
-          </div>
-        </div>
-      </div>
+          </ShowDialogIcon>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography color="primary" variant="h3" align="center" justify="center">
+            TWITTER TRACKER
+            <Typography>{tweets.length} tweets collected</Typography>
+          </Typography>
+        </Grid>
+        <Grid item container xs={4} justify="flex-end">
+          <ShowDialogIcon
+            icon={<SearchIcon />}
+            iconOnly
+            name="Filter tweets"
+            desc={FABsDesc['filter']}
+          >
+            <Filters list={tweets} setFilteredList={setTweetsFiltered} />
+          </ShowDialogIcon>
+          <ShowDialogIcon
+            icon={<AlarmIcon />}
+            iconOnly
+            name="Scheduled tweet"
+            desc={FABsDesc['schedule']}
+          >
+            <ScheduleTweet handleAuth={handleAuthentication} />
+          </ShowDialogIcon>
+          <ShowDialogIcon
+            icon={<EmailIcon />}
+            iconOnly
+            name="E-mail notification"
+            desc={FABsDesc['email']}
+            disabled={!streamId}
+          >
+            <NotifySettings streamId={streamId} />
+          </ShowDialogIcon>
+        </Grid>
+      </Grid>
+
+      {/* Grid layout for Map and InsightTabs */}
+      <Grid container>
+        <Grid item xs={6} className={mainContainer}>
+          <Map
+            tweetsList={tweetsFiltered}
+            setCoordinates={onAddRect}
+            showToolbars={!streamId}
+          />
+        </Grid>
+        <Grid item xs={6} className={mainContainer}>
+          <InsightTabs>
+            <TweetList list={tweetsFiltered} setList={setTweets} tabName="Tweet List" />
+            <WordCloud list={tweetsFiltered} tabName="Wordcloud" />
+            <Graphs list={tweetsFiltered} tabName="Graphs" />
+          </InsightTabs>
+        </Grid>
+      </Grid>
     </div>
   );
 };
 
 export default MainContainer;
-//liso cacca

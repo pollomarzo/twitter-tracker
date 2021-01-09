@@ -1,22 +1,17 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
+import axios from 'axios';
+
 import {
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
   DialogActions,
   TextField,
   makeStyles,
   Checkbox,
   FormControlLabel,
-  CircularProgress,
+  Typography,
 } from '@material-ui/core';
-import axios from 'axios';
 import { useUser } from '../context/UserContext';
-import { SEND_TWEET } from '../constants';
-import TooltipButton from '../fun/TooltipButton';
-import { MAP_ID, WORDCLOUD_ID } from '../constants';
+import { MAP_ID, WORDCLOUD_ID, SEND_TWEET } from '../constants';
 
 import html2canvas from 'html2canvas';
 
@@ -37,7 +32,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: '1 0 0',
   },
 }));
-const NUMBER_RE = /^[0-9|\.]+$/;
+
+const NUMBER_RE = /^[0-9|.]+$/;
 const CONFIRM_RE = /^[0-9]+(\.[0-9]+)?$/;
 const H_TO_MS = (hours) => Math.floor(hours * 60 * 60 * 1000);
 
@@ -45,10 +41,8 @@ const H_TO_MS = (hours) => Math.floor(hours * 60 * 60 * 1000);
 // and if not calls handleAuth to complete authentication.
 const ScheduleTweet = ({ handleAuth }) => {
   const { authProps } = useUser();
-  const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
   const [text, setText] = useState('');
-  const [pass, setPass] = useState('');
   const [timer, setTimer] = useState(undefined);
   const [hours, setHours] = useState('');
   const [error, setError] = useState(false);
@@ -65,11 +59,6 @@ const ScheduleTweet = ({ handleAuth }) => {
     setCheck((prev) => ({ ...prev, [evt.target.name]: evt.target.checked }));
   };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    setSent(false);
-  };
   const handleInterval = (e) => {
     const input = e.target.value;
     if (NUMBER_RE.test(input) || input === '') {
@@ -77,7 +66,7 @@ const ScheduleTweet = ({ handleAuth }) => {
       setError('');
     }
   };
-  const confirmation = 'Seems your tweet went through!';
+
   const handleSend = async () => {
     try {
       const screenshots = await Promise.all(
@@ -95,7 +84,7 @@ const ScheduleTweet = ({ handleAuth }) => {
         text: text,
         media,
       };
-      const response = await axios.post(SEND_TWEET, { msg, authProps });
+      await axios.post(SEND_TWEET, { msg, authProps });
       setSent(true);
     } catch (err) {
       console.error(err.response.data.message);
@@ -115,30 +104,13 @@ const ScheduleTweet = ({ handleAuth }) => {
   };
 
   return (
-    <div>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={!authProps ? handleAuth : handleOpen}
-      >
-        {!authProps ? 'AUTHENTICATE' : 'SCHEDULE TWEET'}
-      </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">
-          Setup
-          <span className={classes.status}>
-            <span className={classes.statusText}> status: </span>
-            {!timer ? (
-              <span className={classes.stopped}>stopped</span>
-            ) : (
-              <span className={classes.running}>running</span>
-            )}
-          </span>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Use this to schedule a periodic update tweet.
-          </DialogContentText>
+    <>
+      {!authProps ? (
+        <Button variant="contained" color="secondary" onClick={handleAuth}>
+          AUTHENTICATE
+        </Button>
+      ) : (
+        <>
           <TextField
             helperText={error || 'how many hours should we wait?'}
             error={!!error}
@@ -149,13 +121,21 @@ const ScheduleTweet = ({ handleAuth }) => {
             id="tweet-interval"
             disabled={!!timer}
           />
+          <span className={classes.status}>
+            <Typography variant="button"> status: </Typography>
+            {!timer ? (
+              <span className={classes.stopped}>stopped</span>
+            ) : (
+              <span className={classes.running}>running</span>
+            )}
+          </span>
           <TextField
             multiline
-            helperText={"don't forget the length limit!"}
             value={text}
             onChange={(event) => {
               if (event.target.value.length <= 140) setText(event.target.value);
             }}
+            helperText={`${text.length}/${140}`}
             margin="dense"
             id="tweet-text"
             label="Tweet Text"
@@ -187,46 +167,25 @@ const ScheduleTweet = ({ handleAuth }) => {
             }
             label="Word cloud"
           />
-          <div style={{ display: !sent ? 'none' : 'block' }}>{confirmation}</div>
-        </DialogContent>
-        <DialogActions>
-          <TooltipButton
-            tooltipText={
-              !timer ? 'set an interval first' : 'kill previous interval and change'
-            }
-            tooltipPlacement="top"
-            onClick={cleanAll}
-            color="primary"
-            disabled={!timer}
-          >
-            Change Interval
-          </TooltipButton>
-          <TooltipButton
-            tooltipText={!text ? 'set some text first' : 'click me for a quick test!'}
-            tooltipPlacement="top"
-            className={classes.leftButton}
-            onClick={handleSend}
-            disabled={!text}
-          >
-            SEND NOW!
-          </TooltipButton>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-          <TooltipButton
-            tooltipText={
-              !(hours && text) ? 'input some values first' : 'already running!'
-            }
-            tooltipPlacement="top"
-            onClick={handleConfirm}
-            color="primary"
-            disabled={!(hours && text && !timer)}
-          >
-            Confirm
-          </TooltipButton>
-        </DialogActions>
-      </Dialog>
-    </div>
+          {sent && <div>Seems your tweet went through!</div>}
+          <DialogActions>
+            <Button onClick={cleanAll} color="primary" disabled={!timer}>
+              Change Interval
+            </Button>
+            <Button className={classes.leftButton} onClick={handleSend} disabled={!text}>
+              SEND NOW!
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              color="primary"
+              disabled={!(hours && text && !timer)}
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </>
+      )}
+    </>
   );
 };
 

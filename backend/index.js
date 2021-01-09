@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -28,9 +29,13 @@ app.use(cookieParser('super duper secret password'));
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-app.use(express.static(__dirname + '/public')); // static middleware
+app.use(express.static(path.join(__dirname,  'build'))); // static middleware
 
 app.use('/api', api);
+
+app.get('/', (_, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 io.on('connection', (socket) => {
   console.log('a user connected');

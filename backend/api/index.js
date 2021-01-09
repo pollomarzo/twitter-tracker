@@ -1,6 +1,5 @@
 const express = require('express');
 const twitter = require('./twitter');
-const SMTP = require('./email');
 const router = express.Router();
 
 // twitter API expects
@@ -39,23 +38,9 @@ router.get('/getUserIDs', async (req, res) => {
 });
 
 router.put('/notification', (req, res) => {
-  const { address, count } = req.body;
-  const toSend = {
-    from: '***REMOVED***',
-    to: address,
-    subject: '[Notification] Your selected treshold has been surpassed',
-    text: `Currently we got ${count} tweets that fullfill your paramaters`,
-  };
-
-  SMTP.send(toSend)
-    .then((info) => {
-      res.statusCode = 200;
-      res.send(info);
-    })
-    .catch((err) => {
-      res.statusCode = 400;
-      res.send(err);
-    });
+  const { streamId, email, treshold } = req.body;
+  twitter.setNotification({ streamId, email, treshold });
+  res.status(200).json({});
 });
 
 router.post('/sendTweet', async (req, res) => {

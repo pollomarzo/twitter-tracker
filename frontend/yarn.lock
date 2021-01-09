@@ -2469,18 +2469,6 @@ adjust-sourcemap-loader@3.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-grid-community@^24.1.0:
-  version "24.1.0"
-  resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-24.1.0.tgz#1e3cab51211822e08d56f03a491b7c0deaa398e6"
-  integrity sha512-pWnWphuDcejZ8ahf6C734EpCx3XQ6dHEZWMWTlCdHNT0mZBLJ4YKCGACX+ttAEtSX2MGM3G13JncvuratUlYag==
-
-ag-grid-react@^24.1.1:
-  version "24.1.1"
-  resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-24.1.1.tgz#56d0086316d262cf6e5804e2b4bdeeb5fb3279b9"
-  integrity sha512-MuITqlVo1QD48DzLFFOcX/8eG7XvezkgqymSJrIo4JI6znAqNRpnRgDt+oFHRDgK1NSDh6rZRXGFZI/DRYWq0A==
-  dependencies:
-    prop-types "^15.6.2"
-
 aggregate-error@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/aggregate-error/-/aggregate-error-3.0.1.tgz#db2fe7246e536f40d9b5442a39e117d7dd6a24e0"
@@ -3921,11 +3909,6 @@ cosmiconfig@^7.0.0:
     parse-json "^5.0.0"
     path-type "^4.0.0"
     yaml "^1.10.0"
-
-country-list@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/country-list/-/country-list-2.2.0.tgz#e248338cafb97b2d86cf0784a25dceb4d52054d1"
-  integrity sha512-AS21pllCp72LmUztqXPVKXK3TRyap1XlohGLqN04cXH2rFB9vo7SnH5sMnqltZPnu9ie/x1se3UuCZJbGXErfw==
 
 create-ecdh@^4.0.0:
   version "4.0.3"

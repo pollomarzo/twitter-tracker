@@ -1,97 +1,107 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
+import { Slider, makeStyles, Grid, useMediaQuery } from '@material-ui/core';
+
 import ReactWordcloud from 'react-wordcloud';
-import { Slider, Typography, makeStyles } from '@material-ui/core';
-import { WORDCLOUD_ID } from '../constants';
 
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/material.css';
 
 const useStyles = makeStyles(() => ({
-  container: {
-    flexGrow: 0,
-    display: 'flex',
-    flexFlow: 'column nowrap',
-  },
-  wordCloud: {
-    width: '100%',
-  },
-  sliderStyle: {
-    width: '40vh',
+  slider: {
+    width: '80%',
+    marginTop: 40,
+    marginLeft: 70,
   },
 }));
 
+const collapse = (toCollapse) => {
+  const collapsed = [];
+  toCollapse.split(' ').forEach((item) => {
+    const index = collapsed.findIndex((element) => element.text === item);
+    if (index !== -1) collapsed[index].value += 1;
+    else collapsed.push({ text: item, value: 1 });
+  });
+  return collapsed.sort((a, b) => b.value - a.value);
+};
+
+const getWordList = (list) => {
+  let listOfWord = '';
+  let accumulator = '';
+  // Create an agglomerate with all the text from the list
+  list.forEach((item) => (accumulator += `${item.text} `));
+  accumulator = accumulator.split(' ');
+  // Separate every word in the conglomerate and purges links
+  accumulator.forEach((word) => {
+    if (!word.startsWith('http') || !word.startsWith('@'))
+      listOfWord += `${word.toLowerCase()} `;
+  });
+  return listOfWord;
+};
+
 const WordCloud = ({ list }) => {
-  const classes = useStyles();
+  const { slider } = useStyles();
   const [arrayOfWords, setArrayOfWords] = useState([]);
-  const [numWords, setNumWords] = useState(7);
-  const handleSlider = (event, newValue) => {
+  const [numWords, setNumWords] = useState(20);
+  const handleSlider = (_, newValue) => {
     setNumWords(newValue);
   };
 
-  const collapse = (toCollapse) => {
-    const collapsed = [];
-    toCollapse.split(' ').forEach((item) => {
-      const index = collapsed.findIndex((element) => element.text === item);
-      if (index !== -1) collapsed[index].value += 1;
-      else collapsed.push({ text: item, value: 1 });
-    });
-    return collapsed;
-  };
-
-  useEffect(() => {
-    const getWordList = () => {
-      let listOfWord = '';
-      let accumulator = '';
-      // Create an agglomerate with all the text from the list
-      list.forEach((item) => (accumulator += `${item.text} `));
-      accumulator = accumulator.split(' ');
-      // Separate every word in the conglomerate and purges links
-      accumulator.forEach((word) => {
-        if (!word.startsWith('http')) listOfWord += `${word.toLowerCase()} `;
-      });
-      return listOfWord;
-    };
-    const wordData = getWordList();
-    const compressedData = collapse(wordData);
-    setArrayOfWords(compressedData);
-  }, [list]);
+  const wordsColors = useMediaQuery('(prefers-color-scheme: dark)')
+    ? ['#f6d7de', '#bed2f8', '#f8f8b0', '#77DD77', '#FFCBA5', '#B3EEFF']
+    : ['#7AE4FF', '#F5A86C', '#7EE083', '#E07CA5'];
 
   const options = {
-    colors: ['blue', '#2F4F4F', '#011f4b', '#03396c', '#008080', '#05E9FF', '#525C65'],
+    colors: wordsColors,
     enableTooltip: true,
-    deterministic: true,
-    fontFamily: 'impact',
-    fontSizes: [15, 60],
+    enableOptimizations: true,
+    deterministic: false,
+    fontFamily: 'Helvetica',
+    fontSizes: [15, 70],
     fontStyle: 'normal',
-    fontWeight: 'normal',
+    fontWeight: 'bold',
     rotations: 0,
     transitionDuration: 1000,
-    tooltipOptions: {
-      theme: 'material',
-    },
+    tooltipOptions: { theme: 'material' },
   };
+
+  useLayoutEffect(() => {
+    if (list.length > 0) {
+      const wordData = getWordList(list);
+      const compressedData = collapse(wordData);
+      setArrayOfWords(compressedData.slice(0, 100));
+    } else {
+      setArrayOfWords([]);
+    }
+  }, [list]);
 
   const getWordTooltip = (word) => `${word.text} (${word.value})`;
 
   return (
-    <div className={classes.container}>
-      <Typography>How many words would you like to show?</Typography>
-      <Slider
-        className={classes.sliderStyle}
-        value={numWords}
-        onChange={handleSlider}
-        max={Math.min(100, arrayOfWords.length)}
-        min={1}
-      />
-      <div id={WORDCLOUD_ID} className={classes.wordCloud}>
+    <Grid container>
+      <Grid item xs={12}>
+        <Slider
+          color="secondary"
+          valueLabelDisplay="on"
+          className={slider}
+          onChange={handleSlider}
+          value={numWords}
+          max={100}
+          min={1}
+          marks={[
+            { value: 1, label: 'Sola una parola' },
+            { value: 100, label: '100 parole' },
+          ]}
+        />
+      </Grid>
+      <Grid item xs={12}>
         <ReactWordcloud
           callbacks={{ getWordTooltip }}
           options={options}
           maxWords={numWords}
           words={arrayOfWords}
         />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 
