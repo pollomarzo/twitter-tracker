@@ -189,7 +189,11 @@ const MainContainer = () => {
       socket.on('tweet', (tweet) => {
         setTweets((prevTweets) => [...prevTweets, tweet]);
       });
-      socket.on('error', console.log);
+      socket.on('error', (err) => {
+        if (err.source && err.source === 'Exceeded connection limit for user') {
+          launch(UserError('Exceeded connection limit'));
+        }
+      });
     } catch (err) {
       launch(UserError("Couldn't start stream on server, please retry!"));
     }
