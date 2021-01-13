@@ -9,12 +9,12 @@ const useStyles = makeStyles({
   },
   childrenContainer: {
     height: 'auto',
-  }
+  },
 });
 
 const ShowDialogIcon = ({ icon, iconOnly, name, desc, disabled, children }) => {
   const [isOpen, setOpen] = useState(false);
-  const { fabIcon, childrenContainer} = useStyles();
+  const { fabIcon, childrenContainer } = useStyles();
 
   return (
     <>
@@ -24,8 +24,10 @@ const ShowDialogIcon = ({ icon, iconOnly, name, desc, disabled, children }) => {
         onClick={() => setOpen((prev) => !prev)}
         disabled={disabled}
       >
-        {icon}
-        {iconOnly || name}
+        <>
+          {icon}
+          {iconOnly || name}
+        </>
       </Fab>
       <Dialog open={isOpen} onClose={() => setOpen(false)} maxWidth="md" keepMounted>
         <DialogTitle>{name}</DialogTitle>

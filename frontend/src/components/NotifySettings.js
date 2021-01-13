@@ -53,7 +53,7 @@ const NotifySettings = ({ streamId }) => {
       <Grid item xs={4}>
         <Typography gutterBottom>Treshold</Typography>
         <Slider
-          classNames={tresholdSlider}
+          className={tresholdSlider}
           value={treshold}
           onChange={(_, newT) => setTreshold(newT)}
           valueLabelDisplay="auto"

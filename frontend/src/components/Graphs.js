@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
 
 import { AreaChart, BarChart, PieChart, TableChart } from './GraphSnippets';
 
@@ -51,7 +51,17 @@ const statsTemplate = {
   countries: [],
 };
 
+const useStyles = makeStyles({
+  container: {
+    maxHeight: 800,
+    overflowY: 'auto',
+    scrollbarWidth: 'none',
+  },
+});
+
 const Graphs = ({ list }) => {
+  const classes = useStyles();
+
   const updatedStats = useMemo(() => {
     const stats = JSON.parse(JSON.stringify(statsTemplate));
 
@@ -101,48 +111,48 @@ const Graphs = ({ list }) => {
   }, [list]);
 
   return (
-    <>
-      <Grid container justify="center" xs={12}>
+    <div className={classes.container}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets volume by hour
         </Typography>
         <BarChart data={updatedStats.hours} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets volume by day
         </Typography>
         <AreaChart data={updatedStats.days} />
       </Grid>
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           % of geolocalized tweets
         </Typography>
         <PieChart data={updatedStats.geolocalization} colors={['#1da1f2', '#00C49F']} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           % of retweeted tweets
         </Typography>
         <PieChart data={updatedStats.retweet} colors={['#1da1f2', '#00C49F']} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets country origin
         </Typography>
         <TableChart data={updatedStats.countries} header={['Country', 'Tweet No.']} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets city origin
         </Typography>
         <TableChart data={updatedStats.cities} header={['City', 'Tweet No.']} />
       </Grid>
-    </>
+    </div>
   );
 };
 
