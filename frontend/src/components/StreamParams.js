@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.light,
     },
     '&:.MuiButton-text': {
-      marginLeft: 70
+      marginLeft: 70,
     },
   },
 }));
@@ -44,7 +44,7 @@ const StreamParams = ({ activeStream, params, onStart, onStop, onParamChange }) 
         color="primary"
         className={submitButton}
         onClick={activeStream ? onStop : onStart}
-        startIcon={activeStream ? <CircularProgress color="#ffffff" size={20}/> : undefined}
+        startIcon={activeStream ? <CircularProgress size={20} /> : undefined}
       >
         {activeStream ? 'STOP ' : 'START'}
       </Button>

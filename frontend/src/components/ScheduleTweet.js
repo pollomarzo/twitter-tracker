@@ -69,6 +69,7 @@ const ScheduleTweet = ({ handleAuth }) => {
 
   const handleSend = async () => {
     try {
+      console.log(selectedComponents);
       const screenshots = await Promise.all(
         selectedComponents.map((id) =>
           html2canvas(document.getElementById(id), {
@@ -76,8 +77,10 @@ const ScheduleTweet = ({ handleAuth }) => {
           })
         )
       );
+      console.log(screenshots);
       const media = screenshots.map((canvas) => {
         const dataUrl = canvas.toDataURL();
+        console.log(dataUrl);
         return dataUrl.substring(dataUrl.lastIndexOf(',') + 1);
       });
       const msg = {
@@ -87,7 +90,11 @@ const ScheduleTweet = ({ handleAuth }) => {
       await axios.post(SEND_TWEET, { msg, authProps });
       setSent(true);
     } catch (err) {
-      console.error(err.response.data.message);
+      if (err.response) {
+        console.error(err.response.data.message);
+      } else {
+        console.error(err.message);
+      }
     }
   };
   const handleConfirm = () => {

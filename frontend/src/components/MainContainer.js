@@ -23,6 +23,8 @@ import { ShowDialogIcon, StreamParams, Map, InsightTabs, TweetList, WordCloud } 
 import { NotifySettings, ScheduleTweet, Filters, Graphs } from '.';
 import { UserError } from './AlertWindow';
 
+import { MAP_ID, WORDCLOUD_ID } from '../constants';
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     top: 0,
@@ -319,11 +321,13 @@ const MainContainer = () => {
       {/* Grid layout for Map and InsightTabs */}
       <Grid container>
         <Grid item xs={6} className={mainContainer}>
-          <Map
-            tweetsList={tweetsFiltered}
-            setCoordinates={onAddRect}
-            showToolbars={!streamId}
-          />
+          <div id={MAP_ID}>
+            <Map
+              tweetsList={tweetsFiltered}
+              setCoordinates={onAddRect}
+              showToolbars={!streamId}
+            />
+          </div>
         </Grid>
         <Grid item xs={6} className={mainContainer}>
           <InsightTabs>

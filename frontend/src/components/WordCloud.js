@@ -3,6 +3,8 @@ import { Slider, makeStyles, Grid, useMediaQuery } from '@material-ui/core';
 
 import ReactWordcloud from 'react-wordcloud';
 
+import { WORDCLOUD_ID } from '../constants';
+
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/material.css';
 
@@ -94,12 +96,14 @@ const WordCloud = ({ list }) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <ReactWordcloud
-          callbacks={{ getWordTooltip }}
-          options={options}
-          maxWords={numWords}
-          words={arrayOfWords}
-        />
+        <div id={WORDCLOUD_ID}>
+          <ReactWordcloud
+            callbacks={{ getWordTooltip }}
+            options={options}
+            maxWords={numWords}
+            words={arrayOfWords}
+          />
+        </div>
       </Grid>
     </Grid>
   );

@@ -102,41 +102,41 @@ const Graphs = ({ list }) => {
 
   return (
     <>
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets volume by hour
         </Typography>
         <BarChart data={updatedStats.hours} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets volume by day
         </Typography>
         <AreaChart data={updatedStats.days} />
       </Grid>
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           % of geolocalized tweets
         </Typography>
         <PieChart data={updatedStats.geolocalization} colors={['#1da1f2', '#00C49F']} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           % of retweeted tweets
         </Typography>
         <PieChart data={updatedStats.retweet} colors={['#1da1f2', '#00C49F']} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets country origin
         </Typography>
         <TableChart data={updatedStats.countries} header={['Country', 'Tweet No.']} />
       </Grid>
 
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets city origin
         </Typography>

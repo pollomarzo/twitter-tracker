@@ -130,19 +130,25 @@ const TweetList = ({ list, setList }) => {
             </Button>
           </Tooltip>
           <Tooltip title="Export tweets">
-            <Button onClick={exportJSON} disabled={isTweetListEmpty}>
-              <GetAppIcon />
-            </Button>
+            <span>
+              <Button onClick={exportJSON} disabled={isTweetListEmpty}>
+                <GetAppIcon />
+              </Button>
+            </span>
           </Tooltip>
           <Tooltip title="Download Images">
-            <Button onClick={downloadImages} disabled={isImageListEmpty}>
-              <PhotoLibraryIcon />
-            </Button>
+            <span>
+              <Button onClick={downloadImages} disabled={isImageListEmpty}>
+                <PhotoLibraryIcon />
+              </Button>
+            </span>
           </Tooltip>
           <Tooltip title="Clear list">
-            <Button onClick={() => setList([])} disabled={isTweetListEmpty}>
-              <DeleteIcon />
-            </Button>
+            <span>
+              <Button onClick={() => setList([])} disabled={isTweetListEmpty}>
+                <DeleteIcon />
+              </Button>
+            </span>
           </Tooltip>
         </Grid>
 

@@ -22,7 +22,9 @@ const Auth = () => {
   useEffect(() => {
     const requestAccess = async () => {
       try {
+        console.log('sending params...');
         const result = await axios.get(AUTH, { params: { oauthToken, oauthVerifier } });
+        console.log('we gucci');
         setAuthProps(result.data);
         history.push('/');
       } catch (err) {
@@ -35,7 +37,7 @@ const Auth = () => {
 
   return (
     <>
-      <Grid container justify="center" xs={12}>
+      <Grid container justify="center">
         <Typography variant="h3" color="primary">
           You are about to be redirected... Let's hope everything goes well!
         </Typography>
