@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PieGraph = ({ data, colors }) => {
   const { piechart } = useStyles();
-  const fillColor = useMediaQuery('(prefers-color-scheme: dark)') ? 'white' : 'black';
+  const fillColor = useMediaQuery('(prefers-color-scheme: dark)') ? '#ffffff' : 'black';
 
   return (
     <PieChart width={700} height={300} className={piechart}>
