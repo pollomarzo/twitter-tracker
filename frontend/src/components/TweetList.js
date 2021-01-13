@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { List, Button, Grid, Avatar, Tooltip } from '@material-ui/core';
+import { List, Button, Grid, Avatar, Tooltip, makeStyles } from '@material-ui/core';
 import { ListItem, ListItemText, ListItemAvatar } from '@material-ui/core';
 import JSZip from 'jszip';
 
@@ -47,7 +47,20 @@ const triggerUpload = (onChangeHandler) => {
   document.body.removeChild(link);
 };
 
+const useStyles = makeStyles((theme) => ({
+  icons: {
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  listContainer: {
+    maxHeight: 800,
+    overflowY: 'auto',
+    scrollbarWidth: 'none',
+  },
+}));
+
 const TweetList = ({ list, setList }) => {
+  const classes = useStyles();
   const launch = useErrorHandler();
   const imgFiles = useMemo(
     () =>
@@ -123,7 +136,7 @@ const TweetList = ({ list, setList }) => {
     <>
       <Grid container>
         {/* Tooltip to manipulate the data */}
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.icons}>
           <Tooltip title="Import tweet list">
             <Button onClick={() => triggerUpload(importJSON)}>
               <PublishIcon />
@@ -154,11 +167,13 @@ const TweetList = ({ list, setList }) => {
 
         {/* List of th tweets captured by the client */}
         <Grid item xs={12}>
-          <List>
-            {list.map((tweet) => (
-              <Tweet key={tweet.id} {...tweet} />
-            ))}
-          </List>
+          {list.length > 0 && (
+            <List className={classes.listContainer}>
+              {list.map((tweet) => (
+                <Tweet key={tweet.id} {...tweet} />
+              ))}
+            </List>
+          )}
         </Grid>
       </Grid>
     </>

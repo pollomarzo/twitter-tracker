@@ -5,19 +5,32 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
-    margin: 20,
-    width: '95%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
   },
-  container: {
-    margin: 10,
-    maxHeight: '78vh',
-    overflowY: 'auto',
-    scrollbarWidth: 'none',
+  tabs: {
+    flexShrink: 0,
+  },
+  panelsContainer: {
+    flexGrow: 1,
+    position: 'relative',
+    backgroundColor: theme.palette.background.default,
+  },
+  panel: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 
 const InsightTabs = ({ children }) => {
-  const { root, container } = useStyles();
+  const { root, tabs, panel, panelsContainer } = useStyles();
   const [focusedTab, setFocused] = useState(0);
 
   const panels = useMemo(
@@ -25,13 +38,13 @@ const InsightTabs = ({ children }) => {
       children.map((child, index) => (
         <Box
           key={index}
-          className={container}
-          style={{ display: focusedTab !== index ? 'none' : 'block' }}
+          className={panel}
+          style={{ zIndex: focusedTab !== index ? -1 : 0 }}
         >
           {React.cloneElement(child)}
         </Box>
       )),
-    [children, focusedTab, container]
+    [children, focusedTab, panel]
   );
 
   console.log(`${Date.now()}: insight tabs render. selected child: ${focusedTab}`);
@@ -40,6 +53,7 @@ const InsightTabs = ({ children }) => {
   return (
     <div className={root}>
       <Tabs
+        className={tabs}
         value={focusedTab}
         onChange={(_, newVal) => setFocused(newVal)}
         textColor="secondary"
@@ -48,7 +62,7 @@ const InsightTabs = ({ children }) => {
           <Tab value={index} key={index} label={child.props.tabName} />
         ))}
       </Tabs>
-      {panels}
+      <div className={panelsContainer}>{panels}</div>
     </div>
   );
 };

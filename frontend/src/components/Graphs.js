@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
 
 import { AreaChart, BarChart, PieChart, TableChart } from './GraphSnippets';
 
@@ -51,7 +51,17 @@ const statsTemplate = {
   countries: [],
 };
 
+const useStyles = makeStyles({
+  container: {
+    maxHeight: 800,
+    overflowY: 'auto',
+    scrollbarWidth: 'none',
+  },
+});
+
 const Graphs = ({ list }) => {
+  const classes = useStyles();
+
   const updatedStats = useMemo(() => {
     const stats = JSON.parse(JSON.stringify(statsTemplate));
 
@@ -101,7 +111,7 @@ const Graphs = ({ list }) => {
   }, [list]);
 
   return (
-    <>
+    <div className={classes.container}>
       <Grid container justify="center">
         <Typography variant="h6" color="primary" align="center">
           Tweets volume by hour
@@ -142,7 +152,7 @@ const Graphs = ({ list }) => {
         </Typography>
         <TableChart data={updatedStats.cities} header={['City', 'Tweet No.']} />
       </Grid>
-    </>
+    </div>
   );
 };
 

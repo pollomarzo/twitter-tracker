@@ -22,11 +22,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#cccccc',
     borderRadius: '5px',
     padding: `${theme.spacing(0.5)}px ${theme.spacing(1)}px`,
+    color: 'black',
   },
   running: {
     backgroundColor: '#86e038',
     borderRadius: '5px',
     padding: `${theme.spacing(0.5)}px ${theme.spacing(1)}px`,
+    color: 'black',
   },
   leftButton: {
     flexGrow: '1 0 0',

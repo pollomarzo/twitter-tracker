@@ -105,13 +105,12 @@ const WordCloud = ({ list }) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <div id={WORDCLOUD_ID} style={{ height: 300 }}>
+        <div id={WORDCLOUD_ID}>
           <ReactWordcloud
             callbacks={{ getWordTooltip }}
             options={options}
             maxWords={numWords}
             words={arrayOfWords}
-            size={[400, 300]}
           />
         </div>
       </Grid>

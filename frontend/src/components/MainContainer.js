@@ -38,16 +38,19 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
   },
   header: {
-    height: '10%',
-    marginTop: 10,
-    marginBottom: 10,
+    height: '15%',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   mainContainer: {
-    height: 850,
-    '& .leaflet-container': {
-      margin: 20,
-      width: '95%',
-      height: '84vh',
+    height: '85%',
+  },
+  sideContainer: {
+    height: '100%',
+    padding: theme.spacing(1),
+    '& #map, & .leaflet-container': {
+      width: '100%',
+      height: '100%',
     },
   },
   settingsIcon: {
@@ -69,7 +72,7 @@ const COORDINATE_RE = /^-?[\d]{1,3}[.][\d]+$/;
 
 const MainContainer = () => {
   const launch = useErrorHandler();
-  const { paper, header, mainContainer, settingsIcon } = useStyles();
+  const { paper, header, mainContainer, sideContainer, settingsIcon } = useStyles();
   // To set the id of the current stream
   const [streamId, setStreamId] = useState();
   const [tweets, setTweets] = useState([]);
@@ -319,8 +322,8 @@ const MainContainer = () => {
       </Grid>
 
       {/* Grid layout for Map and InsightTabs */}
-      <Grid container>
-        <Grid item xs={6} className={mainContainer}>
+      <Grid container className={mainContainer}>
+        <Grid item xs={6} className={sideContainer}>
           <div id={MAP_ID}>
             <Map
               tweetsList={tweetsFiltered}
@@ -329,7 +332,7 @@ const MainContainer = () => {
             />
           </div>
         </Grid>
-        <Grid item xs={6} className={mainContainer}>
+        <Grid item xs={6} className={sideContainer}>
           <InsightTabs>
             <TweetList list={tweetsFiltered} setList={setTweets} tabName="Tweet List" />
             <WordCloud list={tweetsFiltered} tabName="Wordcloud" />
