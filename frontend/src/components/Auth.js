@@ -22,9 +22,7 @@ const Auth = () => {
   useEffect(() => {
     const requestAccess = async () => {
       try {
-        console.log('sending params...');
         const result = await axios.get(AUTH, { params: { oauthToken, oauthVerifier } });
-        console.log('we gucci');
         setAuthProps(result.data);
         history.push('/');
       } catch (err) {

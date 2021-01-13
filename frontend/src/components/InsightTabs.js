@@ -47,9 +47,6 @@ const InsightTabs = ({ children }) => {
     [children, focusedTab, panel]
   );
 
-  console.log(`${Date.now()}: insight tabs render. selected child: ${focusedTab}`);
-  console.log(panels);
-
   return (
     <div className={root}>
       <Tabs

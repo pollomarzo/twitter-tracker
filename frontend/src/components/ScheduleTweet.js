@@ -71,7 +71,6 @@ const ScheduleTweet = ({ handleAuth }) => {
 
   const handleSend = async () => {
     try {
-      console.log(selectedComponents);
       const screenshots = await Promise.all(
         selectedComponents.map((id) =>
           html2canvas(document.getElementById(id), {
@@ -80,10 +79,8 @@ const ScheduleTweet = ({ handleAuth }) => {
           })
         )
       );
-      console.log(screenshots);
       const media = screenshots.map((canvas) => {
         const dataUrl = canvas.toDataURL();
-        console.log(dataUrl);
         return dataUrl.substring(dataUrl.lastIndexOf(',') + 1);
       });
       const msg = {

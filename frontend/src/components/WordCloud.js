@@ -85,8 +85,6 @@ const WordCloud = ({ list }) => {
     }
   }, [list]);
 
-  console.log(`${Date.now()}: render`);
-
   return (
     <Grid container style={{ width: '100%' }}>
       <Grid item xs={12}>

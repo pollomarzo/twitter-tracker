@@ -53,9 +53,12 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 10,
   },
   listContainer: {
-    maxHeight: 800,
+    maxHeight: 570,
     overflowY: 'auto',
     scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': {
+      width: 0,
+    },
   },
 }));
 
