@@ -24,19 +24,19 @@ const Filters = ({ list, setFilteredList }) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
 
   const { countryList, cityList } = useMemo(() => {
-    const countryList = list.reduce((accList, tweet) => {
+    const countries = list.reduce((accList, tweet) => {
       if (tweet.place && !accList.includes(tweet.place.country_code))
         accList.push(tweet.place.country_code);
       return accList;
     }, []);
 
-    const cityList = list.reduce((accList, tweet) => {
+    const cities = list.reduce((accList, tweet) => {
       if (tweet.place && !accList.includes(tweet.place.name))
         accList.push(tweet.place.name);
       return accList;
     }, []);
 
-    return { countryList, cityList };
+    return { countryList: countries, cityList: cities };
   }, [list]);
 
   const applyFilter = () => {

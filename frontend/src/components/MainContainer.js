@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+
 import { useErrorHandler } from 'react-error-boundary';
 import io from 'socket.io-client';
 import axios from 'axios';
@@ -23,7 +24,7 @@ import { ShowDialogIcon, StreamParams, Map, InsightTabs, TweetList, WordCloud } 
 import { NotifySettings, ScheduleTweet, Filters, Graphs } from '.';
 import { UserError } from './AlertWindow';
 
-import { MAP_ID, WORDCLOUD_ID } from '../constants';
+import { MAP_ID } from '../constants';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -99,9 +100,9 @@ const MainContainer = () => {
 
   //cookie
   useEffect(() => {
-    const fetchSettings = async (streamId) => {
+    const fetchSettings = async (id) => {
       try {
-        const res = await axios.get(`${SETTINGS}?streamId=${streamId}`);
+        const res = await axios.get(`${SETTINGS}?streamId=${id}`);
         const settings = res.data;
 
         if (settings.locations) {

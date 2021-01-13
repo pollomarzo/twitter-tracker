@@ -87,15 +87,15 @@ const startStream = (constraints, parameters) => {
   stream.on('data', (tweet) => {
     if (check(tweet, constraints)) {
       console.log(tweet.text);
-      const stream = streams[streamId];
-      stream.data.push(tweet);
+      const s = streams[streamId];
+      s.data.push(tweet);
 
-      if (stream.socket) {
-        stream.socket.emit('tweet', tweet);
+      if (s.socket) {
+        s.socket.emit('tweet', tweet);
       }
 
-      const tweetCount = stream.data.length;
-      Object.entries(stream.notifications).forEach(async ([email, data]) => {
+      const tweetCount = s.data.length;
+      Object.entries(s.notifications).forEach(async ([email, data]) => {
         if (!data.sent && tweetCount >= data.treshold) {
           data.sent = true;
           try {
@@ -107,7 +107,7 @@ const startStream = (constraints, parameters) => {
           }
         }
       });
-      console.log(`Notifications for stream ${streamId}`, stream.notifications);
+      console.log(`Notifications for stream ${streamId}`, s.notifications);
     }
   });
   return streamId;
@@ -133,22 +133,22 @@ const getIDs = async (usernames) => {
 
 // FIRST ONE: aks for token
 const requestToken = async () => {
-  const client = new Twitter({
+  const requestTokenClient = new Twitter({
     consumer_key: credentials.consumer_key, // from Twitter.
     consumer_secret: credentials.consumer_secret, // from Twitter.
   });
 
-  const res = await client.getRequestToken(credentials.auth_url);
+  const res = await requestTokenClient.getRequestToken(credentials.auth_url);
   return { token: res.oauth_token, secret: res.oauth_token_secret };
 };
 
 const requestAccess = async (oauthToken, oauthVerifier) => {
-  const client = new Twitter({
+  const requestAccessClient = new Twitter({
     consumer_key: credentials.consumer_key,
     consumer_secret: credentials.consumer_secret,
   });
 
-  const res = await client.getAccessToken({
+  const res = await requestAccessClient.getAccessToken({
     oauth_verifier: oauthVerifier,
     oauth_token: oauthToken,
   });
@@ -176,7 +176,7 @@ const requestAccess = async (oauthToken, oauthVerifier) => {
   }
  */
 const sendTweet = async (msg, authProps) => {
-  const client = new Twitter({
+  const sendTweetClient = new Twitter({
     consumer_key: credentials.consumer_key,
     consumer_secret: credentials.consumer_secret,
     access_token_key: authProps.accessToken,
@@ -199,7 +199,7 @@ const sendTweet = async (msg, authProps) => {
     )
   );
 
-  const tweet = await client.post('statuses/update', {
+  const tweet = await sendTweetClient.post('statuses/update', {
     status: msg.text,
     auto_populate_reply_metadata: true,
     media_ids: mediaUploadResponses.map((res) => res.media_id_string).join(','),

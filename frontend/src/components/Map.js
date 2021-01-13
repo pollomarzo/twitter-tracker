@@ -125,9 +125,9 @@ const Map = ({ tweetsList, setCoordinates, showToolbars }) => {
                     secondary={tweet.text}
                   />
                   <div>
-                    {tweet.images.map((image, index) => (
+                    {tweet.images.map((image, tweetIndex) => (
                       <img
-                        key={index}
+                        key={tweetIndex}
                         src={image.media_url}
                         alt="User's shared content"
                         width="80"
