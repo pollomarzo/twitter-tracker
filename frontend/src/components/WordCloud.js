@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useMemo, memo } from 'react';
 import { Slider, makeStyles, Grid, useMediaQuery } from '@material-ui/core';
 
 import ReactWordcloud from 'react-wordcloud';
@@ -40,6 +40,21 @@ const getWordList = (list) => {
   return listOfWord;
 };
 
+const defaultOptions = {
+  enableTooltip: true,
+  enableOptimizations: true,
+  deterministic: false,
+  fontFamily: 'Helvetica',
+  fontSizes: [15, 70],
+  fontStyle: 'normal',
+  fontWeight: 'bold',
+  rotations: 0,
+  transitionDuration: 1000,
+  tooltipOptions: { theme: 'material' },
+};
+
+const getWordTooltip = (word) => `${word.text} (${word.value})`;
+
 const WordCloud = ({ list }) => {
   const { slider } = useStyles();
   const [arrayOfWords, setArrayOfWords] = useState([]);
@@ -48,23 +63,17 @@ const WordCloud = ({ list }) => {
     setNumWords(newValue);
   };
 
-  const wordsColors = useMediaQuery('(prefers-color-scheme: dark)')
-    ? ['#f6d7de', '#bed2f8', '#f8f8b0', '#77DD77', '#FFCBA5', '#B3EEFF']
-    : ['#7AE4FF', '#F5A86C', '#7EE083', '#E07CA5'];
+  const isDarkTheme = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const options = {
-    colors: wordsColors,
-    enableTooltip: true,
-    enableOptimizations: true,
-    deterministic: false,
-    fontFamily: 'Helvetica',
-    fontSizes: [15, 70],
-    fontStyle: 'normal',
-    fontWeight: 'bold',
-    rotations: 0,
-    transitionDuration: 1000,
-    tooltipOptions: { theme: 'material' },
-  };
+  const options = useMemo(
+    () => ({
+      ...defaultOptions,
+      colors: isDarkTheme
+        ? ['#f6d7de', '#bed2f8', '#f8f8b0', '#77DD77', '#FFCBA5', '#B3EEFF']
+        : ['#7AE4FF', '#F5A86C', '#7EE083', '#E07CA5'],
+    }),
+    [isDarkTheme]
+  );
 
   useLayoutEffect(() => {
     if (list.length > 0) {
@@ -76,10 +85,10 @@ const WordCloud = ({ list }) => {
     }
   }, [list]);
 
-  const getWordTooltip = (word) => `${word.text} (${word.value})`;
+  console.log(`${Date.now()}: render`);
 
   return (
-    <Grid container>
+    <Grid container style={{ width: '100%' }}>
       <Grid item xs={12}>
         <Slider
           color="secondary"
@@ -96,12 +105,13 @@ const WordCloud = ({ list }) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <div id={WORDCLOUD_ID}>
+        <div id={WORDCLOUD_ID} style={{ height: 300 }}>
           <ReactWordcloud
             callbacks={{ getWordTooltip }}
             options={options}
             maxWords={numWords}
             words={arrayOfWords}
+            size={[400, 300]}
           />
         </div>
       </Grid>
@@ -109,4 +119,4 @@ const WordCloud = ({ list }) => {
   );
 };
 
-export default WordCloud;
+export default memo(WordCloud);

@@ -74,6 +74,7 @@ const ScheduleTweet = ({ handleAuth }) => {
         selectedComponents.map((id) =>
           html2canvas(document.getElementById(id), {
             useCORS: true,
+            backgroundColor: null,
           })
         )
       );

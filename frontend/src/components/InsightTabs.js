@@ -26,13 +26,16 @@ const InsightTabs = ({ children }) => {
         <Box
           key={index}
           className={container}
-          style={focusedTab !== index ? { display: 'none' } : {}}
+          style={{ display: focusedTab !== index ? 'none' : 'block' }}
         >
-          {child}
+          {React.cloneElement(child)}
         </Box>
       )),
     [children, focusedTab, container]
   );
+
+  console.log(`${Date.now()}: insight tabs render. selected child: ${focusedTab}`);
+  console.log(panels);
 
   return (
     <div className={root}>
