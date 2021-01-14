@@ -1,6 +1,6 @@
-### yo
+### Dev instructions
 
-Here's how you use this:
+Here's how you use this in local:
 
 - make an account and download (ngrok)[https://ngrok.com/]
 - follow instructions to activate account and create conf file
