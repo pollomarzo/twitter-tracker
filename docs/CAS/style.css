@@ -1,0 +1,49 @@
+* {
+    margin: 0px;
+}
+body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+h1{
+    margin-top: 50px;
+}
+.container{
+    margin-top: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+
+}
+.cointanier_div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.container2{
+    margin-top: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+
+}
+.img, .img2{
+    width: 150px;
+    height: 150px;
+    border: solid 2px black;
+    border-radius: 50%;
+    transition: transform .2s; 
+}
+.img2{
+    border: solid 2px #1DA1F2;
+}
+.text2{
+    color: #1DA1F2;
+}
+.img:hover, .img2:hover {
+    transform: scale(1.4); 
+}
