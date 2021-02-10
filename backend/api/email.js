@@ -1,7 +1,7 @@
 const mailClient = require('@sendgrid/mail');
 const credentials = require('./twitter/.credentials');
 
-const SENDER = '***REMOVED***';
+const SENDER = credentials.addr;
 const SUBJECT = '[Notification] Your selected treshold has been surpassed';
 
 mailClient.setApiKey(credentials.sendGrid.api_key);
