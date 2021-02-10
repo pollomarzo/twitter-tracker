@@ -3,6 +3,9 @@
 A simple analysis tool for tweets, focused on geo-location.
 We made this for the 2020-2021 Course of Software Engineering of the University of Bologna. If you wish to test this yourself, read `dev-instructions.md`.
 Because of hosting costs, we cannot keep a public instance for you to play around with. Here are some screenshots, though.
+![interface3](https://user-images.githubusercontent.com/37805933/107536746-665b0280-6bc2-11eb-910d-de7b96befa35.png)
+![interface2](https://user-images.githubusercontent.com/37805933/107536750-678c2f80-6bc2-11eb-8a41-d620e54a53e2.png)
+![interface1](https://user-images.githubusercontent.com/37805933/107536751-6824c600-6bc2-11eb-8163-7f03b2b19e9e.png)
 
 Because of technical limitations with Twitter Developer API, requests are rate limited to 15 every 10 minutes. So remember that if you play with it too much you'll have to wait a while until twitter chooses to give you access again.
 
@@ -21,5 +24,3 @@ Because of the difference in features, setup is not exactly simple. Still, follo
 ## Contributors
 
 Mattia Guazzaloca, Enea Guidi, Lorenzo Liso, Matteo Lorenzoni, Paolo Marzolo.
-
-![home interface](./docs/img/interface1.png?raw=true 'Home interface')
